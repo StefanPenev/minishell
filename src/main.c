@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/10 00:08:09 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/13 22:52:12 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,15 @@
 #include <readline/history.h>
 #include "signals.h"
 #include "lexer.h"
+#include "parser.h"
+#include "ast.h"
 
 int	main(int argc, char **argv, char **envp)
 {
 	char			*input;
 	t_token			*tokens;
 	t_term_context	ctx;
+	t_ast			*ast;
 
 	(void)argc;
 	(void)argv;
@@ -50,7 +53,15 @@ int	main(int argc, char **argv, char **envp)
 			free(input);
 			continue ;
 		}
-
+		ast = parse_tokens(tokens);
+		if (!ast)
+		{
+			fprintf(stderr, "Parsing error\n");
+			lexer_free_tokens(tokens);
+			free(input);
+			continue ;
+		}
+        
 		//process
 
 		lexer_free_tokens(tokens);

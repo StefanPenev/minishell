@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/12 11:55:03 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/13 22:50:27 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <string.h>
 # include <ctype.h>
 # include <stdio.h>
-# include "libft/libft.h"
+# include "../libft/libft.h"
 
 typedef enum e_token_type
 {
