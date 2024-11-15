@@ -1,15 +1,23 @@
-# Name of the executable
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
+#    Updated: 2024/11/16 00:30:58 by stfn             ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = minishell
 
-# Compiler and flags
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror -I./include -g
+CC = cc
+CFLAGS = -Wall -Wextra -Werror -I./include
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 LDFLAGS = -L$(LIBFT_DIR)
-
-# Flags for the readline library
 LIBS = -lreadline -lft
 
 COLOR_RED = \033[31m
@@ -23,53 +31,49 @@ SRC_DIR = src
 SRCS = $(SRC_DIR)/main.c \
        $(SRC_DIR)/signals.c \
 
-# Lexer module
+# Lexer 
 SRCS += $(SRC_DIR)/lexer/lexer.c \
         $(SRC_DIR)/lexer/lexer_utils.c \
         $(SRC_DIR)/lexer/lexer_extensions.c \
         $(SRC_DIR)/lexer/lexer_operators.c \
+		$(SRC_DIR)/lexer/lexer_tester.c \
 
-# Utils module
+# Utils 
 SRCS += $(SRC_DIR)/utils/utils.c \
 
-# AST module
+# AST 
 SRCS += $(SRC_DIR)/ast/ast.c \
 
-# Parser module
+# Parser 
 SRCS += $(SRC_DIR)/parser/parser.c
 
 # Object files
 OBJ_DIR = obj
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-# Rule to build the executable
 all: $(NAME)
+
+$(NAME): $(OBJS) $(LIBFT)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME) $(LDFLAGS) $(LIBS)
 	@echo "${COLOR_GREEN}Project compiled successfully.${COLOR_RESET}"
 
-$(NAME): $(OBJS) ${OBJ_DIR} $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LDFLAGS) $(LIBS)
-
-# Compile .c files into .o files, maintaining directory structure in obj/
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADER)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIBFT):
-	@make -s -C $(LIBFT_DIR)
+	@make -C $(LIBFT_DIR) > /dev/null
 
-# Rule to clean object files
 clean:
 	@rm -rf $(OBJ_DIR)
-	@make -s -C $(LIBFT_DIR) clean
+	@make -C $(LIBFT_DIR) clean > /dev/null
 	@echo "${COLOR_YELLOW}Object files and directories cleaned.${COLOR_RESET}"
 
-# Rule to clean object files and executable
 fclean: clean
 	@rm -f $(NAME)
-	@make -s -C $(LIBFT_DIR) fclean
+	@make -C $(LIBFT_DIR) fclean > /dev/null
 	@echo "${COLOR_YELLOW}Executable and all objects fully cleaned.${COLOR_RESET}"
 
-# Rule to recompile everything from scratch
 re: fclean all
 
 .PHONY: all clean fclean re

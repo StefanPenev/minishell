@@ -6,11 +6,12 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:02:09 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/13 13:27:37 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/15 23:24:10 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
+#include "minishell.h"
 
 // Free redirections
 static void redirection_free(t_redirection *redir) {

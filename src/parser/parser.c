@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 08:55:59 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/13 13:28:20 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/15 13:54:33 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,59 @@
                 | TOKEN_HEREDOC TOKEN_WORD
 
 <parenthesized_expression> ::= TOKEN_LEFT_PAREN <logical_expression> TOKEN_RIGHT_PAREN*/
+
+// <command_line> ::= <logical_expression> TOKEN_EOF
+
+// <logical_expression> ::= <pipeline>
+//                        | <logical_expression> TOKEN_AND <pipeline>
+//                        | <logical_expression> TOKEN_OR <pipeline>
+//                        | <parenthesized_expression>
+
+// <parenthesized_expression> ::= TOKEN_LEFT_PAREN <logical_expression> TOKEN_RIGHT_PAREN
+
+// <pipeline> ::= <command>
+//              | <pipeline> TOKEN_PIPE <command>
+
+// <command> ::= <builtin_command> <redirections>
+//             | <external_command> <redirections>
+
+// <builtin_command> ::= TOKEN_ECHO <echo_options> <arguments>
+//                     | TOKEN_CD <path>
+//                     | TOKEN_PWD
+//                     | TOKEN_EXPORT <export_arguments>
+//                     | TOKEN_UNSET <variable>
+//                     | TOKEN_ENV
+//                     | TOKEN_EXIT <exit_status>
+
+// <echo_options> ::= TOKEN_FLAG_N
+//                  | ε
+
+// <external_command> ::= TOKEN_WORD <arguments>
+
+// <arguments> ::= TOKEN_WORD <arguments>
+//               | TOKEN_QUOTED_STRING <arguments>
+//               | TOKEN_ENV_VAR <arguments>
+//               | ε
+
+// <export_arguments> ::= <variable_assignment> <export_arguments>
+//                      | ε
+
+// <variable_assignment> ::= TOKEN_WORD TOKEN_EQUALS TOKEN_WORD
+
+// <redirections> ::= <redirection> <redirections>
+//                  | ε
+
+// <redirection> ::= TOKEN_REDIRECT_IN TOKEN_WORD
+//                 | TOKEN_REDIRECT_OUT TOKEN_WORD
+//                 | TOKEN_APPEND TOKEN_WORD
+//                 | TOKEN_HEREDOC TOKEN_WORD
+
+// <path> ::= TOKEN_WORD
+
+// <variable> ::= TOKEN_WORD
+
+// <exit_status> ::= TOKEN_NUMBER
+//                 | ε
 
 // Mapping function from t_token_type to t_redirection_type
 static int map_token_to_redirection(t_token_type token_type, t_redirection_type *redir_type) {

@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 20:51:24 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/09 23:55:01 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/15 23:22:22 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,6 @@
 
 # include <signal.h>
 # include <termios.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <unistd.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 

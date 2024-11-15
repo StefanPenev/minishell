@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/13 22:50:27 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/15 23:29:54 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,7 @@
 
 # include <stddef.h>
 # include <dirent.h>  // For wildcard expansion (manual)
-# include <stdlib.h>
-# include <string.h>
 # include <ctype.h>
-# include <stdio.h>
-# include "../libft/libft.h"
 
 typedef enum e_token_type
 {
@@ -52,6 +48,7 @@ typedef struct s_lexer
 	size_t	pos;
 	char	current_char;
 	char	**envp;
+	int		last_exit_status;
 }	t_lexer;
 
 //lexer.c

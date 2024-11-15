@@ -6,11 +6,12 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 18:15:02 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/11 21:16:38 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/15 23:23:39 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
+#include "minishell.h"
 
 /* Check if a character is a special shell character */
 int	is_special_char(char c)

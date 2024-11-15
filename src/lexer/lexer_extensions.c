@@ -6,11 +6,12 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:22:50 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/12 00:14:59 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/16 00:11:46 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
+#include "minishell.h"
 
 /* Create a new token */
 t_token	*lexer_new_token(t_token_type type, char *value)
@@ -66,59 +67,45 @@ char	*lexer_collect_quoted(t_lexer *lexer, char quote_type)
 	return (str);
 }
 
-/* Expand environment variables */
-char	*lexer_expand_variable(t_lexer *lexer, size_t *length)
+static char	*lexer_get_var_name(t_lexer *lexer, size_t start, size_t *length)
 {
-	size_t	start;
 	size_t	var_len;
-	char	*value;
-	char	*var_name;
 
-	start = lexer->pos + 1;
 	var_len = 0;
-	while (isalnum(lexer->input[start + var_len])
+	while (ft_isalnum(lexer->input[start + var_len])
 		|| lexer->input[start + var_len] == '_')
 		var_len++;
 	if (var_len == 0)
 	{
 		*length = 1;
-		return (ft_strdup("$"));
+		return (NULL);
 	}
-	var_name = ft_strndup(lexer->input + start, var_len);
+	*length = var_len + 1;
+	return (ft_strndup(lexer->input + start, var_len));
+}
+
+char	*lexer_expand_variable(t_lexer *lexer, size_t *length)
+{
+	size_t	start;
+	char	*var_name;
+	char	*value;
+
+	start = lexer->pos + 1;
+	if (lexer->input[start] == '?')
+	{
+		*length = 2;
+		return (ft_itoa(lexer->last_exit_status));
+	}
+	var_name = lexer_get_var_name(lexer, start, length);
+	if (!var_name)
+		return (ft_strdup("$"));
 	value = getenv(var_name);
 	free(var_name);
-	*length = var_len + 1;
 	if (value)
 		return (ft_strdup(value));
 	else
 		return (ft_strdup(""));
 }
-
-// /* Handle wildcard expansion manually (for current working directory only) */
-// char	**expand_wildcard(void);
-// {
-// 	int				i;
-// 	char			**files;
-// 	struct dirent	*entry;
-// 	DIR				*dp;
-
-// 	dp = opendir(".");
-// 	if (!dp)
-// 		return (NULL);
-// 	files = malloc(sizeof(char *) * 256);
-// 	i = 0;
-// 	while ((entry = readdir(dp)))
-// 	{
-// 		if (entry->d_name[0] != '.')
-// 		{
-// 			files[i] = ft_strdup(entry->d_name);
-// 			i++;
-// 		}
-// 	}
-// 	files[i] = NULL;
-// 	closedir(dp);
-// 	return (files);
-// }
 
 char	**expand_wildcard(void)
 {
@@ -159,3 +146,68 @@ char	**expand_wildcard(void)
 	closedir(dp);
 	return (files);
 }
+
+// char **expand_wildcard(void)
+// {
+//     int i;
+//     char **files;
+//     struct dirent *entry;
+//     DIR *dp;
+
+//     dp = opendir(".");
+//     if (!dp)
+//     {
+//         perror("opendir failed");
+//         return NULL;
+//     }
+
+//     // Allocate memory for up to INITIAL_CAPACITY files
+//     files = malloc(sizeof(char *) * INITIAL_CAPACITY);
+//     if (!files)
+//     {
+//         perror("malloc failed");
+//         closedir(dp);
+//         return NULL;
+//     }
+
+//     i = 0;
+//     entry = readdir(dp);
+//     while (entry)
+//     {
+//         if (entry->d_name[0] != '.')
+//         {
+//             // Check if we have space to add a new entry
+//             if (i >= INITIAL_CAPACITY)
+//             {
+//                 perror("Exceeded allocated space");
+//                 // Cleanup allocated memory before returning
+//                 while (i > 0)
+//                     free(files[--i]);
+//                 free(files);
+//                 closedir(dp);
+//                 return NULL;
+//             }
+
+//             // Duplicate the filename into the array
+//             files[i] = strdup(entry->d_name);
+//             if (!files[i])
+//             {
+//                 perror("strdup failed");
+//                 // Cleanup before returning
+//                 while (i > 0)
+//                     free(files[--i]);
+//                 free(files);
+//                 closedir(dp);
+//                 return NULL;
+//             }
+//             i++;
+//         }
+//         entry = readdir(dp);
+//     }
+
+//     // Null-terminate the array
+//     files[i] = NULL;
+//     closedir(dp);
+
+//     return files;
+// }
