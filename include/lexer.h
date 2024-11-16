@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/15 23:29:54 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/16 17:52:19 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ typedef enum e_token_type
 	TOKEN_LEFT_PAREN,
 	TOKEN_RIGHT_PAREN,
 	TOKEN_EOF,
-	TOKEN_SEMICOLON,
 	TOKEN_WILDCARD,
 	TOKEN_ERROR
 }	t_token_type;
@@ -80,5 +79,7 @@ t_token		*handle_wildcard(t_lexer *lexer);
 t_token		*handle_ampersand(t_lexer *lexer);
 t_token		*handle_redirect_in(t_lexer *lexer);
 t_token		*handle_redirect_out(t_lexer *lexer);
+t_token		*handle_lparen(t_lexer *lexer);
+t_token		*handle_rparen(t_lexer *lexer);
 
 #endif 

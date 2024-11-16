@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 23:41:10 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/16 00:14:13 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/16 17:53:16 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,4 +65,17 @@ t_token	*handle_wildcard(t_lexer *lexer)
 {
 	lexer_advance(lexer);
 	return (lexer_new_token(TOKEN_WILDCARD, "*"));
+}
+
+t_token	*handle_lparen(t_lexer *lexer)
+{
+
+	lexer_advance(lexer);
+	return (lexer_new_token(TOKEN_LEFT_PAREN, "("));
+}
+
+t_token	*handle_rparen(t_lexer *lexer)
+{
+	lexer_advance(lexer);
+	return (lexer_new_token(TOKEN_RIGHT_PAREN, ")"));
 }

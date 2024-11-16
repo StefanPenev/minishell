@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:02:09 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/15 23:24:10 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/17 00:23:55 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,33 @@
 #include "minishell.h"
 
 // Free redirections
-static void redirection_free(t_redirection *redir) {
-    while (redir) {
-        t_redirection *tmp = redir;
-        redir = redir->next;
-        if (tmp->filename)
-            free(tmp->filename);
-        free(tmp);
-    }
+static void	redirection_free(t_redirection *redir)
+{
+	t_redirection	*tmp;
+
+	while (redir)
+	{
+		tmp = redir;
+		redir = redir->next;
+		if (tmp->filename)
+			free(tmp->filename);
+		free(tmp);
+	}
 }
 
 // Free commands
-static void command_free(t_command *cmd) {
-    if (!cmd)
-        return;
-    if (cmd->args) {
+static void	command_free(t_command *cmd)
+{
+	if (!cmd)
+		return ;
+	if (cmd->args)
+	{
         for (size_t i = 0; cmd->args[i]; i++)
             free(cmd->args[i]);
         free(cmd->args);
-    }
-    redirection_free(cmd->redirections);
-    free(cmd);
+	}
+	redirection_free(cmd->redirections);
+	free(cmd);
 }
 
 // Recursive AST free

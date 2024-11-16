@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:22:50 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/16 00:11:46 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/16 15:16:45 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char	*lexer_collect_word(t_lexer *lexer)
 	size_t	length;
 
 	start = lexer->pos;
-	while (lexer->current_char && !isspace(lexer->current_char)
+	while (lexer->current_char && !ft_isspace(lexer->current_char)
 		&& !is_special_char(lexer->current_char))
 		lexer_advance(lexer);
 	length = lexer->pos - start;
