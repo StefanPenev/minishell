@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:22:50 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/16 15:16:45 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/17 18:55:07 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,108 +106,3 @@ char	*lexer_expand_variable(t_lexer *lexer, size_t *length)
 	else
 		return (ft_strdup(""));
 }
-
-char	**expand_wildcard(void)
-{
-	int				i;
-	char			**files;
-	struct dirent	*entry;
-	DIR				*dp;
-
-	dp = opendir(".");
-	if (!dp)
-		return (NULL);
-	files = malloc(sizeof(char *) * 256);
-	if (!files)
-	{
-		closedir(dp);
-		return (NULL);
-	}
-	i = 0;
-	entry = readdir(dp);
-	while (entry)
-	{
-		if (entry->d_name[0] != '.')
-		{
-			files[i] = ft_strdup(entry->d_name);
-			if (!files[i])
-			{
-				while (i > 0)
-					free(files[--i]);
-				free(files);
-				closedir(dp);
-				return (NULL);
-			}
-			i++;
-		}
-		entry = readdir(dp);
-	}
-	files[i] = NULL;
-	closedir(dp);
-	return (files);
-}
-
-// char **expand_wildcard(void)
-// {
-//     int i;
-//     char **files;
-//     struct dirent *entry;
-//     DIR *dp;
-
-//     dp = opendir(".");
-//     if (!dp)
-//     {
-//         perror("opendir failed");
-//         return NULL;
-//     }
-
-//     // Allocate memory for up to INITIAL_CAPACITY files
-//     files = malloc(sizeof(char *) * INITIAL_CAPACITY);
-//     if (!files)
-//     {
-//         perror("malloc failed");
-//         closedir(dp);
-//         return NULL;
-//     }
-
-//     i = 0;
-//     entry = readdir(dp);
-//     while (entry)
-//     {
-//         if (entry->d_name[0] != '.')
-//         {
-//             // Check if we have space to add a new entry
-//             if (i >= INITIAL_CAPACITY)
-//             {
-//                 perror("Exceeded allocated space");
-//                 // Cleanup allocated memory before returning
-//                 while (i > 0)
-//                     free(files[--i]);
-//                 free(files);
-//                 closedir(dp);
-//                 return NULL;
-//             }
-
-//             // Duplicate the filename into the array
-//             files[i] = strdup(entry->d_name);
-//             if (!files[i])
-//             {
-//                 perror("strdup failed");
-//                 // Cleanup before returning
-//                 while (i > 0)
-//                     free(files[--i]);
-//                 free(files);
-//                 closedir(dp);
-//                 return NULL;
-//             }
-//             i++;
-//         }
-//         entry = readdir(dp);
-//     }
-
-//     // Null-terminate the array
-//     files[i] = NULL;
-//     closedir(dp);
-
-//     return files;
-// }

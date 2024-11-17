@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/16 17:52:19 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/17 18:14:23 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include <stddef.h>
 # include <dirent.h>  // For wildcard expansion (manual)
 # include <ctype.h>
+
+# define INITIAL_CAPACITY 256
 
 typedef enum e_token_type
 {

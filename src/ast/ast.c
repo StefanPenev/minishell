@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:02:09 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/17 00:23:55 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/17 17:03:17 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,38 +31,40 @@ static void	redirection_free(t_redirection *redir)
 // Free commands
 static void	command_free(t_command *cmd)
 {
+	size_t	i;
+
 	if (!cmd)
 		return ;
+	i = 0;
 	if (cmd->args)
 	{
-        for (size_t i = 0; cmd->args[i]; i++)
-            free(cmd->args[i]);
-        free(cmd->args);
+		while (cmd->args[i])
+		{
+			free(cmd->args[i]);
+			i++;
+		}
+		free(cmd->args);
 	}
 	redirection_free(cmd->redirections);
-	free(cmd);
+	free (cmd);
 }
 
 // Recursive AST free
-void ast_free(t_ast *ast) {
-    if (!ast)
-        return;
-    switch (ast->type) {
-        case AST_COMMAND:
-            command_free(ast->u_data.command);
-            break;
-        case AST_PIPELINE:
-            ast_free(ast->u_data.pipeline.left);
-            ast_free(ast->u_data.pipeline.right);
-            break;
-        case AST_LOGICAL_AND:
-        case AST_LOGICAL_OR:
-            ast_free(ast->u_data.logical.left);
-            ast_free(ast->u_data.logical.right);
-            break;
-        // Handle other node types if added
-        default:
-            break;
-    }
-    free(ast);
+void	ast_free(t_ast *ast)
+{
+	if (!ast)
+		return ;
+	if (ast->type == AST_COMMAND)
+		command_free(ast->u_data.command);
+	else if (ast->type == AST_PIPELINE)
+	{
+		ast_free(ast->u_data.pipeline.left);
+		ast_free(ast->u_data.pipeline.right);
+	}
+	else if (ast->type == AST_LOGICAL_AND || ast->type == AST_LOGICAL_OR)
+	{
+		ast_free(ast->u_data.logical.left);
+		ast_free(ast->u_data.logical.right);
+	}
+	free (ast);
 }
