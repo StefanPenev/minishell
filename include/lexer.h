@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/18 10:42:38 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/18 16:52:28 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,11 @@ typedef struct s_lexer
 
 //lexer.c
 void		lexer_free_tokens(t_token *tokens);
+t_token		*lexer_handle_operator(t_lexer *lexer);
 const char	*lexer_get_error_message(t_token *token);
 t_token		*lexer_tokenize(char *input, char **envp);
-
-//utils.c
-int			ft_isspace(int c);
-char		*ft_strndup(const char *s, size_t n);
+void		lexer_append_token(t_token **head, t_token **current,
+				t_token *new_tok);
 
 //lexer_utils.c
 int			is_special_char(char c);
@@ -81,11 +80,22 @@ t_token		*handle_ampersand(t_lexer *lexer);
 t_token		*handle_redirect_in(t_lexer *lexer);
 t_token		*handle_redirect_out(t_lexer *lexer);
 
+//lexer_tokens.c
+t_token		*lexer_handle_word(t_lexer *lexer);
+t_token		*lexer_handle_quotes(t_lexer *lexer);
+t_token		*lexer_process_token(t_lexer *lexer, t_token *head);
+t_token		*lexer_handle_dollar(t_lexer *lexer, t_token *head);
+t_token		*lexer_finalize_tokens(t_token *head, t_token **current);
+
 //lexer_wildcard.c
 char		**expand_wildcard(void);
 
 //lexer_wildcard_utils.c
 void		free_files(char **files, int size);
 int			resize_array(char ***files, int *capacity, int current_size);
+
+//utils.c
+int			ft_isspace(int c);
+char		*ft_strndup(const char *s, size_t n);
 
 #endif 

@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/18 10:47:43 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/18 13:17:01 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	main(int argc, char **argv, char **envp)
 		}
 		if (tokens->type == TOKEN_ERROR)
 		{
-			fprintf(stderr, "Error: %s\n", lexer_get_error_message(tokens));
+			printf("Error: %s\n", lexer_get_error_message(tokens));
 			lexer_free_tokens(tokens);
 			free(input);
 			continue ;
