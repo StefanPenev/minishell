@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/17 18:14:23 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/18 10:42:38 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <dirent.h>  // For wildcard expansion (manual)
 # include <ctype.h>
 
-# define INITIAL_CAPACITY 256
+# define INITIAL_CAPACITY 128
 
 typedef enum e_token_type
 {
@@ -69,7 +69,6 @@ void		lexer_skip_whitespace(t_lexer *lexer);
 const char	*lexer_get_error_message(t_token *token);
 
 //lexer_extensions.c
-char		**expand_wildcard(void);
 char		*lexer_collect_word(t_lexer *lexer);
 t_token		*lexer_new_token(t_token_type type, char *value);
 char		*lexer_expand_variable(t_lexer *lexer, size_t *length);
@@ -81,7 +80,12 @@ t_token		*handle_wildcard(t_lexer *lexer);
 t_token		*handle_ampersand(t_lexer *lexer);
 t_token		*handle_redirect_in(t_lexer *lexer);
 t_token		*handle_redirect_out(t_lexer *lexer);
-t_token		*handle_lparen(t_lexer *lexer);
-t_token		*handle_rparen(t_lexer *lexer);
+
+//lexer_wildcard.c
+char		**expand_wildcard(void);
+
+//lexer_wildcard_utils.c
+void		free_files(char **files, int size);
+int			resize_array(char ***files, int *capacity, int current_size);
 
 #endif 

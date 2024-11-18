@@ -6,7 +6,7 @@
 #    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/11/17 18:56:28 by stfn             ###   ########.fr        #
+#    Updated: 2024/11/18 10:33:44 by stfn             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,7 @@ SRCS += $(SRC_DIR)/lexer/lexer.c \
 		$(SRC_DIR)/lexer/lexer_wildcard.c \
         $(SRC_DIR)/lexer/lexer_operators.c \
 		$(SRC_DIR)/lexer/lexer_extensions.c \
+		$(SRC_DIR)/lexer/lexer_wildcard_utils.c \
 		$(SRC_DIR)/lexer/lexer_tester.c \
 
 # Utils 
@@ -74,6 +75,12 @@ fclean: clean
 	@rm -f $(NAME)
 	@make -C $(LIBFT_DIR) fclean > /dev/null
 	@echo "${COLOR_YELLOW}Executable and all objects fully cleaned.${COLOR_RESET}"
+
+leaks: $(NAME)
+	@echo "${COLOR_BLUE}Running valgrind for memory leak check...${COLOR_RESET}"
+	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes \
+		--log-file=valgrind_report.log ./$(NAME)
+	@echo "${COLOR_GREEN}Valgrind completed. Check valgrind_report.log for details.${COLOR_RESET}"
 
 re: fclean all
 
