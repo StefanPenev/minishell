@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/18 13:17:01 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/19 11:10:29 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	main(int argc, char **argv, char **envp)
 	char			*input;
 	t_token			*tokens;
 	t_term_context	ctx;
-	//t_ast			*ast;
+	t_ast			*ast;
 
 	(void)argc;
 	(void)argv;
@@ -50,19 +50,20 @@ int	main(int argc, char **argv, char **envp)
 			free(input);
 			continue ;
 		}
-		// ast = parse_tokens(tokens);
-		// if (!ast)
-		// {
-		// 	fprintf(stderr, "Parsing error\n");
-		// 	lexer_free_tokens(tokens);
-		// 	free(input);
-		// 	continue ;
-		// }
-        // print_ast(ast, 0);
+		print_tokens(tokens);
+		ast = parse_tokens(tokens);
+		if (!ast)
+		{
+			fprintf(stderr, "Parsing error\n");
+			lexer_free_tokens(tokens);
+			free(input);
+			continue ;
+		}
+        print_ast(ast, 0);
         
 		//process
 
-		print_tokens(tokens);
+		
 
 		lexer_free_tokens(tokens);
 		free(input);

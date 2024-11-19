@@ -6,7 +6,7 @@
 #    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/11/18 16:33:52 by stfn             ###   ########.fr        #
+#    Updated: 2024/11/18 22:49:22 by stfn             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,7 @@ COLOR_RESET = \033[0m
 SRC_DIR = src
 SRCS = $(SRC_DIR)/main.c \
        $(SRC_DIR)/signals.c \
+       $(SRC_DIR)/ast_tester.c \
 
 # Lexer 
 SRCS += $(SRC_DIR)/lexer/lexer.c \
