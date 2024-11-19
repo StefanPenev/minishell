@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 10:47:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/19 13:03:37 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/19 21:10:36 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,47 +52,47 @@ void	print_redirection(t_redirection *redir, int indent)
 }
 
 // Print a command node
-void	print_command(t_command *cmd, int indent)
-{
-	size_t	i;
-
-	print_indent(indent);
-	printf("Command:\n");
-	print_indent(indent + 1);
-	printf("Arguments: ");
-	i = 0;
-	while (cmd->args && cmd->args[i])
-	{
-		printf("%s ", cmd->args[i]);
-		i++;
-	}
-	printf("\n");
-	if (cmd->redirections)
-	{
-		print_indent(indent + 1);
-		printf("Redirections:\n");
-		print_redirection(cmd->redirections, indent + 2);
-	}
-}
-// void print_command(t_command *cmd, int indent)
+// void	print_command(t_command *cmd, int indent)
 // {
-//     size_t i;
+// 	size_t	i;
 
-//     print_indent(indent);
-//     printf("Command:\n");
-//     // Loop through and print each argument on a new line
-//     for (i = 0; cmd->args && cmd->args[i]; i++) {
-//         print_indent(indent + 1);
-//         printf("Arguments: %s\n", cmd->args[i]);
-//     }
-
-//     // If the command has redirections, print them
-//     if (cmd->redirections) {
-//         print_indent(indent + 1);
-//         printf("Redirections:\n");
-//         print_redirection(cmd->redirections, indent + 2);
-//     }
+// 	print_indent(indent);
+// 	printf("Command:\n");
+// 	print_indent(indent + 1);
+// 	printf("Arguments: ");
+// 	i = 0;
+// 	while (cmd->args && cmd->args[i])
+// 	{
+// 		printf("%s ", cmd->args[i]);
+// 		i++;
+// 	}
+// 	printf("\n");
+// 	if (cmd->redirections)
+// 	{
+// 		print_indent(indent + 1);
+// 		printf("Redirections:\n");
+// 		print_redirection(cmd->redirections, indent + 2);
+// 	}
 // }
+void print_command(t_command *cmd, int indent)
+{
+    size_t i;
+
+    print_indent(indent);
+    printf("Command:\n");
+    // Loop through and print each argument on a new line
+    for (i = 0; cmd->args && cmd->args[i]; i++) {
+        print_indent(indent + 1);
+        printf("Arguments: %s\n", cmd->args[i]);
+    }
+
+    // If the command has redirections, print them
+    if (cmd->redirections) {
+        print_indent(indent + 1);
+        printf("Redirections:\n");
+        print_redirection(cmd->redirections, indent + 2);
+    }
+}
 
 
 

@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 08:55:59 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/19 18:32:01 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/19 22:24:27 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ static void parser_advance(t_parser *parser) {
     parser->current_token = parser->current_token->next;
     debug_token(parser);  // Debug after advancing
 }
-
 
 // Forward declarations
 t_ast *parse_command(t_parser *parser);
@@ -62,6 +61,48 @@ static int map_token_to_redirection(t_token_type token_type, t_redirection_type 
             return 0; // Unknown redirection type
     }
 }
+
+void add_argument_to_command(t_command *command, const char *arg) {
+    // Ensure the command's args array is big enough to hold the new argument
+    size_t args_count = 0;
+    while (command->args[args_count] != NULL) {
+        args_count++;
+    }
+
+    // Resize the argument list if necessary
+    if (args_count >= command->args_capacity - 1) {
+        size_t new_capacity = command->args_capacity * 2;
+        command->args = realloc(command->args, new_capacity * sizeof(char *));
+        if (!command->args) {
+            fprintf(stderr, "Failed to allocate memory for arguments\n");
+            exit(EXIT_FAILURE);  // Or handle error properly
+        }
+        command->args_capacity = new_capacity;
+    }
+
+    // Add the new argument
+    command->args[args_count] = strdup(arg);
+    command->args[args_count + 1] = NULL;  // Null-terminate the list
+}
+
+void parse_wildcard(t_token *token, t_command *command) {
+    // Wildcard handling code here
+    if (token->type == TOKEN_WILDCARD) {
+        char **expanded_files = expand_wildcard();
+        if (!expanded_files) {
+            fprintf(stderr, "Wildcard expansion failed\n");
+            return;
+        }
+
+        // Add expanded filenames to the command's argument list
+        for (int i = 0; expanded_files[i] != NULL; i++) {
+            add_argument_to_command(command, expanded_files[i]);
+            free(expanded_files[i]); // Free each expanded filename
+        }
+        free(expanded_files); // Free the array itself
+    }
+}
+
 // Parse a redirection
 t_redirection *parse_redirection(t_parser *parser) {
     t_redirection *redir = malloc(sizeof(t_redirection));
@@ -166,6 +207,75 @@ t_redirection *parse_redirection(t_parser *parser) {
     return redir;
 }
 
+// t_ast *parse_command(t_parser *parser) {
+//     t_ast *node = malloc(sizeof(t_ast));
+//     if (!node)
+//         return NULL;
+
+//     node->type = AST_COMMAND;
+//     t_command *cmd = malloc(sizeof(t_command));
+//     if (!cmd) {
+//         free(node);
+//         return NULL;
+//     }
+//     cmd->args = NULL;
+//     cmd->redirections = NULL;
+
+//     // Collect arguments (if any)
+//     size_t args_size = 0;
+//     size_t args_capacity = 10;
+//     cmd->args = malloc(sizeof(char *) * args_capacity);
+//     if (!cmd->args) {
+//         free(cmd);
+//         free(node);
+//         return NULL;
+//     }
+
+//     // Collect all words as arguments for the command
+//     while (parser->current_token->type == TOKEN_WORD) {
+//         if (args_size >= args_capacity - 1) {
+//             // Resize arguments array if necessary
+//             args_capacity *= 2;
+//             char **new_args = realloc(cmd->args, sizeof(char *) * args_capacity);
+//             if (!new_args) {
+//                 for (size_t i = 0; i < args_size; i++)
+//                     free(cmd->args[i]);
+//                 free(cmd->args);
+//                 free(cmd);
+//                 free(node);
+//                 return NULL;
+//             }
+//             cmd->args = new_args;
+//         }
+//         cmd->args[args_size++] = strdup(parser->current_token->value);
+//         parser_advance(parser);
+//     }
+
+//     cmd->args[args_size] = NULL; // Null-terminate the argument array
+
+//     // Parse redirections associated with this command
+//     while (1) {
+//         t_redirection *redir = parse_redirection(parser);
+//         if (!redir) {
+//             break;  // No more redirections, break the loop
+//         }
+
+//         // Add the redirection to the command's redirection list
+//         redir->next = cmd->redirections;
+//         cmd->redirections = redir;
+//     }
+
+//     // If no arguments and no redirections were found, the command is malformed
+//     if (args_size == 0 && !cmd->redirections) {
+//         free(cmd->args);
+//         free(cmd);
+//         free(node);
+//         return NULL;
+//     }
+
+//     node->u_data.command = cmd;
+//     return node;
+// }
 t_ast *parse_command(t_parser *parser) {
     t_ast *node = malloc(sizeof(t_ast));
     if (!node)
@@ -212,6 +322,12 @@ t_ast *parse_command(t_parser *parser) {
 
     cmd->args[args_size] = NULL; // Null-terminate the argument array
 
+    // Handle wildcard expansion if we encounter a wildcard token
+    if (parser->current_token->type == TOKEN_WILDCARD) {
+        parse_wildcard(parser->current_token, cmd);
+        parser_advance(parser);  // Move past the wildcard token
+    }
+
     // Parse redirections associated with this command
     while (1) {
         t_redirection *redir = parse_redirection(parser);
@@ -235,6 +351,7 @@ t_ast *parse_command(t_parser *parser) {
     node->u_data.command = cmd;
     return node;
 }
+
 
 // Parse a pipeline
 t_ast *parse_pipeline(t_parser *parser) {
@@ -300,39 +417,69 @@ t_ast *parse_parenthesized_expression(t_parser *parser) {
 }
 
 // Parse a logical expression (AND, OR)
+// t_ast *parse_logical_expression(t_parser *parser) {
+//     t_ast *left = parse_pipeline(parser);
+//     if (!left)
+//         return NULL;
+
+//     while (parser->current_token->type == TOKEN_AND ||
+//            parser->current_token->type == TOKEN_OR) {
+//         t_token_type op = parser->current_token->type;
+//         parser_advance(parser);
+
+//         // Ensure there's a valid right operand
+//         t_ast *right = parse_pipeline(parser);
+//         if (!right) {
+//             fprintf(stderr, "Error: Expected command after '%s'.\n",
+//                 op == TOKEN_AND ? "&&" : "||");
+//             ast_free(left);
+//             return NULL;
+//         }
+
+//         t_ast *logic_node = malloc(sizeof(t_ast));
+//         if (!logic_node) {
+//             ast_free(left);
+//             ast_free(right);
+//             return NULL;
+//         }
+//         logic_node->type = (op == TOKEN_AND) ? AST_LOGICAL_AND : AST_LOGICAL_OR;
+//         logic_node->u_data.logical.left = left;
+//         logic_node->u_data.logical.right = right;
+//         left = logic_node;
+//     }
+
+//     return left;
+// }
 t_ast *parse_logical_expression(t_parser *parser) {
-    t_ast *left = parse_pipeline(parser);
+    t_ast *left = parse_pipeline(parser); // Parse the left-hand pipeline
     if (!left)
         return NULL;
 
-    while (parser->current_token->type == TOKEN_AND ||
-           parser->current_token->type == TOKEN_OR) {
-        t_token_type op = parser->current_token->type;
+    while (parser->current_token->type == TOKEN_AND || parser->current_token->type == TOKEN_OR) {
+        t_ast_node_type type = (parser->current_token->type == TOKEN_AND) ? AST_LOGICAL_AND : AST_LOGICAL_OR;
         parser_advance(parser);
 
-        // Ensure there's a valid right operand
-        t_ast *right = parse_pipeline(parser);
+        t_ast *right = parse_pipeline(parser); // Parse the right-hand pipeline
         if (!right) {
-            fprintf(stderr, "Error: Expected command after '%s'.\n",
-                op == TOKEN_AND ? "&&" : "||");
+            fprintf(stderr, "Error: Expected pipeline after logical operator.\n");
             ast_free(left);
             return NULL;
         }
 
-        t_ast *logic_node = malloc(sizeof(t_ast));
-        if (!logic_node) {
+        t_ast *node = malloc(sizeof(t_ast));
+        if (!node) {
             ast_free(left);
             ast_free(right);
             return NULL;
         }
-        logic_node->type = (op == TOKEN_AND) ? AST_LOGICAL_AND : AST_LOGICAL_OR;
-        logic_node->u_data.logical.left = left;
-        logic_node->u_data.logical.right = right;
-        left = logic_node;
+        node->type = type;
+        node->u_data.logical.left = left;
+        node->u_data.logical.right = right;
+        left = node;
     }
-
     return left;
 }
+
 
 // Parse a command line
 t_ast *parse_command_line(t_parser *parser) {

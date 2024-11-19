@@ -6,13 +6,14 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:17:30 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/19 13:45:55 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/19 22:26:08 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef AST_H
 # define AST_H
 
+#include <stddef.h>
 //to do some additional node types
 typedef enum e_ast_node_type
 {
@@ -41,6 +42,7 @@ typedef struct s_redirection
 typedef struct s_command
 {
 	char			**args;
+	size_t			args_capacity;
 	t_redirection	*redirections;
 }	t_command;
 
