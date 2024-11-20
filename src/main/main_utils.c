@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:05 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/19 19:01:31 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/20 12:45:07 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,3 +53,5 @@ t_ast	*process_parser(t_token *tokens)
 	print_ast(ast, 0);
 	return (ast);
 }
+
+

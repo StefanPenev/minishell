@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/19 19:02:12 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/20 12:54:24 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "parser.h"
 #include "ast.h"
 #include "minishell.h"
+#include "process.h"
 
 void	setup_signals(t_term_context *ctx)
 {
@@ -34,10 +35,66 @@ char	*read_input(void)
 	return (input);
 }
 
-void	process(char *input, char **envp)
+////////////////////////////////
+int	minishell_pwd(t_env *env_copy, t_process *process)
 {
-	t_token	*tokens;
-	t_ast	*ast;
+	t_env	*current;
+
+	current = env_copy;
+	// pwd shouldnt have any arguments, but if they are, it still works
+	while (current != NULL)
+	{
+		// printf("Key: %s, Value: %s\n", current->key, current->value);
+		if (strcmp(current->key, "PWD") == 0)
+		{
+			write(1, current->value, ft_strlen(current->value));
+			write(1, "\n", 1);
+			set_exit_status(process, 0);
+			return (EXIT_SUCCESS);
+		}
+		current = current->next;
+	}
+	set_exit_status(process, 0);
+	return (EXIT_SUCCESS);
+}
+
+//Execute buildins
+void	execute_builtin(t_command *cmd, t_env *env_copy, t_process *process)
+{
+	if (strcmp(cmd->args[0], "pwd") == 0)
+		minishell_pwd(env_copy, process);
+	// if (strcmp(cmd->args[0], "echo") == 0)
+	// 	execute_echo(cmd);
+	// else if (strcmp(cmd->args[0], "cd") == 0)
+	// 	execute_cd(cmd);
+	// else if (strcmp(cmd->args[0], "pwd") == 0)
+	// 	execute_pwd();
+	// else if (strcmp(cmd->args[0], "export") == 0)
+	// 	execute_export(cmd);
+	// else if (strcmp(cmd->args[0], "unset") == 0)
+	// 	execute_unset(cmd);
+	// else if (strcmp(cmd->args[0], "env") == 0)
+	// 	execute_env(envp);
+	// else if (strcmp(cmd->args[0], "exit") == 0)
+	// 	execute_exit(cmd);
+}
+
+int is_builtin(t_command *cmd) {
+    static const char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit"};
+    for (size_t i = 0; i < sizeof(builtins) / sizeof(builtins[0]); i++) {
+        if (strcmp(cmd->args[0], builtins[i]) == 0) {
+            return 1; // Command is a built-in
+        }
+    }
+    return 0; // Command is not a built-in
+}
+/////////////////////////////////
+
+void	process_command(char *input, t_env *env_copy, t_process process, char **envp)
+{
+	t_token		*tokens;
+	t_ast		*ast;
+	t_command	*cmd;
 
 	tokens = process_lexer(input, envp);
 	if (!tokens)
@@ -48,7 +105,15 @@ void	process(char *input, char **envp)
 		free(input);
 		return ;
 	}
-	//Process/Execute
+	// Execute command
+	if (ast->type == AST_COMMAND)
+	{
+		cmd = ast->u_data.command;
+		if (is_builtin(cmd))
+			execute_builtin(cmd, env_copy, &process);
+		else
+			printf("%s\n", "Execution Test");
+	}
 	cleanup(tokens, input);
 }
 
@@ -56,16 +121,20 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_term_context	ctx;
 	char			*input;
+	t_env			*env_copy;
+	t_process		process;
 
 	(void)argc;
 	(void)argv;
 	setup_signals(&ctx);
+	process.last_exit_status = 0;
+	env_copy = init_env(envp);
 	while (1)
 	{
 		input = read_input();
 		if (!input)
 			break ;
-		process(input, envp);
+		process_command(input, env_copy, process, envp);
 	}
 	restore_terminal(&ctx);
 	return (0);

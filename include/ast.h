@@ -3,17 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   ast.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:17:30 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/19 22:26:08 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/20 10:05:12 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef AST_H
 # define AST_H
 
-#include <stddef.h>
+# include <stddef.h>
+
 //to do some additional node types
 typedef enum e_ast_node_type
 {

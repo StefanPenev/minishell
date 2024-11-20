@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
+#    By: spenev <spenev@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/11/19 19:06:47 by stfn             ###   ########.fr        #
+#    Updated: 2024/11/20 12:31:04 by spenev           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,6 +53,12 @@ SRCS += $(SRC_DIR)/ast/ast.c \
 
 # Parser 
 SRCS += $(SRC_DIR)/parser/parser.c
+
+# Execution
+SRCS += $(SRC_DIR)/execution/getenv.c \
+		$(SRC_DIR)/execution/exit_status.c \
+		$(SRC_DIR)/execution/minishell_utils.c \
+
 
 # Object files
 OBJ_DIR = obj
