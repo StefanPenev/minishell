@@ -3,56 +3,57 @@
 /*                                                        :::      ::::::::   */
 /*   getenv.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:09:36 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 11:12:02 by spenev           ###   ########.fr       */
+/*   Updated: 2024/11/20 17:04:08 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "process.h"
 #include "minishell.h"
+#include "process.h"
 
-// t_process	*create_line(char *env_str)
+// // debug function, delete afterwards
+// void	printList(t_env *head)
 // {
-// 	t_process	*sring;
-// 	char		*equal;
+// 	t_env	*current;
 
-// 	sring = malloc(sizeof(t_process));
-// 	equal = ft_strchr(env_str, '=');
-// 	if (!equal)
+// 	current = head;
+// 	while (current != NULL)
 // 	{
-// 		sring->key = ft_strdup(env_str);
-// 		sring->value = NULL;
+// 		printf("Key: %s, Value: %s\n", current->key, current->value);
+// 		current = current->next;
 // 	}
-// 	else
-// 	{
-// 		*equal = '\0';
-// 		sring->key = ft_strdup(env_str);
-// 		sring->value = ft_strdup(equal + 1);
-// 		*equal = '=';
-// 	}
-// 	return (sring);
 // }
 
-// debug function
-void	printList(t_env *head)
+// get anv value
+char	*get_env_value(char *name, t_env *env_copy, t_process *process)
 {
-	t_env	*current;
+	t_env	*cur;
+	char	*exit_status;
 
-	current = head;
-	while (current != NULL)
+	if (ft_strcmp(name, "?") == 0)
 	{
-		printf("Key: %s, Value: %s\n", current->key, current->value);
-		current = current->next;
+		exit_status = ft_itoa(process->last_exit_status);
+		return (exit_status);
 	}
+	cur = env_copy;
+	while (cur != NULL)
+	{
+		if (ft_strcmp(cur->key, name) == 0)
+		{
+			return (ft_strdup(cur->value));
+		}
+		cur = cur->next;
+	}
+	return (ft_strdup(""));
 }
 
-//create node
+// create node
 t_env	*create_node(char *env_str)
 {
 	t_env	*node;
-	char		*equal;
+	char	*equal;
 
 	node = malloc(sizeof(t_env));
 	if (!node)
@@ -74,48 +75,25 @@ t_env	*create_node(char *env_str)
 	return (node);
 }
 
-//create linked list
+// create linked list
 t_env	*init_env(char **envp)
 {
 	t_env	*env_copy;
 	t_env	*new_var;
-	int			i;
+	int		i;
 
 	env_copy = NULL;
 	i = 0;
 	while (envp[i] != NULL)
 	{
-		// minishell_lstnew(void *key, void *value);
 		new_var = create_node(envp[i]);
 		minishell_lstadd_back(&env_copy, new_var);
 		i++;
 	}
-	//printList(env_copy);
 	return (env_copy);
 }
 
-// t_process	**init_env(char **envp)
-// {
-// 	t_process	**env_copy;
-// 	int			i;
-
-// 	i = 0;
-// 	while (envp[i] != NULL)
-// 	{
-// 		i++;
-// 	}
-// 	env_copy = malloc(sizeof(t_process *) * (i + 1));
-// 	i = 0;
-// 	while (envp[i] != NULL)
-// 	{
-// 		env_copy[i] = create_line(envp[i]);
-
-// 		i++;
-// 	}
-// 	env_copy[i] = NULL;
-// 	return (env_copy);
-// }
-
+// set env value
 void	my_setenv(char *key, char *value, t_env *env_copy)
 {
 	t_env	*current;
@@ -123,7 +101,7 @@ void	my_setenv(char *key, char *value, t_env *env_copy)
 	current = env_copy;
 	while (current != NULL)
 	{
-		if (strcmp(current->key, key) == 0)
+		if (ft_strcmp(current->key, key) == 0)
 		{
 			free(current->value);
 			current->value = value;

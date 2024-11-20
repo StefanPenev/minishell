@@ -1,30 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit_status.c                                      :+:      :+:    :+:   */
+/*   minishell_utils_2.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/15 15:25:48 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 14:47:46 by anilchen         ###   ########.fr       */
+/*   Created: 2024/11/20 16:44:21 by anilchen          #+#    #+#             */
+/*   Updated: 2024/11/20 17:03:23 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
 #include "process.h"
 
-// void	call_exit_status(t_process *process)
-// {
-// 	char	*status_str;
-
-// 	status_str = ft_itoa(process->last_exit_status);
-// 	write(1, status_str, ft_strlen(status_str));
-// 	free(status_str);
-// }
-
-void	set_exit_status(t_process *process, int status)
+void	swap_nodes(t_env *node1, t_env *node2)
 {
-	process->last_exit_status = status;
+	char	*temp_key;
+	char	*temp_value;
+
+	temp_key = node1->key;
+	temp_value = node1->value;
+	node1->key = node2->key;
+	node1->value = node2->value;
+	node2->key = temp_key;
+	node2->value = temp_value;
 }
 
-	// printf("Debug(set_exit_status): status updated, code %d\n",
-	//	process->last_exit_status);

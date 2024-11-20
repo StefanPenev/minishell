@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:56:31 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 12:32:28 by spenev           ###   ########.fr       */
+/*   Updated: 2024/11/20 13:32:57 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "process.h"
 #include "minishell.h"
+#include "process.h"
 
 // stringcompare
 int	ft_strcmp(const char *s1, const char *s2)
@@ -29,32 +29,6 @@ int	ft_strcmp(const char *s1, const char *s2)
 	}
 	return (0);
 }
-
-// t_process	**add_to_env_array(t_process **env_copy, t_process *new)
-// {
-// 	int			count;
-// 	t_process	**new_env_copy;
-// 	printf("hello\n");
-// 	count = 0;
-// 	while (env_copy && env_copy[count] != NULL)
-// 	{
-// 		count++;
-// 	}
-// 	new_env_copy = malloc(sizeof(t_process *) * (count + 2));
-// 	if (!new_env_copy)
-// 	{
-// 		return (NULL);
-// 	}
-// 	for (int i = 0; i < count; i++)
-// 	{
-// 		new_env_copy[i] = env_copy[i];
-// 	}
-// 	new_env_copy[count] = new;
-// 	new_env_copy[count + 1] = NULL;
-// 	free(env_copy);
-// 	printf("new_env_copy created\n");
-// 	return (new_env_copy);
-// }
 
 // put it to the back
 void	minishell_lstadd_back(t_env **lst, t_env *new)
@@ -74,8 +48,6 @@ void	minishell_lstadd_back(t_env **lst, t_env *new)
 		current = current->next;
 	}
 	current->next = new;
-	// printf("%s hello from adding\n", new->key);
-	// printf("%s hello from adding\n", new->value);
 }
 
 // create new node
@@ -91,12 +63,10 @@ t_env	*minishell_lstnew(void *key, void *value)
 	node->key = key;
 	node->value = value;
 	node->next = NULL;
-	// printf("Debug: new node created\n"); // debug
-	// printf("Debug: %s\n", node->key);
-	// printf("Debug: %s\n", node->value);
 	return (node);
 }
 
+//add node to the back
 int	minishell_lstsize(t_env *lst)
 {
 	int	count;
@@ -110,32 +80,13 @@ int	minishell_lstsize(t_env *lst)
 	return (count);
 }
 
-
-// stolen from Stefan
-// char	*ft_strndup(const char *s, size_t n)
-// {
-// 	char			*res;
-// 	unsigned int	i;
-
-// 	i = 0;
-// 	res = malloc(sizeof(char) * (n + 1));
-// 	if (res == NULL)
-// 		return (NULL);
-// 	while (i < n)
-// 	{
-// 		res[i] = s[i];
-// 		i++;
-// 	}
-// 	res[i] = '\0';
-// 	return (res);
-// }
-
+//join 3 strings together
 char	*ft_strjoin_three(const char *s1, const char *s2, const char *s3)
 {
-	int len_s1;
-	int len_s2;
-	int len_s3;
-	char *res;
+	int		len_s1;
+	int		len_s2;
+	int		len_s3;
+	char	*res;
 
 	len_s1 = 0;
 	len_s2 = 0;

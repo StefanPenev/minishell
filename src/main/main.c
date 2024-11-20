@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/20 12:54:24 by spenev           ###   ########.fr       */
+/*   Updated: 2024/11/20 16:59:30 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "signals.h"
-#include "lexer.h"
-#include "parser.h"
 #include "ast.h"
+#include "lexer.h"
 #include "minishell.h"
+#include "parser.h"
 #include "process.h"
+#include "signals.h"
 
 void	setup_signals(t_term_context *ctx)
 {
@@ -35,62 +35,45 @@ char	*read_input(void)
 	return (input);
 }
 
-////////////////////////////////
-int	minishell_pwd(t_env *env_copy, t_process *process)
-{
-	t_env	*current;
-
-	current = env_copy;
-	// pwd shouldnt have any arguments, but if they are, it still works
-	while (current != NULL)
-	{
-		// printf("Key: %s, Value: %s\n", current->key, current->value);
-		if (strcmp(current->key, "PWD") == 0)
-		{
-			write(1, current->value, ft_strlen(current->value));
-			write(1, "\n", 1);
-			set_exit_status(process, 0);
-			return (EXIT_SUCCESS);
-		}
-		current = current->next;
-	}
-	set_exit_status(process, 0);
-	return (EXIT_SUCCESS);
-}
-
-//Execute buildins
+// Execute buildins
 void	execute_builtin(t_command *cmd, t_env *env_copy, t_process *process)
 {
-	if (strcmp(cmd->args[0], "pwd") == 0)
-		minishell_pwd(env_copy, process);
-	// if (strcmp(cmd->args[0], "echo") == 0)
-	// 	execute_echo(cmd);
-	// else if (strcmp(cmd->args[0], "cd") == 0)
-	// 	execute_cd(cmd);
-	// else if (strcmp(cmd->args[0], "pwd") == 0)
-	// 	execute_pwd();
-	// else if (strcmp(cmd->args[0], "export") == 0)
-	// 	execute_export(cmd);
-	// else if (strcmp(cmd->args[0], "unset") == 0)
-	// 	execute_unset(cmd);
-	// else if (strcmp(cmd->args[0], "env") == 0)
-	// 	execute_env(envp);
-	// else if (strcmp(cmd->args[0], "exit") == 0)
-	// 	execute_exit(cmd);
+	if (ft_strcmp(cmd->args[0], "pwd") == 0)
+		execute_pwd(env_copy, process);
+	// else if (ft_strcmp(cmd->args[0], "echo") == 0)
+	// 	execute_echo(cmd, env_copy, process);
+	else if (strcmp(cmd->args[0], "cd") == 0)
+		execute_cd(cmd, env_copy, process);
+	else if (strcmp(cmd->args[0], "export") == 0)
+		execute_export(cmd, env_copy, process);
+	else if (strcmp(cmd->args[0], "unset") == 0)
+		execute_unset(cmd, env_copy, process);
+	else if (ft_strcmp(cmd->args[0], "env") == 0)
+		execute_env(env_copy, process);
+	else if (ft_strcmp(cmd->args[0], "exit") == 0)
+		execute_exit(cmd, process);
 }
 
-int is_builtin(t_command *cmd) {
-    static const char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit"};
-    for (size_t i = 0; i < sizeof(builtins) / sizeof(builtins[0]); i++) {
-        if (strcmp(cmd->args[0], builtins[i]) == 0) {
-            return 1; // Command is a built-in
-        }
-    }
-    return 0; // Command is not a built-in
-}
-/////////////////////////////////
+int	is_builtin(t_command *cmd)
+{
+	static const char	*builtins[] = {"echo", "cd", "pwd", "export", "unset",
+			"env", "exit"};
+	size_t				i;
 
-void	process_command(char *input, t_env *env_copy, t_process process, char **envp)
+	i = 0;
+	while (i < sizeof(builtins) / sizeof(builtins[0]))
+	{
+		if (ft_strcmp(cmd->args[0], builtins[i]) == 0)
+		{
+			return (1); // Command is a built-in
+		}
+		i++;
+	}
+	return (0); // Command is not a built-in
+}
+
+void	process_command(char *input, t_env *env_copy, t_process *process,
+		char **envp)
 {
 	t_token		*tokens;
 	t_ast		*ast;
@@ -110,7 +93,7 @@ void	process_command(char *input, t_env *env_copy, t_process process, char **env
 	{
 		cmd = ast->u_data.command;
 		if (is_builtin(cmd))
-			execute_builtin(cmd, env_copy, &process);
+			execute_builtin(cmd, env_copy, process);
 		else
 			printf("%s\n", "Execution Test");
 	}
@@ -134,7 +117,7 @@ int	main(int argc, char **argv, char **envp)
 		input = read_input();
 		if (!input)
 			break ;
-		process_command(input, env_copy, process, envp);
+		process_command(input, env_copy, &process, envp);
 	}
 	restore_terminal(&ctx);
 	return (0);

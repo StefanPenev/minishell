@@ -1,30 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit_status.c                                      :+:      :+:    :+:   */
+/*   minishell_env,c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/15 15:25:48 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 14:47:46 by anilchen         ###   ########.fr       */
+/*   Created: 2024/11/14 17:53:05 by anilchen          #+#    #+#             */
+/*   Updated: 2024/11/20 14:51:38 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
 #include "process.h"
 
-// void	call_exit_status(t_process *process)
-// {
-// 	char	*status_str;
-
-// 	status_str = ft_itoa(process->last_exit_status);
-// 	write(1, status_str, ft_strlen(status_str));
-// 	free(status_str);
-// }
-
-void	set_exit_status(t_process *process, int status)
+int	execute_env(t_env *env_copy, t_process *process)
 {
-	process->last_exit_status = status;
-}
+	t_env	*cur;
 
-	// printf("Debug(set_exit_status): status updated, code %d\n",
-	//	process->last_exit_status);
+	cur = env_copy;
+	while (cur != NULL)
+	{
+		printf("%s=%s\n", cur->key, cur->value);
+		cur = cur->next;
+	}
+	set_exit_status(process, 0);
+	return (EXIT_SUCCESS);
+}

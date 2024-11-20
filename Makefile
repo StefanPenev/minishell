@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: spenev <spenev@student.42.fr>              +#+  +:+       +#+         #
+#    By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/11/20 12:31:04 by spenev           ###   ########.fr        #
+#    Updated: 2024/11/20 17:10:20 by anilchen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,6 +58,16 @@ SRCS += $(SRC_DIR)/parser/parser.c
 SRCS += $(SRC_DIR)/execution/getenv.c \
 		$(SRC_DIR)/execution/exit_status.c \
 		$(SRC_DIR)/execution/minishell_utils.c \
+		$(SRC_DIR)/execution/minishell_utils_2.c \
+		$(SRC_DIR)/execution/minishell_pwd.c \
+		$(SRC_DIR)/execution/minishell_exit.c \
+		$(SRC_DIR)/execution/minishell_env.c \
+		$(SRC_DIR)/execution/minishell_export.c \
+		$(SRC_DIR)/execution/minishell_export_2.c \
+		$(SRC_DIR)/execution/minishell_unset.c \
+		$(SRC_DIR)/execution/minishell_cd.c \
+		$(SRC_DIR)/execution/!cleanup.c \
+#		$(SRC_DIR)/execution/minishell_echo.c \
 
 
 # Object files
