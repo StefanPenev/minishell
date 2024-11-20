@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 08:55:59 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/19 22:24:27 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/20 20:59:22 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,11 @@
 #include <string.h>
 #include <stdio.h>
 
-void debug_token(t_parser *parser) {
-    printf("Debug: Current Token Type=%d, Value='%s'\n",
-           parser->current_token->type,
-           parser->current_token->value);
-}
+// void debug_token(t_parser *parser) {
+//     printf("Debug: Current Token Type=%d, Value='%s'\n",
+//            parser->current_token->type,
+//            parser->current_token->value);
+// }
 
 // Advance the parser to the next token
 static void parser_advance(t_parser *parser) {
@@ -28,9 +28,9 @@ static void parser_advance(t_parser *parser) {
         return;  // Do not advance if we are at EOF or there is an error
     }
 
-    debug_token(parser);  // Debug before advancing
+    //debug_token(parser);  // Debug before advancing
     parser->current_token = parser->current_token->next;
-    debug_token(parser);  // Debug after advancing
+    //debug_token(parser);  // Debug after advancing
 }
 
 // Forward declarations

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 18:15:02 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/20 12:35:58 by spenev           ###   ########.fr       */
+/*   Updated: 2024/11/20 21:10:16 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,8 @@
 /* Check if a character is a special shell character */
 int	is_special_char(char c)
 {
-	return (c == '|' || c == '<' || c == '>' || c == '"'
-		|| c == '$' || c == '&' || c == '(' || c == ')'
-		|| c == '*');
+	return (c == '|' || c == '<' || c == '>' || c == '$'
+		|| c == '&' || c == '(' || c == ')' || c == '*');
 }
 
 /* Advance the lexer by one character */

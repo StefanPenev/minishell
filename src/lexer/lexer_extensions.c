@@ -6,42 +6,59 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:22:50 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/17 18:55:07 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/20 21:23:35 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "minishell.h"
 
-/* Create a new token */
-t_token	*lexer_new_token(t_token_type type, char *value)
+/* Collect a subword (part of a word) */
+char	*lexer_collect_subword(t_lexer *lexer)
 {
-	t_token	*token;
+	char	*temp_str;
+	char	quote_type;
+	size_t	start;
 
-	token = malloc(sizeof(t_token));
-	if (!token)
-		return (NULL);
-	token->type = type;
-	if (value)
-		token->value = ft_strdup(value);
+	if (lexer->current_char == '"' || lexer->current_char == '\'')
+	{
+		quote_type = lexer->current_char;
+		temp_str = lexer_collect_quoted(lexer, quote_type);
+	}
 	else
-		token->value = NULL;
-	token->next = NULL;
-	return (token);
+	{
+		start = lexer->pos;
+		while (lexer->current_char && !ft_isspace(lexer->current_char)
+			&& !is_special_char(lexer->current_char)
+			&& lexer->current_char != '"' && lexer->current_char != '\'')
+		{
+			lexer_advance(lexer);
+		}
+		temp_str = ft_strndup(lexer->input + start, lexer->pos - start);
+	}
+	return (temp_str);
 }
 
 /* Collect a word (non-special, non-whitespace characters) */
 char	*lexer_collect_word(t_lexer *lexer)
 {
-	size_t	start;
-	size_t	length;
+	char	*str;
+	char	*temp_str;
 
-	start = lexer->pos;
+	str = ft_strdup("");
 	while (lexer->current_char && !ft_isspace(lexer->current_char)
 		&& !is_special_char(lexer->current_char))
-		lexer_advance(lexer);
-	length = lexer->pos - start;
-	return (ft_strndup(lexer->input + start, length));
+	{
+		temp_str = lexer_collect_subword(lexer);
+		if (!temp_str)
+		{
+			free(str);
+			return (NULL);
+		}
+		str = ft_strjoin(str, temp_str);
+		free(temp_str);
+	}
+	return (str);
 }
 
 /* Collect a quoted string (single or double quotes) */

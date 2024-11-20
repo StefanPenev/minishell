@@ -6,12 +6,29 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 00:11:30 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/18 16:50:03 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/20 21:23:44 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "minishell.h"
+
+/* Create a new token */
+t_token	*lexer_new_token(t_token_type type, char *value)
+{
+	t_token	*token;
+
+	token = malloc(sizeof(t_token));
+	if (!token)
+		return (NULL);
+	token->type = type;
+	if (value)
+		token->value = ft_strdup(value);
+	else
+		token->value = NULL;
+	token->next = NULL;
+	return (token);
+}
 
 /* Append token to the linked list */
 void	lexer_append_token(t_token **head, t_token **current, t_token *new_tok)
