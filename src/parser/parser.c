@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 08:55:59 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/20 20:59:22 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/21 11:05:56 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,53 +103,63 @@ void parse_wildcard(t_token *token, t_command *command) {
     }
 }
 
+// Helper function to check if a token is a redirection token
+static int is_redirection_token(t_token_type token_type) {
+    return token_type == TOKEN_REDIRECT_OUT ||
+           token_type == TOKEN_REDIRECT_IN ||
+           token_type == TOKEN_APPEND ||
+           token_type == TOKEN_HEREDOC;
+}
+
 // Parse a redirection
 t_redirection *parse_redirection(t_parser *parser) {
+    // Check if the current token exists and is a redirection operator
+    if (!parser->current_token ||
+        !is_redirection_token(parser->current_token->type)) {
+        return NULL;
+    }
+
     t_redirection *redir = malloc(sizeof(t_redirection));
     if (!redir) {
         fprintf(stderr, "Error: Memory allocation failed for redirection.\n");
         return NULL;
     }
 
-    // Check if the token is a valid redirection operator
-    if (parser->current_token->type != TOKEN_REDIRECT_OUT &&
-        parser->current_token->type != TOKEN_REDIRECT_IN &&
-        parser->current_token->type != TOKEN_APPEND &&
-        parser->current_token->type != TOKEN_HEREDOC) {
-        free(redir);
-        return NULL;
-    }
+    // Initialize the redirection struct
+    redir->type = 0;
+    redir->filename = NULL;
+    redir->heredoc_content = NULL;
+    redir->next = NULL;
 
-    t_redirection_type redir_type;
-    if (!map_token_to_redirection(parser->current_token->type, &redir_type)) {
-        free(redir);
-        return NULL;
-    }
+    // Map token type to redirection type
+    map_token_to_redirection(parser->current_token->type, &redir->type);
 
-    redir->type = redir_type;
     parser_advance(parser); // Move past the redirection operator
 
     if (redir->type == HEREDOC) {
-        // Ensure the next token is the delimiter (WORD)
-        if (parser->current_token->type != TOKEN_WORD) {
-            fprintf(stderr, "Error: Expected heredoc delimiter, but found '%s'.\n",
-                    parser->current_token->value);
+        // Expect the next token to be the heredoc delimiter (WORD)
+        if (!parser->current_token ||
+            parser->current_token->type != TOKEN_WORD ||
+            !parser->current_token->value) {
+            fprintf(stderr, "Error: Expected heredoc delimiter after '<<', but found '%s'.\n",
+                    parser->current_token && parser->current_token->value ? parser->current_token->value : "NULL");
             free(redir);
             return NULL;
         }
 
-        // Set the delimiter as the filename
+        // Store the heredoc delimiter
         redir->filename = strdup(parser->current_token->value);
         if (!redir->filename) {
-            fprintf(stderr, "Error: Memory allocation failed for delimiter.\n");
+            fprintf(stderr, "Error: Memory allocation failed for heredoc delimiter.\n");
             free(redir);
             return NULL;
         }
 
-        parser_advance(parser); // Move past the delimiter
+        parser_advance(parser); // Move past the delimiter token
 
         // Initialize heredoc content buffer
         size_t content_capacity = 1024;
+        size_t content_length = 0;
         redir->heredoc_content = malloc(content_capacity);
         if (!redir->heredoc_content) {
             fprintf(stderr, "Error: Memory allocation failed for heredoc content.\n");
@@ -159,123 +169,81 @@ t_redirection *parse_redirection(t_parser *parser) {
         }
         redir->heredoc_content[0] = '\0';
 
-        // Collect heredoc content
-        while (parser->current_token) {
-            // Check if the token matches the delimiter (end of heredoc)
+        // Collect heredoc content until the delimiter is found
+        int delimiter_found = 0;
+        while (parser->current_token && parser->current_token->type != TOKEN_EOF) {
+            // Check if the token matches the delimiter
             if (parser->current_token->type == TOKEN_WORD &&
+                parser->current_token->value &&
                 strcmp(parser->current_token->value, redir->filename) == 0) {
-                parser_advance(parser); // Move past the delimiter
-                break; // Exit the loop after encountering the delimiter
+                delimiter_found = 1;
+                parser_advance(parser); // Move past the delimiter token
+                break;
             }
 
-            // Append token value to heredoc content
-            size_t token_len = strlen(parser->current_token->value);
-            if (strlen(redir->heredoc_content) + token_len + 2 > content_capacity) {
-                content_capacity *= 2;
-                redir->heredoc_content = realloc(redir->heredoc_content, content_capacity);
-                if (!redir->heredoc_content) {
-                    fprintf(stderr, "Error: Memory reallocation failed for heredoc content.\n");
-                    free(redir->filename);
-                    free(redir);
-                    return NULL;
-                }
-            }
-
-            strcat(redir->heredoc_content, parser->current_token->value);
-            strcat(redir->heredoc_content, "\n"); // Add a newline for heredoc formatting
-
-            parser_advance(parser); // Move to the next token
-        }
-    } else {
-        // Handle other types of redirection (e.g., >, >>, <)
-        if (parser->current_token->type == TOKEN_WORD) {
-            redir->filename = strdup(parser->current_token->value);
-            if (!redir->filename) {
-                fprintf(stderr, "Error: Memory allocation failed for filename.\n");
+            // Ensure parser->current_token->value is not NULL
+            if (!parser->current_token->value) {
+                fprintf(stderr, "Error: Token value is NULL in heredoc content.\n");
+                free(redir->filename);
+                free(redir->heredoc_content);
                 free(redir);
                 return NULL;
             }
-            parser_advance(parser); // Move past the filename
-        } else {
-            fprintf(stderr, "Error: Expected filename, but found '%s'.\n",
-                    parser->current_token->value);
+
+            // Ensure buffer has enough space for new content
+            size_t token_len = strlen(parser->current_token->value) + 1;
+            if (content_length + token_len + 1 > content_capacity) {
+                content_capacity *= 2;
+                char *new_content = realloc(redir->heredoc_content, content_capacity);
+                if (!new_content) {
+                    fprintf(stderr, "Error: Memory reallocation failed for heredoc content.\n");
+                    free(redir->filename);
+                    free(redir->heredoc_content);
+                    free(redir);
+                    return NULL;
+                }
+                redir->heredoc_content = new_content;
+            }
+
+            // Append token value to heredoc content
+            strcat(redir->heredoc_content, parser->current_token->value);
+            strcat(redir->heredoc_content, "\n");
+            content_length += token_len;
+
+            parser_advance(parser); // Move to the next token
+        }
+
+        // Check if the delimiter was found
+        if (!delimiter_found) {
+            fprintf(stderr, "Error: Expected heredoc delimiter '%s' not found before end of input.\n", redir->filename);
+            free(redir->filename);
+            free(redir->heredoc_content);
             free(redir);
             return NULL;
         }
+    } else {
+        // Handle standard redirection types (>, >>, <)
+        if (!parser->current_token ||
+            parser->current_token->type != TOKEN_WORD ||
+            !parser->current_token->value) {
+            fprintf(stderr, "Error: Expected filename after redirection operator, but found '%s'.\n",
+                    parser->current_token && parser->current_token->value ? parser->current_token->value : "NULL");
+            free(redir);
+            return NULL;
+        }
+
+        redir->filename = strdup(parser->current_token->value);
+        if (!redir->filename) {
+            fprintf(stderr, "Error: Memory allocation failed for filename.\n");
+            free(redir);
+            return NULL;
+        }
+        parser_advance(parser); // Move past the filename token
     }
 
     return redir;
 }
 
-// t_ast *parse_command(t_parser *parser) {
-//     t_ast *node = malloc(sizeof(t_ast));
-//     if (!node)
-//         return NULL;
-
-//     node->type = AST_COMMAND;
-//     t_command *cmd = malloc(sizeof(t_command));
-//     if (!cmd) {
-//         free(node);
-//         return NULL;
-//     }
-//     cmd->args = NULL;
-//     cmd->redirections = NULL;
-
-//     // Collect arguments (if any)
-//     size_t args_size = 0;
-//     size_t args_capacity = 10;
-//     cmd->args = malloc(sizeof(char *) * args_capacity);
-//     if (!cmd->args) {
-//         free(cmd);
-//         free(node);
-//         return NULL;
-//     }
-
-//     // Collect all words as arguments for the command
-//     while (parser->current_token->type == TOKEN_WORD) {
-//         if (args_size >= args_capacity - 1) {
-//             // Resize arguments array if necessary
-//             args_capacity *= 2;
-//             char **new_args = realloc(cmd->args, sizeof(char *) * args_capacity);
-//             if (!new_args) {
-//                 for (size_t i = 0; i < args_size; i++)
-//                     free(cmd->args[i]);
-//                 free(cmd->args);
-//                 free(cmd);
-//                 free(node);
-//                 return NULL;
-//             }
-//             cmd->args = new_args;
-//         }
-//         cmd->args[args_size++] = strdup(parser->current_token->value);
-//         parser_advance(parser);
-//     }
-
-//     cmd->args[args_size] = NULL; // Null-terminate the argument array
-
-//     // Parse redirections associated with this command
-//     while (1) {
-//         t_redirection *redir = parse_redirection(parser);
-//         if (!redir) {
-//             break;  // No more redirections, break the loop
-//         }
-
-//         // Add the redirection to the command's redirection list
-//         redir->next = cmd->redirections;
-//         cmd->redirections = redir;
-//     }
-
-//     // If no arguments and no redirections were found, the command is malformed
-//     if (args_size == 0 && !cmd->redirections) {
-//         free(cmd->args);
-//         free(cmd);
-//         free(node);
-//         return NULL;
-//     }
-
-//     node->u_data.command = cmd;
-//     return node;
-// }
 t_ast *parse_command(t_parser *parser) {
     t_ast *node = malloc(sizeof(t_ast));
     if (!node)
@@ -290,7 +258,7 @@ t_ast *parse_command(t_parser *parser) {
     cmd->args = NULL;
     cmd->redirections = NULL;
 
-    // Collect arguments (if any)
+    // Initialize arguments array
     size_t args_size = 0;
     size_t args_capacity = 10;
     cmd->args = malloc(sizeof(char *) * args_capacity);
@@ -300,10 +268,10 @@ t_ast *parse_command(t_parser *parser) {
         return NULL;
     }
 
-    // Collect all words as arguments for the command
-    while (parser->current_token->type == TOKEN_WORD) {
+    // Collect all words as arguments
+    while (parser->current_token && parser->current_token->type == TOKEN_WORD) {
         if (args_size >= args_capacity - 1) {
-            // Resize arguments array if necessary
+            // Resize arguments array
             args_capacity *= 2;
             char **new_args = realloc(cmd->args, sizeof(char *) * args_capacity);
             if (!new_args) {
@@ -323,16 +291,21 @@ t_ast *parse_command(t_parser *parser) {
     cmd->args[args_size] = NULL; // Null-terminate the argument array
 
     // Handle wildcard expansion if we encounter a wildcard token
-    if (parser->current_token->type == TOKEN_WILDCARD) {
+    if (parser->current_token && parser->current_token->type == TOKEN_WILDCARD) {
         parse_wildcard(parser->current_token, cmd);
         parser_advance(parser);  // Move past the wildcard token
     }
 
     // Parse redirections associated with this command
-    while (1) {
+    while (parser->current_token && is_redirection_token(parser->current_token->type)) {
         t_redirection *redir = parse_redirection(parser);
         if (!redir) {
-            break;  // No more redirections, break the loop
+            for (size_t i = 0; i < args_size; i++)
+                free(cmd->args[i]);
+            free(cmd->args);
+            free(cmd);
+            free(node);
+            return NULL;
         }
 
         // Add the redirection to the command's redirection list
@@ -352,16 +325,12 @@ t_ast *parse_command(t_parser *parser) {
     return node;
 }
 
-
-// Parse a pipeline
 t_ast *parse_pipeline(t_parser *parser) {
     t_ast *left = parse_command(parser);
-    if (!left) {
-        fprintf(stderr, "Error: Expected command before '|'.\n");
+    if (!left)
         return NULL;
-    }
 
-    while (parser->current_token->type == TOKEN_PIPE) {
+    while (parser->current_token && parser->current_token->type == TOKEN_PIPE) {
         parser_advance(parser);
         t_ast *right = parse_command(parser);
         if (!right) {
@@ -389,77 +358,51 @@ t_ast *parse_pipeline(t_parser *parser) {
 
 // Parse a parenthesized expression
 t_ast *parse_parenthesized_expression(t_parser *parser) {
-    // Check for opening parenthesis
-    if (parser->current_token->type != TOKEN_LEFT_PAREN)
+    if (!parser->current_token || parser->current_token->type != TOKEN_LEFT_PAREN)
         return NULL;
 
-    // Advance past the opening parenthesis
-    parser_advance(parser);
-
-    // Parse the logical expression inside the parentheses
+    parser_advance(parser); // Move past '('
     t_ast *expr = parse_logical_expression(parser);
     if (!expr) {
         fprintf(stderr, "Error: Invalid expression inside parentheses.\n");
         return NULL;
     }
 
-    // Check if the current token is a closing parenthesis
-    if (parser->current_token->type != TOKEN_RIGHT_PAREN) {
-        fprintf(stderr, "Error: Unmatched '('.\n");
-        ast_free(expr);  // Free the AST that was partially parsed
+    if (!parser->current_token || parser->current_token->type != TOKEN_RIGHT_PAREN) {
+        fprintf(stderr, "Error: Expected ')' after expression.\n");
+        ast_free(expr);
         return NULL;
     }
 
-    // Advance past the closing parenthesis
-    parser_advance(parser);
-
-    return expr;  // Return the parsed expression
+    parser_advance(parser); // Move past ')'
+    return expr;
 }
 
-// Parse a logical expression (AND, OR)
-// t_ast *parse_logical_expression(t_parser *parser) {
-//     t_ast *left = parse_pipeline(parser);
-//     if (!left)
-//         return NULL;
-
-//     while (parser->current_token->type == TOKEN_AND ||
-//            parser->current_token->type == TOKEN_OR) {
-//         t_token_type op = parser->current_token->type;
-//         parser_advance(parser);
-
-//         // Ensure there's a valid right operand
-//         t_ast *right = parse_pipeline(parser);
-//         if (!right) {
-//             fprintf(stderr, "Error: Expected command after '%s'.\n",
-//                 op == TOKEN_AND ? "&&" : "||");
-//             ast_free(left);
-//             return NULL;
-//         }
-
-//         t_ast *logic_node = malloc(sizeof(t_ast));
-//         if (!logic_node) {
-//             ast_free(left);
-//             ast_free(right);
-//             return NULL;
-//         }
-//         logic_node->type = (op == TOKEN_AND) ? AST_LOGICAL_AND : AST_LOGICAL_OR;
-//         logic_node->u_data.logical.left = left;
-//         logic_node->u_data.logical.right = right;
-//         left = logic_node;
-//     }
-
-//     return left;
-// }
 t_ast *parse_logical_expression(t_parser *parser) {
-    t_ast *left = parse_pipeline(parser); // Parse the left-hand pipeline
+    t_ast *left = NULL;
+
+    if (parser->current_token && parser->current_token->type == TOKEN_LEFT_PAREN) {
+        left = parse_parenthesized_expression(parser);
+    } else {
+        left = parse_pipeline(parser);
+    }
+
     if (!left)
         return NULL;
 
-    while (parser->current_token->type == TOKEN_AND || parser->current_token->type == TOKEN_OR) {
+    while (parser->current_token &&
+           (parser->current_token->type == TOKEN_AND ||
+            parser->current_token->type == TOKEN_OR)) {
         t_ast_node_type type = (parser->current_token->type == TOKEN_AND) ? AST_LOGICAL_AND : AST_LOGICAL_OR;
         parser_advance(parser);
 
-        t_ast *right = parse_pipeline(parser); // Parse the right-hand pipeline
+        t_ast *right = NULL;
+        if (parser->current_token && parser->current_token->type == TOKEN_LEFT_PAREN) {
+            right = parse_parenthesized_expression(parser);
+        } else {
+            right = parse_pipeline(parser);
+        }
+
         if (!right) {
             fprintf(stderr, "Error: Expected pipeline after logical operator.\n");
             ast_free(left);
@@ -475,38 +418,28 @@ t_ast *parse_logical_expression(t_parser *parser) {
         node->type = type;
         node->u_data.logical.left = left;
         node->u_data.logical.right = right;
+
         left = node;
     }
+
     return left;
 }
 
-
 // Parse a command line
 t_ast *parse_command_line(t_parser *parser) {
-    t_ast *expr = NULL;
-
-    // Handle parenthesized expressions or logical expressions
-    if (parser->current_token->type == TOKEN_LEFT_PAREN) {
-        expr = parse_parenthesized_expression(parser);
-        if (!expr) {
-            return NULL;
-        }
-    } else {
-        expr = parse_logical_expression(parser);
-        if (!expr) {
-            return NULL;
-        }
-    }
+    t_ast *expr = parse_logical_expression(parser);
+    if (!expr)
+        return NULL;
 
     // Handle any trailing redirections (after the main expression)
-    while (map_token_to_redirection(parser->current_token->type, NULL)) {
+    while (parser->current_token && is_redirection_token(parser->current_token->type)) {
         t_redirection *redir = parse_redirection(parser);
         if (!redir) {
             ast_free(expr);
             return NULL;
         }
 
-        // Attach the redirection to the command at the root of the 
+        // Attach the redirection to the command at the root of the expression
         if (expr->type == AST_COMMAND) {
             redir->next = expr->u_data.command->redirections;
             expr->u_data.command->redirections = redir;
@@ -518,7 +451,7 @@ t_ast *parse_command_line(t_parser *parser) {
         }
     }
 
-    return expr;  // Return the parsed expression
+    return expr;
 }
 
 // Main parse function
@@ -526,20 +459,16 @@ t_ast *parse_tokens(t_token *tokens) {
     t_parser parser;
     parser.current_token = tokens;
 
-    // Call the main parsing function (parse_command_line)
     t_ast *ast = parse_command_line(&parser);
 
-    // **Ensure the parser has reached the end of input (EOF)**
-    if (parser.current_token->type != TOKEN_EOF) {
-        // If we haven't reached EOF, report the unexpected token
-        fprintf(stderr, "Error: Unexpected token '%s' at end of input.\n",
-                parser.current_token->value);
+    // Ensure the parser has reached the end of input (EOF)
+    if (!parser.current_token || parser.current_token->type != TOKEN_EOF) {
+        fprintf(stderr, "Error: Unexpected %s at end of input.\n",
+                parser.current_token && parser.current_token->value ? parser.current_token->value : "end of input");
 
-        // Clean up and free the parsed AST in case of error
-        ast_free(ast);  // Free the partially parsed AST
-        return NULL;    // Return NULL to indicate an error
+        ast_free(ast);
+        return NULL;
     }
 
-    // Return the successfully parsed AST
     return ast;
 }
