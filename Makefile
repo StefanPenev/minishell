@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+         #
+#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/11/21 16:52:44 by anilchen         ###   ########.fr        #
+#    Updated: 2024/11/21 19:38:21 by stfn             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,6 +42,7 @@ SRCS += $(SRC_DIR)/lexer/lexer.c \
 		$(SRC_DIR)/lexer/lexer_wildcard.c \
         $(SRC_DIR)/lexer/lexer_operators.c \
 		$(SRC_DIR)/lexer/lexer_extensions.c \
+		$(SRC_DIR)/lexer/lexer_env_variables.c \
 		$(SRC_DIR)/lexer/lexer_wildcard_utils.c \
 		$(SRC_DIR)/lexer/lexer_tester.c \
 
