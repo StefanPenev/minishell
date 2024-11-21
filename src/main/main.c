@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/20 16:59:30 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/21 14:07:41 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ void	execute_builtin(t_command *cmd, t_env *env_copy, t_process *process)
 {
 	if (ft_strcmp(cmd->args[0], "pwd") == 0)
 		execute_pwd(env_copy, process);
-	// else if (ft_strcmp(cmd->args[0], "echo") == 0)
-	// 	execute_echo(cmd, env_copy, process);
+	else if (ft_strcmp(cmd->args[0], "echo") == 0)
+		execute_echo(cmd, process);
 	else if (strcmp(cmd->args[0], "cd") == 0)
 		execute_cd(cmd, env_copy, process);
 	else if (strcmp(cmd->args[0], "export") == 0)
@@ -94,6 +94,10 @@ void	process_command(char *input, t_env *env_copy, t_process *process,
 		cmd = ast->u_data.command;
 		if (is_builtin(cmd))
 			execute_builtin(cmd, env_copy, process);
+		// new added, maybe move somethere
+		else if (ft_strncmp(cmd->args[0], "./", 2) == 0)
+			execute_external_commands(cmd, env_copy, process);
+		//end
 		else
 			printf("%s\n", "Execution Test");
 	}

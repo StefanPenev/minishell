@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 13:38:22 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 14:47:23 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/21 12:21:11 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,34 +64,10 @@ int	calculate_exit_code(const char *arg)
 	return (exit_code);
 }
 
-char	*prepare_exit_arg(t_command *cmd)
-{
-	char	*joined_arg;
-
-	if (cmd->args[1][0] == '-' || cmd->args[1][0] == '+')
-	{
-		if (cmd->args[2] != NULL)
-		{
-			joined_arg = ft_strjoin(cmd->args[1], cmd->args[2]);
-		}
-		else
-		{
-			joined_arg = ft_strdup(cmd->args[1]);
-		}
-	}
-	else
-	{
-		joined_arg = ft_strdup(cmd->args[1]);
-	}
-	return (joined_arg);
-}
-
 void	execute_exit(t_command *cmd, t_process *process)
 {
-	int		exit_code;
-	char	*joined_arg;
+	int	exit_code;
 
-	joined_arg = NULL;
 	if (cmd->args[1] == NULL)
 		exit_msgs(cmd, process, 0);
 	if (cmd->args[1][0] != '-' && cmd->args[1][0] != '+'
@@ -100,14 +76,9 @@ void	execute_exit(t_command *cmd, t_process *process)
 		exit_msgs(cmd, process, 1);
 		return ;
 	}
-	joined_arg = prepare_exit_arg(cmd);
-	if (!is_numeric_argument(joined_arg))
-	{
-		free(joined_arg);
+	if (!is_numeric_argument(cmd->args[1]))
 		exit_msgs(cmd, process, 2);
-	}
-	exit_code = calculate_exit_code(joined_arg);
-	free(joined_arg);
+	exit_code = calculate_exit_code(cmd->args[1]);
 	write(1, "exit\n", 5);
 	exit(exit_code);
 }

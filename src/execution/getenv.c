@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:09:36 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 17:04:08 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/21 14:22:34 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,4 +110,35 @@ void	my_setenv(char *key, char *value, t_env *env_copy)
 		current = current->next;
 	}
 	free(value);
+}
+
+//creatre env_array from list
+char	**create_env_array(t_env *env_copy)
+{
+	t_env	*cur;
+	int		i;
+	int		env_count;
+	char	**env_array;
+	char	*key_value;
+
+	env_count = minishell_lstsize(env_copy);
+	// +1 for NULL
+	env_array = malloc(sizeof(char *) * (env_count + 1));
+	// copying from list to array
+	cur = env_copy;
+	i = 0;
+	while (cur != NULL)
+	{
+		key_value = ft_strjoin_three(cur->key, "=", cur->value);
+		if (!key_value)
+		{
+			free_splitted(env_array);
+			return (NULL);
+		}
+		env_array[i] = key_value;
+		cur = cur->next;
+		i++;
+	}
+	env_array[i] = NULL;
+	return (env_array);
 }

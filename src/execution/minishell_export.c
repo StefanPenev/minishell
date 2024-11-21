@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:14:41 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 16:41:22 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/21 12:37:19 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,36 +36,23 @@ int	is_valid(char *arg)
 	return (1);
 }
 
-char	*handle_lexer(t_command *cmd, int *i)
+void	split_key_value(char *arg, char **key, char **value)
 {
-	char	*joined_arg;
+	char	*equal_sign_pos;
+	size_t	key_length;
 
-	if (cmd->args[*i][ft_strlen(cmd->args[*i]) - 1] == '=')
+	equal_sign_pos = ft_strchr(arg, '=');
+	if (equal_sign_pos != NULL)
 	{
-		if (cmd->args[*i + 1] != NULL)
-		{
-			joined_arg = ft_strjoin(cmd->args[*i], cmd->args[*i + 1]);
-			(*i)++; // Skip the next token
-		}
-		else
-			joined_arg = ft_strdup(cmd->args[*i]);
+		key_length = equal_sign_pos - arg;
+		*key = ft_strndup(arg, key_length);
+		*value = ft_strdup(equal_sign_pos + 1);
 	}
 	else
-		joined_arg = ft_strdup(cmd->args[*i]);
-	return (joined_arg);
-}
-
-void	split_key_value(char *joined_arg, char **key, char **value)
-{
-	char	**var_to_add;
-
-	var_to_add = ft_split(joined_arg, '=');
-	*key = ft_strdup(var_to_add[0]);
-	if (var_to_add[1] != NULL)
-		*value = ft_strdup(var_to_add[1]);
-	else
+	{
+		*key = ft_strdup(arg);
 		*value = NULL;
-	free_splitted(var_to_add);
+	}
 }
 
 int	process_export_argument(char *key, char *value, t_env *env_copy,
@@ -89,7 +76,6 @@ int	execute_export(t_command *cmd, t_env *env_copy, t_process *process)
 	int		i;
 	char	*key;
 	char	*value;
-	char	*joined_arg;
 
 	i = 1;
 	if (cmd->args[1] == NULL)
@@ -100,9 +86,7 @@ int	execute_export(t_command *cmd, t_env *env_copy, t_process *process)
 	}
 	while (cmd->args[i] != NULL)
 	{
-		joined_arg = handle_lexer(cmd, &i);
-		split_key_value(joined_arg, &key, &value);
-		free(joined_arg);
+		split_key_value(cmd->args[i], &key, &value);
 		if (process_export_argument(key, value, env_copy,
 				process) == EXIT_FAILURE)
 			return (EXIT_FAILURE);

@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:56:31 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 13:32:57 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/21 13:51:07 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ t_env	*minishell_lstnew(void *key, void *value)
 	return (node);
 }
 
-//add node to the back
+//find size of linked list
 int	minishell_lstsize(t_env *lst)
 {
 	int	count;

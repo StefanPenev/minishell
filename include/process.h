@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 11:20:43 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 17:09:59 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/21 16:47:39 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,12 @@ typedef struct s_process
 	int				last_exit_status;
 }					t_process;
 
+typedef struct s_pipe_fds
+{
+	int				fd[2];
+	int				fd_prev[2];
+}					t_pipe_fds;
+
 // control structure
 // typedef struct s_ctrl
 // {
@@ -46,8 +52,10 @@ typedef struct s_process
 /*                           Builtins commands                                */
 /* ************************************************************************** */
 
-int					execute_echo(t_command *cmd, t_env *env_copy,
+void				execute_builtin(t_command *cmd, t_env *env_copy,
 						t_process *process);
+int					is_builtin(t_command *cmd);
+int					execute_echo(t_command *cmd, t_process *process);
 int					execute_cd(t_command *cmd, t_env *env_copy,
 						t_process *process);
 int					execute_pwd(t_env *env_copy, t_process *process);
@@ -65,12 +73,13 @@ void				execute_exit(t_command *cmd, t_process *process);
 /* ************************************************************************** */
 
 int					ft_strcmp(const char *s1, const char *s2);
-void				swap_nodes(t_env *node1, t_env *node2);
 void				minishell_lstadd_back(t_env **lst, t_env *new);
 t_env				*minishell_lstnew(void *key, void *value);
-// char				*ft_strjoin_three(const char *s1, const char *s2,
-// 						const char *s3);
-// int					minishell_lstsize(t_env *lst);
+char				*ft_strjoin_three(const char *s1, const char *s2,
+						const char *s3);
+int					minishell_lstsize(t_env *lst);
+void				swap_nodes(t_env *node1, t_env *node2);
+int					is_executable(const char *path);
 
 /* ************************************************************************** */
 /*                                  Cleanup                                   */
@@ -81,38 +90,33 @@ void				free_env(t_env **node);
 void				free_node(t_env *node);
 
 /* ************************************************************************** */
-/*                       Needs to be sorted                                   */
+/*                                 Enviroment                                 */
 /* ************************************************************************** */
 
-// t_env				*create_line(char *env_str);
 t_env				*init_env(char **envp);
 void				my_setenv(char *key, char *value, t_env *env_copy);
 char				*get_env_value(char *name, t_env *env_copy,
 						t_process *process);
-// void				sort_t_process_list(t_env **list);
-
-// int						minishell_env(t_process **env_copy);
-// int					minishell_env(t_env *env_copy);
-
-// void				minishell_lstclear(t_env **node);
-// void					minishell_lstclear(t_process **lst,
-//						void (*del)(void *));
+char				**create_env_array(t_env *env_copy);
 
 /* ************************************************************************** */
-/*                        Manage exit satus commands                          */
+/*                        Manage exit status commands                         */
 /* ************************************************************************** */
 
 void				set_exit_status(t_process *process, int status);
-// void				call_exit_status(t_process *process);
-// void				exit_status(t_ctrl *ctrl, int status);
-// void				free_ctrl(t_ctrl *ctrl);
 
 /* ************************************************************************** */
 /*                       Execute external commands                            */
 /* ************************************************************************** */
 
-// int					execute_external_commands(char **splitted,
-//						t_env *env_copy,
-// 						t_process *process);
+int					execute_external_commands(t_command *cmd, t_env *env_copy,
+						t_process *process);
+
+/* ************************************************************************** */
+/*                              Handle path                                   */
+/* ************************************************************************** */
+
+char				*get_env(char *name, char **env_array);
+char				*find_full_path(char *args, char **env_array);
 
 #endif

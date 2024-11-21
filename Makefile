@@ -6,7 +6,7 @@
 #    By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/11/20 17:10:20 by anilchen         ###   ########.fr        #
+#    Updated: 2024/11/21 16:52:44 by anilchen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -67,7 +67,10 @@ SRCS += $(SRC_DIR)/execution/getenv.c \
 		$(SRC_DIR)/execution/minishell_unset.c \
 		$(SRC_DIR)/execution/minishell_cd.c \
 		$(SRC_DIR)/execution/!cleanup.c \
-#		$(SRC_DIR)/execution/minishell_echo.c \
+		$(SRC_DIR)/execution/minishell_echo.c \
+		$(SRC_DIR)/execution/external_commands.c \
+		$(SRC_DIR)/execution/handle_path.c \
+		$(SRC_DIR)/execution/pipes.c \
 
 
 # Object files
