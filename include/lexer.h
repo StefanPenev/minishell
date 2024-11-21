@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 22:21:15 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/21 22:28:03 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,8 @@ const char	*lexer_get_error_message(t_token *token);
 //lexer_extensions.c
 char		*lexer_collect_word(t_lexer *lexer);
 t_token		*lexer_new_token(t_token_type type, char *value);
-char		*lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy);
+char		*lexer_expand_variable(t_lexer *lexer, size_t *length,
+				t_env *env_copy);
 char		*lexer_collect_quoted(t_lexer *lexer, char quote_type);
 
 //lexer_operators.c
@@ -84,8 +85,10 @@ t_token		*handle_redirect_out(t_lexer *lexer);
 //lexer_tokens.c
 t_token		*lexer_handle_word(t_lexer *lexer);
 t_token		*lexer_handle_quotes(t_lexer *lexer);
-t_token		*lexer_process_token(t_lexer *lexer, t_token *head, t_env *env_copy);
-t_token		*lexer_handle_dollar(t_lexer *lexer, t_token *head, t_env *env_copy);
+t_token		*lexer_process_token(t_lexer *lexer, t_token *head,
+				t_env *env_copy);
+t_token		*lexer_handle_dollar(t_lexer *lexer, t_token *head,
+				t_env *env_copy);
 t_token		*lexer_finalize_tokens(t_token *head, t_token **current);
 
 //lexer_wildcard.c
@@ -94,6 +97,9 @@ char		**expand_wildcard(void);
 //lexer_wildcard_utils.c
 void		free_files(char **files, int size);
 int			resize_array(char ***files, int *capacity, int current_size);
+
+//lexer_env_variables.c
+char		*ft_getenv(char *var_name, t_env *env_copy);
 
 //utils.c
 int			ft_isspace(int c);

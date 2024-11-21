@@ -6,12 +6,26 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 19:33:08 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 20:19:20 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/21 22:27:00 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "minishell.h"
+
+char	*ft_getenv(char *var_name, t_env *env_copy)
+{
+	t_env	*current;
+
+	current = env_copy;
+	while (current != NULL)
+	{
+		if (ft_strcmp(current->key, var_name) == 0)
+			return (current->value);
+		current = current->next;
+	}
+	return (getenv(var_name));
+}
 
 char	*lexer_expand_dollar(t_lexer *lexer, t_token *head, t_env *env_copy)
 {

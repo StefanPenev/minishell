@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:22:50 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 20:04:52 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/21 22:26:53 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,20 +100,6 @@ static char	*lexer_get_var_name(t_lexer *lexer, size_t start, size_t *length)
 	}
 	*length = var_len + 1;
 	return (ft_strndup(lexer->input + start, var_len));
-}
-
-char	*ft_getenv(char *var_name, t_env *env_copy)
-{
-	t_env	*current;
-
-	current = env_copy;
-	while (current != NULL)
-	{
-		if (ft_strcmp(current->key, var_name) == 0)
-			return (current->value);
-		current = current->next;
-	}
-	return (getenv(var_name));
 }
 
 char	*lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy)
