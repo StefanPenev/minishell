@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/18 16:52:28 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/21 22:21:15 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <stddef.h>
 # include <dirent.h>  // For wildcard expansion (manual)
 # include <ctype.h>
+# include "process.h"
 
 # define INITIAL_CAPACITY 128
 
@@ -48,7 +49,7 @@ typedef struct s_lexer
 	char	*input;
 	size_t	pos;
 	char	current_char;
-	char	**envp;
+	t_env	*envp;
 	int		last_exit_status;
 }	t_lexer;
 
@@ -56,7 +57,7 @@ typedef struct s_lexer
 void		lexer_free_tokens(t_token *tokens);
 t_token		*lexer_handle_operator(t_lexer *lexer);
 const char	*lexer_get_error_message(t_token *token);
-t_token		*lexer_tokenize(char *input, char **envp);
+t_token		*lexer_tokenize(char *input, t_env *envp);
 void		lexer_append_token(t_token **head, t_token **current,
 				t_token *new_tok);
 
@@ -70,7 +71,7 @@ const char	*lexer_get_error_message(t_token *token);
 //lexer_extensions.c
 char		*lexer_collect_word(t_lexer *lexer);
 t_token		*lexer_new_token(t_token_type type, char *value);
-char		*lexer_expand_variable(t_lexer *lexer, size_t *length);
+char		*lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy);
 char		*lexer_collect_quoted(t_lexer *lexer, char quote_type);
 
 //lexer_operators.c
@@ -83,8 +84,8 @@ t_token		*handle_redirect_out(t_lexer *lexer);
 //lexer_tokens.c
 t_token		*lexer_handle_word(t_lexer *lexer);
 t_token		*lexer_handle_quotes(t_lexer *lexer);
-t_token		*lexer_process_token(t_lexer *lexer, t_token *head);
-t_token		*lexer_handle_dollar(t_lexer *lexer, t_token *head);
+t_token		*lexer_process_token(t_lexer *lexer, t_token *head, t_env *env_copy);
+t_token		*lexer_handle_dollar(t_lexer *lexer, t_token *head, t_env *env_copy);
 t_token		*lexer_finalize_tokens(t_token *head, t_token **current);
 
 //lexer_wildcard.c

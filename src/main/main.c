@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 14:07:41 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/21 22:18:55 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,14 +72,13 @@ int	is_builtin(t_command *cmd)
 	return (0); // Command is not a built-in
 }
 
-void	process_command(char *input, t_env *env_copy, t_process *process,
-		char **envp)
+void	process_command(char *input, t_env *env_copy, t_process *process)
 {
 	t_token		*tokens;
 	t_ast		*ast;
 	t_command	*cmd;
 
-	tokens = process_lexer(input, envp);
+	tokens = process_lexer(input, env_copy);
 	if (!tokens)
 		return ;
 	ast = process_parser(tokens);
@@ -121,7 +120,7 @@ int	main(int argc, char **argv, char **envp)
 		input = read_input();
 		if (!input)
 			break ;
-		process_command(input, env_copy, &process, envp);
+		process_command(input, env_copy, &process);
 	}
 	restore_terminal(&ctx);
 	return (0);

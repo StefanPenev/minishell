@@ -6,12 +6,13 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:22:50 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/20 21:23:35 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/21 20:04:52 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "minishell.h"
+#include "process.h"
 
 /* Collect a subword (part of a word) */
 char	*lexer_collect_subword(t_lexer *lexer)
@@ -101,7 +102,21 @@ static char	*lexer_get_var_name(t_lexer *lexer, size_t start, size_t *length)
 	return (ft_strndup(lexer->input + start, var_len));
 }
 
-char	*lexer_expand_variable(t_lexer *lexer, size_t *length)
+char	*ft_getenv(char *var_name, t_env *env_copy)
+{
+	t_env	*current;
+
+	current = env_copy;
+	while (current != NULL)
+	{
+		if (ft_strcmp(current->key, var_name) == 0)
+			return (current->value);
+		current = current->next;
+	}
+	return (getenv(var_name));
+}
+
+char	*lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy)
 {
 	size_t	start;
 	char	*var_name;
@@ -116,7 +131,7 @@ char	*lexer_expand_variable(t_lexer *lexer, size_t *length)
 	var_name = lexer_get_var_name(lexer, start, length);
 	if (!var_name)
 		return (ft_strdup("$"));
-	value = getenv(var_name);
+	value = ft_getenv(var_name, env_copy);
 	free(var_name);
 	if (value)
 		return (ft_strdup(value));

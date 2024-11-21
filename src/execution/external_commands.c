@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   external_commands.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 13:32:28 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/21 16:27:13 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/21 22:22:51 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "process.h"
+#include "minishell.h"
 
 void	handle_child_process(t_command *cmd, char **env_array)
 {

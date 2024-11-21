@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   process.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 11:20:43 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/21 16:47:39 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/21 20:26:30 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PROCESS_H
 # define PROCESS_H
 
-# include "minishell.h"
 # include <errno.h>
 # include <limits.h>
 # include <linux/limits.h>
@@ -22,6 +21,7 @@
 # include <stdlib.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include "ast.h"
 
 typedef struct s_env
 {

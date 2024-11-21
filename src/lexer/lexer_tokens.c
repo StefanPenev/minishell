@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 16:27:07 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 19:33:45 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/21 20:27:57 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,13 @@ t_token	*lexer_handle_word(t_lexer *lexer)
 	return (NULL);
 }
 
-t_token	*lexer_process_token(t_lexer *lexer, t_token *head)
+t_token	*lexer_process_token(t_lexer *lexer, t_token *head, t_env *env_copy)
 {
 	t_token	*new_tok;
 
 	new_tok = NULL;
 	if (lexer->current_char == '$')
-		new_tok = lexer_handle_dollar(lexer, head);
+		new_tok = lexer_handle_dollar(lexer, head, env_copy);
 	else if (lexer->current_char == '"' || lexer->current_char == '\'')
 		new_tok = lexer_handle_quotes(lexer);
 	else if (is_special_char(lexer->current_char))

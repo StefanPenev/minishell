@@ -6,14 +6,14 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 19:33:08 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 19:37:53 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/21 20:19:20 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "minishell.h"
 
-char	*lexer_expand_dollar(t_lexer *lexer, t_token *head)
+char	*lexer_expand_dollar(t_lexer *lexer, t_token *head, t_env *env_copy)
 {
 	char	*value;
 	char	*expanded_value;
@@ -25,7 +25,7 @@ char	*lexer_expand_dollar(t_lexer *lexer, t_token *head)
 		return (NULL);
 	while (lexer->current_char == '$')
 	{
-		value = lexer_expand_variable(lexer, &var_len);
+		value = lexer_expand_variable(lexer, &var_len, env_copy);
 		if (!value)
 		{
 			lexer_free_tokens(head);
@@ -42,13 +42,13 @@ char	*lexer_expand_dollar(t_lexer *lexer, t_token *head)
 	return (expanded_value);
 }
 
-char	*lexer_collect_dollar(t_lexer *lexer, t_token *head)
+char	*lexer_collect_dollar(t_lexer *lexer, t_token *head, t_env *env_copy)
 {
 	char	*expanded_value;
 	char	*tmp;
 	char	char_as_str[2];
 
-	expanded_value = lexer_expand_dollar(lexer, head);
+	expanded_value = lexer_expand_dollar(lexer, head, env_copy);
 	if (!expanded_value)
 		return (NULL);
 	while (lexer->current_char && !ft_isspace(lexer->current_char)
@@ -65,12 +65,12 @@ char	*lexer_collect_dollar(t_lexer *lexer, t_token *head)
 	return (expanded_value);
 }
 
-t_token	*lexer_handle_dollar(t_lexer *lexer, t_token *head)
+t_token	*lexer_handle_dollar(t_lexer *lexer, t_token *head, t_env *env_copy)
 {
 	char	*expanded_value;
 	t_token	*new_tok;
 
-	expanded_value = lexer_collect_dollar(lexer, head);
+	expanded_value = lexer_collect_dollar(lexer, head, env_copy);
 	if (!expanded_value)
 		return (NULL);
 	new_tok = lexer_new_token(TOKEN_WORD, expanded_value);

@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_echo.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:08:31 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/21 14:45:51 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/21 22:22:15 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "process.h"
+#include "minishell.h"
 
 int	execute_echo(t_command *cmd, t_process *process)
 {
