@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:09:36 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/21 14:22:34 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/22 14:49:54 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void	my_setenv(char *key, char *value, t_env *env_copy)
 		if (ft_strcmp(current->key, key) == 0)
 		{
 			free(current->value);
-			current->value = value;
+			current->value = ft_strdup(value);
 			return ;
 		}
 		current = current->next;

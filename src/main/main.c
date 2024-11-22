@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/22 08:46:56 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/22 15:46:20 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ char	*read_input(void)
 }
 
 // Execute buildins
-void	execute_builtin(t_command *cmd, t_env *env_copy, t_process *process)
+void	execute_builtin(t_command *cmd, t_env *env_copy, t_process *process)//, int pipe_flag)
 {
 	if (ft_strcmp(cmd->args[0], "pwd") == 0)
 		execute_pwd(env_copy, process);
@@ -92,13 +92,18 @@ void	process_command(char *input, t_shell_context **shell_ctx)
 	{
 		cmd = ast->u_data.command;
 		if (is_builtin(cmd))
-			execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
+			execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);//, 0);
 		// new added, maybe move somethere
 		else if (ft_strncmp(cmd->args[0], "./", 2) == 0)
-			execute_external_commands(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
-		//end
+			execute_external_commands(cmd, (*shell_ctx)->env_copy,
+				(*shell_ctx)->process);
+		// end
 		else
 			printf("%s\n", "Execution Test");
+	}
+	else if (ast->type == AST_PIPELINE)
+	{
+		main_pipes_process(ast, *shell_ctx);
 	}
 	cleanup(tokens, input);
 }
@@ -111,10 +116,13 @@ int	main(int argc, char **argv, char **envp)
 	t_process		process;
 	t_shell_context	*shell_ctx;
 
+	shell_ctx = NULL; // anna
 	(void)argc;
 	(void)argv;
 	setup_signals(&ctx);
+	shell_ctx = malloc(sizeof(t_shell_context)); // anna
 	process.last_exit_status = 0;
+	//process.pipe_flag = 0;
 	env_copy = init_env(envp);
 	shell_ctx->process = &process;
 	shell_ctx->env_copy = env_copy;
@@ -125,6 +133,8 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		process_command(input, &shell_ctx);
 	}
+	// free_env(shell_ctx); //anna
+	free_env(&env_copy); // anna
 	restore_terminal(&ctx);
 	return (0);
 }

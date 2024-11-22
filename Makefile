@@ -3,17 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
+#    By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/11/21 19:38:21 by stfn             ###   ########.fr        #
+#    Updated: 2024/11/22 13:37:01 by anilchen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I./include
+CFLAGS = -g -Wall -Wextra -Werror -I./include
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
