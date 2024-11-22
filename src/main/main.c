@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 22:18:55 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/22 08:46:56 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,13 @@ int	is_builtin(t_command *cmd)
 	return (0); // Command is not a built-in
 }
 
-void	process_command(char *input, t_env *env_copy, t_process *process)
+void	process_command(char *input, t_shell_context **shell_ctx)
 {
 	t_token		*tokens;
 	t_ast		*ast;
 	t_command	*cmd;
 
-	tokens = process_lexer(input, env_copy);
+	tokens = process_lexer(input, shell_ctx);
 	if (!tokens)
 		return ;
 	ast = process_parser(tokens);
@@ -92,10 +92,10 @@ void	process_command(char *input, t_env *env_copy, t_process *process)
 	{
 		cmd = ast->u_data.command;
 		if (is_builtin(cmd))
-			execute_builtin(cmd, env_copy, process);
+			execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
 		// new added, maybe move somethere
 		else if (ft_strncmp(cmd->args[0], "./", 2) == 0)
-			execute_external_commands(cmd, env_copy, process);
+			execute_external_commands(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
 		//end
 		else
 			printf("%s\n", "Execution Test");
@@ -109,18 +109,21 @@ int	main(int argc, char **argv, char **envp)
 	char			*input;
 	t_env			*env_copy;
 	t_process		process;
+	t_shell_context	*shell_ctx;
 
 	(void)argc;
 	(void)argv;
 	setup_signals(&ctx);
 	process.last_exit_status = 0;
 	env_copy = init_env(envp);
+	shell_ctx->process = &process;
+	shell_ctx->env_copy = env_copy;
 	while (1)
 	{
 		input = read_input();
 		if (!input)
 			break ;
-		process_command(input, env_copy, &process);
+		process_command(input, &shell_ctx);
 	}
 	restore_terminal(&ctx);
 	return (0);

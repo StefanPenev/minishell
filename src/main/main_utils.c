@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:05 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 22:15:55 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/22 08:51:05 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ void	cleanup(t_token *tokens, char *input)
 	free(input);
 }
 
-t_token	*process_lexer(char *input, t_env *envp)
+t_token	*process_lexer(char *input, t_shell_context **shell_ctx)
 {
 	t_token	*tokens;
 
-	tokens = lexer_tokenize(input, envp);
+	tokens = lexer_tokenize(input, shell_ctx);
 	if (!tokens || tokens->type == TOKEN_ERROR)
 	{
 		if (tokens)

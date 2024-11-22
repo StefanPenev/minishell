@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:22:50 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 22:26:53 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/22 10:58:43 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,30 @@ static char	*lexer_get_var_name(t_lexer *lexer, size_t start, size_t *length)
 	return (ft_strndup(lexer->input + start, var_len));
 }
 
-char	*lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy)
+// char	*lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy)
+// {
+// 	size_t	start;
+// 	char	*var_name;
+// 	char	*value;
+
+// 	start = lexer->pos + 1;
+// 	if (lexer->input[start] == '?')
+// 	{
+// 		*length = 2;
+// 		return (ft_itoa(lexer->last_exit_status));
+// 	}
+// 	var_name = lexer_get_var_name(lexer, start, length);
+// 	if (!var_name)
+// 		return (ft_strdup("$"));
+// 	value = ft_getenv(var_name, env_copy);
+// 	free(var_name);
+// 	if (value)
+// 		return (ft_strdup(value));
+// 	else
+// 		return (ft_strdup(""));
+// }
+char	*lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy,
+	int last_exit_status)
 {
 	size_t	start;
 	char	*var_name;
@@ -112,7 +135,7 @@ char	*lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy)
 	if (lexer->input[start] == '?')
 	{
 		*length = 2;
-		return (ft_itoa(lexer->last_exit_status));
+		return (ft_itoa(last_exit_status)); // Use passed `last_exit_status`
 	}
 	var_name = lexer_get_var_name(lexer, start, length);
 	if (!var_name)
@@ -124,3 +147,4 @@ char	*lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy)
 	else
 		return (ft_strdup(""));
 }
+

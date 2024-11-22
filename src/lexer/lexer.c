@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 00:11:30 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 22:14:13 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/22 10:46:49 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ t_token	*lexer_handle_operator(t_lexer *lexer)
 }
 
 static t_token	*lexer_process_loop(t_lexer *lexer,
-	t_token **head, t_token **current, t_env *env_copy)
+	t_token **head, t_token **current, t_shell_context **shell_ctx)
 {
 	t_token	*new_tok;
 
@@ -78,7 +78,7 @@ static t_token	*lexer_process_loop(t_lexer *lexer,
 			lexer_skip_whitespace(lexer);
 			continue ;
 		}
-		new_tok = lexer_process_token(lexer, *head, env_copy);
+		new_tok = lexer_process_token(lexer, *head, shell_ctx);
 		if (!new_tok)
 		{
 			lexer_free_tokens(*head);
@@ -94,7 +94,7 @@ static t_token	*lexer_process_loop(t_lexer *lexer,
 	return (*head);
 }
 
-t_token	*lexer_tokenize(char *input, t_env *envp)
+t_token	*lexer_tokenize(char *input, t_shell_context **shell_ctx)
 {
 	t_token	*head;
 	t_token	*current;
@@ -103,11 +103,11 @@ t_token	*lexer_tokenize(char *input, t_env *envp)
 	lexer.input = input;
 	lexer.pos = 0;
 	lexer.current_char = input[0];
-	lexer.envp = envp;
+	lexer.envp = (*shell_ctx)->env_copy;
 	lexer.last_exit_status = 0;
 	head = NULL;
 	current = NULL;
-	if (!lexer_process_loop(&lexer, &head, &current, envp))
+	if (!lexer_process_loop(&lexer, &head, &current, shell_ctx))
 		return (NULL);
 	return (lexer_finalize_tokens(head, &current));
 }
