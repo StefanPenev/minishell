@@ -6,13 +6,14 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:05 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/22 08:51:05 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/23 15:04:27 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "lexer.h"
 #include "parser.h"
+#include "process.h"
 
 void	cleanup(t_token *tokens, char *input)
 {
@@ -52,4 +53,17 @@ t_ast	*process_parser(t_token *tokens)
 	}
 	print_ast(ast, 0);
 	return (ast);
+}
+
+void	free_shell_ctx(t_shell_context *shell_ctx)
+{
+	if (!shell_ctx)
+		return ;
+	if (shell_ctx->env_copy)
+	{
+		free_env(&(shell_ctx->env_copy));
+		shell_ctx->env_copy = NULL;
+	}
+	free(shell_ctx);
+	shell_ctx = NULL;
 }

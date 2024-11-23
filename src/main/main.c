@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/22 15:46:20 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/23 15:05:45 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,11 +116,11 @@ int	main(int argc, char **argv, char **envp)
 	t_process		process;
 	t_shell_context	*shell_ctx;
 
-	shell_ctx = NULL; // anna
+	shell_ctx = NULL;
 	(void)argc;
 	(void)argv;
 	setup_signals(&ctx);
-	shell_ctx = malloc(sizeof(t_shell_context)); // anna
+	shell_ctx = malloc(sizeof(t_shell_context));
 	process.last_exit_status = 0;
 	//process.pipe_flag = 0;
 	env_copy = init_env(envp);
@@ -133,8 +133,7 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		process_command(input, &shell_ctx);
 	}
-	// free_env(shell_ctx); //anna
-	free_env(&env_copy); // anna
+	free_shell_ctx(shell_ctx);
 	restore_terminal(&ctx);
 	return (0);
 }

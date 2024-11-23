@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:31:41 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/22 16:11:48 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/23 15:05:21 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,6 @@ t_token			*lexer_process_token(t_lexer *lexer, t_token *head,
 					t_shell_context **shell_ctx);
 t_token			*lexer_handle_dollar(t_lexer *lexer, t_token *head,
 					t_shell_context **shell_ctx);
+void			free_shell_ctx(t_shell_context *shell_ctx);
+
 #endif
