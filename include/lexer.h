@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/23 16:12:06 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/23 22:59:26 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,6 @@ char				*ft_getenv(char *var_name, t_env *env_copy);
 int					ft_isspace(int c);
 char				*ft_strndup(const char *s, size_t n);
 
-void free_token(t_token *token);
+void				free_token(t_token *token);
 
 #endif

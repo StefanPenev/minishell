@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 00:11:30 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/23 21:13:54 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/23 23:17:18 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,93 +111,3 @@ t_token	*lexer_tokenize(char *input, t_shell_context **shell_ctx)
 		return (NULL);
 	return (lexer_finalize_tokens(head, &current));
 }
-
-// t_token	*lexer_tokenize(char *input, char **envp)
-// {
-// 	t_token	*head;
-// 	t_token	*current;
-// 	t_token	*new_tok;
-// 	t_lexer	lexer = {input, 0, input[0], envp, 0};
-// 	char	*value;
-// 	size_t	var_len;
-// 	char	*str;
-// 	char	*word;
-
-// 	head = NULL;
-// 	current = NULL;
-// 	while (lexer.current_char)
-// 	{
-// 		if (isspace(lexer.current_char))
-// 		{
-// 			lexer_skip_whitespace(&lexer);
-// 			continue ;
-// 		}
-// 		new_tok = NULL;
-// 		if (lexer.current_char == '$')
-// 		{
-// 			value = lexer_expand_variable(&lexer, &var_len);
-// 			if (!value)
-// 			{
-// 				lexer_free_tokens(head);
-// 				return (NULL);
-// 			}
-// 			new_tok = lexer_new_token(TOKEN_WORD, value);
-// 			free(value);
-// 			lexer.pos += var_len;
-// 			lexer.current_char = lexer.input[lexer.pos];
-// 		}
-// 		else if (lexer.current_char == '"' || lexer.current_char == '\'')
-// 		{
-// 			str = lexer_collect_quoted(&lexer, lexer.current_char);
-// 			if (!str)
-// 				new_tok = lexer_new_token(TOKEN_ERROR, "Unclosed quote");
-// 			else
-// 			{
-// 				new_tok = lexer_new_token(TOKEN_WORD, str);
-// 				free(str);
-// 			}
-// 		}
-// 		else if (is_special_char(lexer.current_char))
-// 		{
-// 			new_tok = lexer_handle_operator(&lexer);
-// 		}
-// 		else if (!is_special_char(lexer.current_char)
-// 			&& !isspace(lexer.current_char))
-// 		{
-// 			word = lexer_collect_word(&lexer);
-// 			if (word)
-// 			{
-// 				new_tok = lexer_new_token(TOKEN_WORD, word);
-// 				free(word);
-// 			}
-// 		}
-// 		else
-// 		{
-// 			printf("Character '%c' is not required to interpret\n",
-// 				lexer.current_char);
-// 			new_tok = lexer_new_token(TOKEN_ERROR,
-// 					"Invalid character encountered");
-// 			lexer.current_char = '\0';
-// 		}
-// 		if (!new_tok)
-// 		{
-// 			lexer_free_tokens(head);
-// 			return (NULL);
-// 		}
-// 		lexer_append_token(&head, &current, new_tok);
-// 		if (new_tok->type == TOKEN_ERROR)
-// 		{
-// 			lexer_free_tokens(head);
-// 			return (NULL);
-// 		}
-// 	}
-// 	new_tok = lexer_new_token(TOKEN_EOF, NULL);
-// 	if (new_tok)
-// 		lexer_append_token(&head, &current, new_tok);
-// 	else
-// 	{
-// 		lexer_free_tokens(head);
-// 		return (NULL);
-// 	}
-// 	return (head);
-// }

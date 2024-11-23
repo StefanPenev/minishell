@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/23 22:57:38 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/23 23:57:48 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ char	*read_input(void)
 }
 
 // Execute buildins
-void	execute_builtin(t_command *cmd, t_env *env_copy, t_process *process)//, int pipe_flag)
+void	execute_builtin(t_command *cmd, t_env *env_copy,
+	t_process *process)//, int pipe_flag)
 {
 	if (ft_strcmp(cmd->args[0], "pwd") == 0)
 		execute_pwd(env_copy, process);
@@ -57,7 +58,7 @@ void	execute_builtin(t_command *cmd, t_env *env_copy, t_process *process)//, int
 int	is_builtin(t_command *cmd)
 {
 	static const char	*builtins[] = {"echo", "cd", "pwd", "export", "unset",
-			"env", "exit"};
+		"env", "exit"};
 	size_t				i;
 
 	i = 0;
