@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 23:27:57 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/22 13:10:19 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/23 22:42:48 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,6 @@ t_ast	*parse_pipeline(t_parser *parser);
 t_ast	*parse_command(t_parser *parser);
 
 void	parse_wildcard(t_token *token, t_command *command);
+void	free_redirections(t_redirection *redir);
 
 #endif // PARSER_H

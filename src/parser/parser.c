@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 08:55:59 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 11:05:56 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/23 22:43:32 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,20 @@ t_redirection *parse_redirection(t_parser *parser) {
     return redir;
 }
 
+void free_redirections(t_redirection *redir) {
+    while (redir) {
+        t_redirection *next = redir->next;
+
+        // Safeguard in case filename is NULL
+        if (redir->filename) {
+            free(redir->filename);  // Free the dynamically allocated filename
+        }
+
+        free(redir);  // Free the redirection node itself
+        redir = next; // Move to the next redirection
+    }
+}
+
 t_ast *parse_command(t_parser *parser) {
     t_ast *node = malloc(sizeof(t_ast));
     if (!node)
@@ -275,8 +289,9 @@ t_ast *parse_command(t_parser *parser) {
             args_capacity *= 2;
             char **new_args = realloc(cmd->args, sizeof(char *) * args_capacity);
             if (!new_args) {
-                for (size_t i = 0; i < args_size; i++)
+                for (size_t i = 0; i < args_size; i++) {
                     free(cmd->args[i]);
+                }
                 free(cmd->args);
                 free(cmd);
                 free(node);
@@ -285,6 +300,15 @@ t_ast *parse_command(t_parser *parser) {
             cmd->args = new_args;
         }
         cmd->args[args_size++] = strdup(parser->current_token->value);
+        if (!cmd->args[args_size - 1]) { // Handle strdup failure
+            for (size_t i = 0; i < args_size - 1; i++) {
+                free(cmd->args[i]);
+            }
+            free(cmd->args);
+            free(cmd);
+            free(node);
+            return NULL;
+        }
         parser_advance(parser);
     }
 
@@ -292,7 +316,7 @@ t_ast *parse_command(t_parser *parser) {
 
     // Handle wildcard expansion if we encounter a wildcard token
     if (parser->current_token && parser->current_token->type == TOKEN_WILDCARD) {
-        parse_wildcard(parser->current_token, cmd);
+        parse_wildcard(parser->current_token, cmd); // Assume parse_wildcard cleans up internally
         parser_advance(parser);  // Move past the wildcard token
     }
 
@@ -300,9 +324,11 @@ t_ast *parse_command(t_parser *parser) {
     while (parser->current_token && is_redirection_token(parser->current_token->type)) {
         t_redirection *redir = parse_redirection(parser);
         if (!redir) {
-            for (size_t i = 0; i < args_size; i++)
+            for (size_t i = 0; i < args_size; i++) {
                 free(cmd->args[i]);
+            }
             free(cmd->args);
+            free_redirections(cmd->redirections); // Helper function to free redirections
             free(cmd);
             free(node);
             return NULL;
@@ -315,7 +341,11 @@ t_ast *parse_command(t_parser *parser) {
 
     // If no arguments and no redirections were found, the command is malformed
     if (args_size == 0 && !cmd->redirections) {
+        for (size_t i = 0; i < args_size; i++) {
+            free(cmd->args[i]);
+        }
         free(cmd->args);
+        free_redirections(cmd->redirections); // Free redirections if any
         free(cmd);
         free(node);
         return NULL;
@@ -335,7 +365,7 @@ t_ast *parse_pipeline(t_parser *parser) {
         t_ast *right = parse_command(parser);
         if (!right) {
             fprintf(stderr, "Error: Expected command after '|'.\n");
-            ast_free(left);
+            ast_free(left);  // Clean up left node
             return NULL;
         }
 
@@ -350,7 +380,7 @@ t_ast *parse_pipeline(t_parser *parser) {
         pipe_node->u_data.pipeline.left = left;
         pipe_node->u_data.pipeline.right = right;
 
-        left = pipe_node;
+        left = pipe_node;  // Keep expanding the pipeline, `left` becomes the root
     }
 
     return left;
@@ -446,7 +476,7 @@ t_ast *parse_command_line(t_parser *parser) {
         } else {
             fprintf(stderr, "Error: Redirection not associated with a command.\n");
             ast_free(expr);
-            free(redir);
+            free_redirections(redir);
             return NULL;
         }
     }

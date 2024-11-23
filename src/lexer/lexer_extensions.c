@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:22:50 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/22 10:58:43 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/23 22:24:33 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,11 @@ char	*lexer_collect_word(t_lexer *lexer)
 {
 	char	*str;
 	char	*temp_str;
+	char	*new_str;
 
 	str = ft_strdup("");
+	if (!str)
+		return (NULL);
 	while (lexer->current_char && !ft_isspace(lexer->current_char)
 		&& !is_special_char(lexer->current_char))
 	{
@@ -56,11 +59,16 @@ char	*lexer_collect_word(t_lexer *lexer)
 			free(str);
 			return (NULL);
 		}
-		str = ft_strjoin(str, temp_str);
+		new_str = ft_strjoin(str, temp_str);
 		free(temp_str);
+		free(str);
+		str = new_str;
+		if (!str)
+			return (NULL);
 	}
 	return (str);
 }
+
 
 /* Collect a quoted string (single or double quotes) */
 char	*lexer_collect_quoted(t_lexer *lexer, char quote_type)

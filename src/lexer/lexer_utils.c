@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 18:15:02 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 19:10:34 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/23 16:15:08 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,4 +64,13 @@ void	lexer_free_tokens(t_token *head)
 		free(current);
 		current = next;
 	}
+}
+
+void free_token(t_token *token)
+{
+    if (!token)
+        return;
+    if (token->value)
+        free(token->value);
+    free(token);
 }

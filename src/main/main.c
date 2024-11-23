@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/23 15:05:45 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/23 22:57:38 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,14 @@ void	process_command(char *input, t_shell_context **shell_ctx)
 
 	tokens = process_lexer(input, shell_ctx);
 	if (!tokens)
+	{
+		lexer_free_tokens(tokens);
 		return ;
+	}
 	ast = process_parser(tokens);
 	if (!ast)
 	{
+		lexer_free_tokens(tokens);
 		free(input);
 		return ;
 	}
@@ -105,6 +109,7 @@ void	process_command(char *input, t_shell_context **shell_ctx)
 	{
 		main_pipes_process(ast, *shell_ctx);
 	}
+	ast_free(ast);
 	cleanup(tokens, input);
 }
 
@@ -137,57 +142,3 @@ int	main(int argc, char **argv, char **envp)
 	restore_terminal(&ctx);
 	return (0);
 }
-
-// int	main(int argc, char **argv, char **envp)
-// {
-// 	char			*input;
-// 	t_token			*tokens;
-// 	t_term_context	ctx;
-// 	t_ast			*ast;
-
-// 	(void)argc;
-// 	(void)argv;
-// 	handle_signals();
-// 	disable_echoctl(&ctx);
-// 	while (1)
-// 	{
-// 		input = readline("minishell$ ");
-// 		if (!input)
-// 		{
-// 			printf("exit\n");
-// 			break ;
-// 		}
-// 		if (*input)
-// 			add_history(input);
-// 		tokens = lexer_tokenize(input, envp);
-// 		if (!tokens)
-// 		{
-// 			free(input);
-// 			continue ;
-// 		}
-// 		if (tokens->type == TOKEN_ERROR)
-// 		{
-// 			printf("Error: %s\n", lexer_get_error_message(tokens));
-// 			lexer_free_tokens(tokens);
-// 			free(input);
-// 			continue ;
-// 		}
-// 		print_tokens(tokens);
-// 		ast = parse_tokens(tokens);
-// 		if (!ast)
-// 		{
-// 			fprintf(stderr, "Parsing error\n");
-// 			lexer_free_tokens(tokens);
-// 			free(input);
-// 			continue ;
-// 		}
-// 		print_ast(ast, 0);
-
-// 		//process
-
-// 		lexer_free_tokens(tokens);
-// 		free(input);
-// 	}
-// 	restore_terminal(&ctx);
-// 	return (0);
-// }
