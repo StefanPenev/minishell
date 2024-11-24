@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:17:30 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/23 21:25:08 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/24 17:06:46 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,5 +73,6 @@ typedef struct s_ast
 // AST functions
 void	ast_free(t_ast *ast);
 void	redirection_free(t_redirection *redir);
+void	command_free(t_command *cmd);
 
 #endif

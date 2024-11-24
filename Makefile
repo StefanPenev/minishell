@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+         #
+#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/11/22 13:37:01 by anilchen         ###   ########.fr        #
+#    Updated: 2024/11/24 15:36:36 by stfn             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,7 +53,8 @@ SRCS += $(SRC_DIR)/utils/utils.c \
 SRCS += $(SRC_DIR)/ast/ast.c \
 
 # Parser 
-SRCS += $(SRC_DIR)/parser/parser.c
+SRCS += $(SRC_DIR)/parser/parser.c \
+		$(SRC_DIR)/parser/parse_command.c \
 
 # Execution
 SRCS += $(SRC_DIR)/execution/getenv.c \

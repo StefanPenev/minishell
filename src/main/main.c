@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/23 23:57:48 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/25 00:22:58 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ char	*read_input(void)
 	input = readline("minishell$ ");
 	if (!input)
 		printf("exit\n");
-	else if (*input)
+	else if (input && *input)
 		add_history(input);
 	return (input);
 }
@@ -83,12 +83,12 @@ void	process_command(char *input, t_shell_context **shell_ctx)
 	if (!tokens)
 	{
 		lexer_free_tokens(tokens);
+		free(input);
 		return ;
 	}
 	ast = process_parser(tokens);
 	if (!ast)
 	{
-		lexer_free_tokens(tokens);
 		free(input);
 		return ;
 	}
@@ -143,3 +143,54 @@ int	main(int argc, char **argv, char **envp)
 	restore_terminal(&ctx);
 	return (0);
 }
+
+//For test purposes to isolate lexer and parser from execution
+// void test_lexer_parser(char *input, t_shell_context **shell_ctx)
+// {
+//     t_token *tokens;
+//     t_ast *ast;
+
+//     tokens = process_lexer(input, shell_ctx);
+//     if (!tokens)
+//     {
+//         free(input);
+//         return;
+//     }
+//     ast = process_parser(tokens);
+//     if (!ast)
+//     {
+//         lexer_free_tokens(tokens);
+//         free(input);
+//         return;
+//     }
+//     // Free the AST node and tokens
+//     ast_free(ast);
+//     lexer_free_tokens(tokens);
+//     free(input);
+// }
+
+// int main(int argc, char **argv, char **envp)
+// {
+//     t_term_context ctx;
+//     char *input;
+//     t_env *env_copy;
+//     t_shell_context *shell_ctx;
+
+//     shell_ctx = NULL;
+//     (void)argc;
+//     (void)argv;
+//     setup_signals(&ctx);
+//     shell_ctx = malloc(sizeof(t_shell_context));
+//     env_copy = init_env(envp);
+//     shell_ctx->env_copy = env_copy;
+//     while (1)
+//     {
+//         input = read_input();
+//         if (!input)
+//             break;
+//         test_lexer_parser(input, &shell_ctx);
+//     }
+//     free_shell_ctx(shell_ctx);
+//     restore_terminal(&ctx);
+//     return (0);
+// }

@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:02:09 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/23 23:04:42 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/24 18:26:11 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	redirection_free(t_redirection *redir)
 }
 
 // Free commands
-static void	command_free(t_command *cmd)
+void	command_free(t_command *cmd)
 {
 	size_t	i;
 

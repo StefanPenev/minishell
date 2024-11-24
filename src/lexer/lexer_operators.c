@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 23:41:10 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/23 23:13:07 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/24 17:20:07 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ t_token	*handle_pipe(t_lexer *lexer)
 		token = lexer_new_token(TOKEN_OR, "||");
 		if (!token || !token->value)
 		{
+			if (token)
+				free(token->value);
 			free(token);
 			return (NULL);
 		}
