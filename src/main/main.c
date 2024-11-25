@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/25 00:22:58 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/25 16:46:39 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,7 @@ char	*read_input(void)
 }
 
 // Execute buildins
-void	execute_builtin(t_command *cmd, t_env *env_copy,
-	t_process *process)//, int pipe_flag)
+void	execute_builtin(t_command *cmd, t_env *env_copy, t_process *process)
 {
 	if (ft_strcmp(cmd->args[0], "pwd") == 0)
 		execute_pwd(env_copy, process);
@@ -58,7 +57,7 @@ void	execute_builtin(t_command *cmd, t_env *env_copy,
 int	is_builtin(t_command *cmd)
 {
 	static const char	*builtins[] = {"echo", "cd", "pwd", "export", "unset",
-		"env", "exit"};
+			"env", "exit"};
 	size_t				i;
 
 	i = 0;
@@ -70,6 +69,7 @@ int	is_builtin(t_command *cmd)
 		}
 		i++;
 	}
+	// DO NOT FORGET TO DELETE -G FROM MAKEFILE
 	return (0); // Command is not a built-in
 }
 
@@ -97,11 +97,17 @@ void	process_command(char *input, t_shell_context **shell_ctx)
 	{
 		cmd = ast->u_data.command;
 		if (is_builtin(cmd))
-			execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);//, 0);
+			execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
+		//, 0);
 		// new added, maybe move somethere
-		else if (ft_strncmp(cmd->args[0], "./", 2) == 0)
+		else if (ft_strncmp(cmd->args[0], "./", 2) == 0 || is_builtin(cmd) == 0)
 			execute_external_commands(cmd, (*shell_ctx)->env_copy,
 				(*shell_ctx)->process);
+		// else if ((is_builtin(cmd) == 0))
+		// {
+		// 	execute_external_commands(cmd, (*shell_ctx)->env_copy,
+		// 		(*shell_ctx)->process);
+		// }
 		// end
 		else
 			printf("%s\n", "Execution Test");
@@ -128,7 +134,7 @@ int	main(int argc, char **argv, char **envp)
 	setup_signals(&ctx);
 	shell_ctx = malloc(sizeof(t_shell_context));
 	process.last_exit_status = 0;
-	//process.pipe_flag = 0;
+	// process.pipe_flag = 0;
 	env_copy = init_env(envp);
 	shell_ctx->process = &process;
 	shell_ctx->env_copy = env_copy;
@@ -144,7 +150,7 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 
-//For test purposes to isolate lexer and parser from execution
+// For test purposes to isolate lexer and parser from execution
 // void test_lexer_parser(char *input, t_shell_context **shell_ctx)
 // {
 //     t_token *tokens;
@@ -154,14 +160,14 @@ int	main(int argc, char **argv, char **envp)
 //     if (!tokens)
 //     {
 //         free(input);
-//         return;
+//         return ;
 //     }
 //     ast = process_parser(tokens);
 //     if (!ast)
 //     {
 //         lexer_free_tokens(tokens);
 //         free(input);
-//         return;
+//         return ;
 //     }
 //     // Free the AST node and tokens
 //     ast_free(ast);
@@ -187,7 +193,7 @@ int	main(int argc, char **argv, char **envp)
 //     {
 //         input = read_input();
 //         if (!input)
-//             break;
+//             break ;
 //         test_lexer_parser(input, &shell_ctx);
 //     }
 //     free_shell_ctx(shell_ctx);

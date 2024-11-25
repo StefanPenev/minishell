@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
+#    By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/11/25 10:43:06 by stfn             ###   ########.fr        #
+#    Updated: 2024/11/25 16:37:52 by anilchen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -74,7 +74,10 @@ SRCS += $(SRC_DIR)/execution/getenv.c \
 		$(SRC_DIR)/execution/minishell_echo.c \
 		$(SRC_DIR)/execution/external_commands.c \
 		$(SRC_DIR)/execution/handle_path.c \
-		$(SRC_DIR)/execution/pipes.c \
+		$(SRC_DIR)/execution/pipes_main.c \
+		$(SRC_DIR)/execution/pipes_commands.c \
+		$(SRC_DIR)/execution/pipes_utils.c \
+		$(SRC_DIR)/execution/pipes_utils_2.c \
 
 
 # Object files

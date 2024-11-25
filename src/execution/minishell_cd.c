@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:11:23 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/22 14:51:22 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/25 17:20:52 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,16 @@ int	cd_to_path(const char *path, t_env *env_copy, t_process *process)
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		return (cd_error("minishell: getcwd", old_path, process));
 	old_path = ft_strdup(cwd);
-	if (chdir(path) != 0)
-		return (chdir_error(path, old_path, process));
+	if (ft_strcmp(path, "..") == 0)
+	{
+		if (chdir("..") != 0)
+			return (chdir_error(path, old_path, process));
+	}
+	else
+	{
+		if (chdir(path) != 0)
+			return (chdir_error(path, old_path, process));
+	}
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		return (cd_error("minishell: getcwd", old_path, process));
 	new_path = ft_strdup(cwd);
@@ -78,6 +86,53 @@ int	cd_to_path(const char *path, t_env *env_copy, t_process *process)
 	return (EXIT_SUCCESS);
 }
 
+// int	cd_to_points(t_env *env_copy, t_process *process)
+// {
+// 	char	cwd[PATH_MAX];
+// 	char	*new_path;
+// 	char	*old_path;
+
+// 	old_path = NULL;
+// 	if (getcwd(cwd, sizeof(cwd)) == NULL)
+// 		return (cd_error("minishell: getcwd", old_path, process));
+// 	old_path = ft_strdup(cwd);
+// 	if (chdir("..") != 0)
+// 		return (cd_error("minishell: cd: Failed to change to parent directory\n",
+// 				old_path, process));
+// 	if (getcwd(cwd, sizeof(cwd)) == NULL)
+// 		return (cd_error("minishell: getcwd", old_path, process));
+// 	new_path = ft_strdup(cwd);
+// 	my_setenv("PWD", new_path, env_copy);
+// 	my_setenv("OLDPWD", old_path, env_copy);
+// 	free(new_path);
+// 	free(old_path);
+// 	set_exit_status(process, 0);
+// 	return (EXIT_SUCCESS);
+// }
+
+// int	cd_to_path(const char *path, t_env *env_copy, t_process *process)
+// {
+// 	char	cwd[PATH_MAX];
+// 	char	*new_path;
+// 	char	*old_path;
+
+// 	old_path = NULL;
+// 	if (getcwd(cwd, sizeof(cwd)) == NULL)
+// 		return (cd_error("minishell: getcwd", old_path, process));
+// 	old_path = ft_strdup(cwd);
+// 	if (chdir(path) != 0)
+// 		return (chdir_error(path, old_path, process));
+// 	if (getcwd(cwd, sizeof(cwd)) == NULL)
+// 		return (cd_error("minishell: getcwd", old_path, process));
+// 	new_path = ft_strdup(cwd);
+// 	my_setenv("PWD", new_path, env_copy);
+// 	my_setenv("OLDPWD", old_path, env_copy);
+// 	free(new_path);
+// 	free(old_path);
+// 	set_exit_status(process, 0);
+// 	return (EXIT_SUCCESS);
+// }
+
 int	execute_cd(t_command *cmd, t_env *env_copy, t_process *process)
 {
 	int	status;
@@ -85,7 +140,7 @@ int	execute_cd(t_command *cmd, t_env *env_copy, t_process *process)
 	status = 0;
 	if (cmd->args[1] == NULL)
 	{
-		cd_to_home(env_copy, process);
+		status = cd_to_home(env_copy, process);
 		return (status);
 	}
 	if (cmd->args[2] != NULL)

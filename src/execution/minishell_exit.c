@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 13:38:22 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/21 12:21:11 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/25 15:25:55 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	exit_msgs(t_command *cmd, t_process *process, int action_flag)
 	}
 	if (action_flag == 1)
 	{
+		write(1, "exit\n", 5);
 		write(2, "minishell: exit: too many arguments\n", 36);
 		set_exit_status(process, 1);
 	}

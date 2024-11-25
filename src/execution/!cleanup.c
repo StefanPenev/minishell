@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:10:17 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 15:49:28 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/25 14:46:11 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,17 @@ void	free_node(t_env *node)
 		free(node->key);
 		free(node->value);
 		free(node);
+	}
+}
+
+void	cleanup_pipes_process(t_pipes_process_content *ctx)
+{
+	if (ctx->pid)
+	{
+		free(ctx->pid);
+	}
+	if (ctx->env_array)
+	{
+		free_splitted(ctx->env_array);
 	}
 }
