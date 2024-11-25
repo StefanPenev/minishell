@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 15:26:03 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/24 23:55:57 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/25 10:58:48 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ int	initialize_arguments(t_command *cmd, size_t *args_capacity)
 int	collect_arguments(t_parser *parser, t_command *cmd,
 	size_t *args_size, size_t *args_capacity)
 {
+	size_t	i;
 	char	**new_args;
 
 	while (parser->current_token && parser->current_token->type == TOKEN_WORD)
@@ -53,21 +54,23 @@ int	collect_arguments(t_parser *parser, t_command *cmd,
 		if (*args_size >= *args_capacity - 1)
 		{
 			*args_capacity *= 2;
-			new_args = realloc(cmd->args, sizeof(char *) * *args_capacity); // to do
+			new_args = ft_realloc(cmd->args, sizeof(char *) * *args_capacity);
+			i = 0;
 			if (!new_args)
 			{
-				for (size_t i = 0; i < *args_size; i++)
-                    free(cmd->args[i]);
+				while (i < *args_size)
+					free(cmd->args[i++]);
 				free(cmd->args);
 				return (0);
 			}
 			cmd->args = new_args;
 		}
 		cmd->args[*args_size] = ft_strdup(parser->current_token->value);
+		i = 0;
 		if (!cmd->args[*args_size])
 		{
-			for (size_t i = 0; i < *args_size; i++)
-                free(cmd->args[i]);
+			while (i < *args_size)
+				free(cmd->args[i++]);
 			free(cmd->args);
 			return (0);
 		}
@@ -108,7 +111,7 @@ int	validate_command(t_command *cmd, size_t args_size)
 	return (!(args_size == 0 && !cmd->redirections));
 }
 
-t_ast   *parse_command(t_parser *parser)
+t_ast	*parse_command(t_parser *parser)
 {
 	t_ast		*node;
 	t_command	*cmd;

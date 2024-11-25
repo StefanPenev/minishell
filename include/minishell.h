@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:31:41 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/24 15:19:43 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/25 09:43:02 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,6 @@ void			free_shell_ctx(t_shell_context *shell_ctx);
 
 void			ft_print_error(char *prefix, char *dynamic_part, char *suffix);
 char			*ft_strcat(char *dest, char *src);
+void			*ft_realloc(void *ptr, size_t new_size);
 
 #endif

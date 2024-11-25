@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 23:27:57 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/24 15:41:41 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/25 10:42:39 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,20 @@ void			free_redirections(t_redirection *redir);
 void			parser_advance(t_parser *parser);
 int				is_redirection_token(t_token_type token_type);
 t_redirection	*parse_redirection(t_parser *parser);
+int				map_token_to_redirection(t_token_type token_type,
+					t_redirection_type *redir_type);
 
-#endif // PARSER_H
+// parse_redirection_heredoc.c
+int				validate_heredoc_token(t_parser *parser, t_redirection *redir);
+int				allocate_heredoc_content(t_redirection *redir,
+					size_t content_capacity);
+int				check_heredoc_delimiter(t_parser *parser, t_redirection *redir,
+					int *delimiter_found);
+int				validate_token_value(t_parser *parser, t_redirection *redir);
+int				reallocate_heredoc_content_if_needed(t_parser *parser,
+					t_redirection *redir, size_t *content_capacity, size_t *content_length);
+void			append_heredoc_content(t_parser *parser, t_redirection *redir,
+					size_t *content_length);
+int				handle_missing_delimiter(t_redirection *redir);
+
+#endif 

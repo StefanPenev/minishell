@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 08:55:59 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/24 22:27:23 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/25 11:00:07 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
-// void debug_token(t_parser *parser) {
-//     printf("Debug: Current Token Type=%d, Value='%s'\n",
-//            parser->current_token->type,
-//            parser->current_token->value);
-// }
 
 // Advance the parser to the next token
 void	parser_advance(t_parser *parser)
@@ -32,14 +26,7 @@ void	parser_advance(t_parser *parser)
 	parser->current_token = parser->current_token->next;
 }
 
-// Forward declarations
-t_ast *parse_command(t_parser *parser);
-t_ast *parse_pipeline(t_parser *parser);
-t_ast *parse_parenthesized_expression(t_parser *parser);
-t_ast *parse_logical_expression(t_parser *parser);
-static int map_token_to_redirection(t_token_type token_type, t_redirection_type *redir_type);
-
-static int	map_token_to_redirection(t_token_type token_type,
+int	map_token_to_redirection(t_token_type token_type,
 	t_redirection_type *redir_type)
 {
 	if (!redir_type)
@@ -125,140 +112,6 @@ int	is_redirection_token(t_token_type token_type)
 		|| token_type == TOKEN_HEREDOC);
 }
 
-// Parse a redirection
-t_redirection	*parse_redirection(t_parser *parser)
-{
-	t_redirection	*redir;
-	size_t			content_capacity;
-	size_t			content_length;
-	int				delimiter_found;
-	size_t			token_len;
-	char			*new_content;
-
-	if (!parser->current_token
-		|| !is_redirection_token(parser->current_token->type))
-		return (NULL);
-
-	redir = malloc(sizeof(t_redirection));
-	if (!redir)
-	{
-		ft_putstr_fd("Error: Memory allocation failed for redirection.\n",
-			STDERR_FILENO);
-		return (NULL);
-	}
-	redir->type = 0;
-	redir->filename = NULL;
-	redir->heredoc_content = NULL;
-	redir->next = NULL;
-	map_token_to_redirection(parser->current_token->type, &redir->type);
-	parser_advance(parser);
-	if (redir->type == HEREDOC)
-	{
-		if (!parser->current_token || parser->current_token->type != TOKEN_WORD
-			|| !parser->current_token->value)
-		{
-			if (parser->current_token && parser->current_token->value)
-				ft_print_error("Error: Expected heredoc delimiter after '<<',"
-					"but found ", parser->current_token->value, ".\n");
-			else
-				ft_print_error("Error: Expected heredoc delimiter"
-					"after '<<', but found 'NULL'.\n", NULL, NULL);
-			free(redir);
-			return (NULL);
-		}
-		redir->filename = strdup(parser->current_token->value);
-		if (!redir->filename)
-		{
-			ft_putstr_fd("Error: Memory allocation failed for heredoc \
-				delimiter.\n", STDERR_FILENO);
-			free(redir);
-			return (NULL);
-		}
-		parser_advance(parser);
-		content_capacity = 1024;
-		content_length = 0;
-		redir->heredoc_content = malloc(content_capacity);
-		if (!redir->heredoc_content)
-		{
-			fprintf(stderr, "Error: Memory allocation failed for heredoc content.\n");
-			free(redir->filename);
-			free(redir);
-			return (NULL);
-		}
-		redir->heredoc_content[0] = '\0';
-		delimiter_found = 0;
-		while (parser->current_token && parser->current_token->type
-			!= TOKEN_EOF)
-		{
-			if (parser->current_token->type == TOKEN_WORD
-				&& parser->current_token->value
-				&& ft_strcmp(parser->current_token->value,
-					redir->filename) == 0)
-			{
-				delimiter_found = 1;
-				parser_advance(parser);
-				break ;
-			}
-			if (!parser->current_token->value)
-			{
-				fprintf(stderr, "Error: Token value is NULL in heredoc content.\n");
-				free(redir->filename);
-				free(redir->heredoc_content);
-				free(redir);
-				return (NULL);
-			}
-			token_len = ft_strlen(parser->current_token->value) + 1;
-			if (content_length + token_len + 1 > content_capacity)
-			{
-				content_capacity *= 2;
-				new_content = realloc(redir->heredoc_content, content_capacity);
-				if (!new_content)
-				{
-					fprintf(stderr, "Error: Memory reallocation failed for heredoc content.\n");
-					free(redir->filename);
-					free(redir->heredoc_content);
-					free(redir);
-					return (NULL);
-				}
-				redir->heredoc_content = new_content;
-			}
-			ft_strcat(redir->heredoc_content, parser->current_token->value);
-			ft_strcat(redir->heredoc_content, "\n");
-			content_length += token_len;
-			parser_advance(parser);
-		}
-		if (!delimiter_found)
-		{
-			fprintf(stderr, "Error: Expected heredoc delimiter '%s' not found before end of input.\n", redir->filename);
-			free(redir->filename);
-			free(redir->heredoc_content);
-			free(redir);
-			return (NULL);
-		}
-	}
-	else
-	{
-		if (!parser->current_token
-			|| parser->current_token->type != TOKEN_WORD
-			|| !parser->current_token->value)
-		{
-            fprintf(stderr, "Error: Expected filename after redirection operator, but found '%s'.\n",
-                    parser->current_token && parser->current_token->value ? parser->current_token->value : "NULL");
-			free(redir);
-			return (NULL);
-		}
-		redir->filename = strdup(parser->current_token->value);
-		if (!redir->filename)
-		{
-			fprintf(stderr, "Error: Memory allocation failed for filename.\n"); //to do
-			free(redir);
-			return (NULL);
-		}
-		parser_advance(parser);
-	}
-	return (redir);
-}
-
 void	free_redirections(t_redirection *redir)
 {
 	t_redirection	*next;
@@ -282,7 +135,6 @@ t_ast	*parse_pipeline(t_parser *parser)
 	left = parse_command(parser);
 	if (!left)
 		return (NULL);
-
 	while (parser->current_token && parser->current_token->type == TOKEN_PIPE)
 	{
 		parser_advance(parser);
@@ -430,7 +282,6 @@ t_ast	*parse_tokens(t_token *tokens)
 
 	parser.current_token = tokens;
 	ast = parse_command_line(&parser);
-
 	if (!parser.current_token || parser.current_token->type != TOKEN_EOF)
 	{
 		if (parser.current_token && parser.current_token->value)
