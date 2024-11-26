@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 11:20:43 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/25 15:19:08 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/26 13:34:42 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,10 @@
 # include "lexer.h"
 # include "minishell.h"
 # include <errno.h>
+# include <fcntl.h>
 # include <limits.h>
 # include <linux/limits.h>
 # include <stdbool.h>
-// # include <stdio.h>
-// # include <stdlib.h>
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <sys/wait.h>
@@ -178,5 +177,11 @@ int								create_fork(pid_t *pid, t_process *process);
 void							close_safe(int fd);
 void							dup_stream(int fd, int n);
 void							handle_streams(t_pipe_fds *fds, int flag);
+
+/* ************************************************************************** */
+/*                               Redirections                                 */
+/* ************************************************************************** */
+
+int								handle_redirections(t_command *cmd);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 13:32:28 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/25 16:49:07 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/26 13:32:02 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	handle_child_exit_status(pid_t main_pid, t_process *process)
 	if (main_pid > 0)
 	{
 		waitpid(main_pid, &status, 0);
-		printf("Debug(handle_child_exit_status): Waiting for PID: %d\n", main_pid);
+		//printf("Debug(handle_child_exit_status): Waiting for PID: %d\n", main_pid);
 		if (WIFEXITED(status))
 		{
 			set_exit_status(process, WEXITSTATUS(status));

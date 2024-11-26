@@ -6,7 +6,7 @@
 #    By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/11/25 16:37:52 by anilchen         ###   ########.fr        #
+#    Updated: 2024/11/26 13:39:42 by anilchen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -78,6 +78,7 @@ SRCS += $(SRC_DIR)/execution/getenv.c \
 		$(SRC_DIR)/execution/pipes_commands.c \
 		$(SRC_DIR)/execution/pipes_utils.c \
 		$(SRC_DIR)/execution/pipes_utils_2.c \
+		$(SRC_DIR)/execution/redirections.c \
 
 
 # Object files

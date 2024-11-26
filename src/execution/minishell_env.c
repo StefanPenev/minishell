@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell_env,c                                    :+:      :+:    :+:   */
+/*   minishell_env.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 17:53:05 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 14:51:38 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/26 12:35:31 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,15 @@ int	execute_env(t_env *env_copy, t_process *process)
 	cur = env_copy;
 	while (cur != NULL)
 	{
-		printf("%s=%s\n", cur->key, cur->value);
-		cur = cur->next;
+		if (cur->value == NULL)
+		{
+			cur = cur->next;
+		}
+		else
+		{
+			printf("%s=%s\n", cur->key, cur->value);
+			cur = cur->next;
+		}
 	}
 	set_exit_status(process, 0);
 	return (EXIT_SUCCESS);

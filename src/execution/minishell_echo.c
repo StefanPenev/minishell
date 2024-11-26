@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:08:31 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/22 16:15:25 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/26 12:42:56 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	execute_echo(t_command *cmd, t_process *process)
 {
 	bool	no_newline;
 	int		i;
-
+	//printf("hello from echo\n");
 	no_newline = false;
 	i = 1;
 	while (cmd->args[i] && ft_strcmp(cmd->args[i], "-n") == 0)
