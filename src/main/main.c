@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/26 13:56:36 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/26 14:32:42 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,26 +77,26 @@ int	is_builtin(t_command *cmd)
 	return (0); // Command is not a built-in
 }
 
-t_ast	*parse_input(char *input, t_shell_context **shell_ctx)
-{
-	t_token	*tokens;
-	t_ast	*ast;
+// t_ast	*parse_input(char *input, t_shell_context **shell_ctx)
+// {
+// 	t_token	*tokens;
+// 	t_ast	*ast;
 
-	tokens = process_lexer(input, shell_ctx);
-	if (!tokens)
-	{
-		lexer_free_tokens(tokens);
-		return (NULL);
-	}
-	ast = process_parser(tokens);
-	cleanup(tokens, input);
-	if (!ast)
-	{
-		free(input);
-		return (NULL);
-	}
-	return (ast);
-}
+// 	tokens = process_lexer(input, shell_ctx);
+// 	if (!tokens)
+// 	{
+// 		lexer_free_tokens(tokens);
+// 		return (NULL);
+// 	}
+// 	ast = process_parser(tokens);
+// 	cleanup(tokens, input);
+// 	if (!ast)
+// 	{
+// 		free(input);
+// 		return (NULL);
+// 	}
+// 	return (ast);
+// }
 
 void	restore_standard_fds(int saved_stdin, int saved_stdout,
 		int saved_stderr)
@@ -150,13 +150,45 @@ void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
 	restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
 }
 
+// void	process_command(char *input, t_shell_context **shell_ctx)
+// {
+// 	t_ast	*ast;
+
+// 	ast = parse_input(input, shell_ctx);
+// 	if (!ast)
+// 		return ;
+// 	if (ast->type == AST_COMMAND)
+// 	{
+// 		execute_ast_command(ast->u_data.command, shell_ctx);
+// 	}
+// 	else if (ast->type == AST_PIPELINE)
+// 	{
+// 		main_pipes_process(ast, *shell_ctx);
+// 	}
+// 	ast_free(ast);
+// }
+
 void	process_command(char *input, t_shell_context **shell_ctx)
 {
-	t_ast	*ast;
+	t_token		*tokens;
+	t_ast		*ast;
+	// t_command	*cmd;
+	// int			saved_stdin;
+	// int			saved_stdout;
+	// int			saved_stderr;
 
-	ast = parse_input(input, shell_ctx);
-	if (!ast)
+	tokens = process_lexer(input, shell_ctx);
+	if (!tokens)
+	{
+		lexer_free_tokens(tokens);
 		return ;
+	}
+	ast = process_parser(tokens);
+	if (!ast)
+	{
+		free(input);
+		return ;
+	}
 	if (ast->type == AST_COMMAND)
 	{
 		execute_ast_command(ast->u_data.command, shell_ctx);
@@ -166,6 +198,7 @@ void	process_command(char *input, t_shell_context **shell_ctx)
 		main_pipes_process(ast, *shell_ctx);
 	}
 	ast_free(ast);
+	cleanup(tokens, input);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -182,7 +215,6 @@ int	main(int argc, char **argv, char **envp)
 	setup_signals(&ctx);
 	shell_ctx = malloc(sizeof(t_shell_context));
 	process.last_exit_status = 0;
-	// process.pipe_flag = 0;
 	env_copy = init_env(envp);
 	shell_ctx->process = &process;
 	shell_ctx->env_copy = env_copy;

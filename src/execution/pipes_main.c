@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 15:08:15 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/25 16:31:09 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/26 15:55:50 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,23 +30,24 @@ void	wait_for_children(t_pipes_process_content *ctx,
 	}
 }
 
-int	handle_last_command(t_pipes_process_content *ctx)
+int	handle_first_command(t_pipes_process_content *ctx)
 {
-	int	last;
-
-	last = ctx->cmd_count - 1;
-	if (create_fork(&ctx->pid[last], ctx->shell_ctx->process) == -1)
+	if (pipe(ctx->fds.fd) == -1)
+	{
+		ft_putstr_fd("Pipe failed\n", 2);
+		set_exit_status(ctx->shell_ctx->process, 1);
+		return (EXIT_FAILURE);
+	}
+	if (create_fork(&ctx->pid[0], ctx->shell_ctx->process) == -1)
 	{
 		close_safe(ctx->fds.fd[0]);
 		close_safe(ctx->fds.fd[1]);
 		return (EXIT_FAILURE);
 	}
-	if (ctx->pid[last] == 0)
+	if (ctx->pid[0] == 0)
 	{
-		last_cmd(&ctx->fds, ctx->cmds[last], ctx->env_array, ctx->shell_ctx);
+		first_cmd(&ctx->fds, ctx->cmds[0], ctx->env_array, ctx->shell_ctx);
 	}
-	close_safe(ctx->fds.fd[0]);
-	close_safe(ctx->fds.fd[1]);
 	return (EXIT_SUCCESS);
 }
 
@@ -78,24 +79,23 @@ int	handle_middle_commands(t_pipes_process_content *ctx)
 	return (EXIT_SUCCESS);
 }
 
-int	handle_first_command(t_pipes_process_content *ctx)
+int	handle_last_command(t_pipes_process_content *ctx)
 {
-	if (pipe(ctx->fds.fd) == -1)
-	{
-		ft_putstr_fd("Pipe failed\n", 2);
-		set_exit_status(ctx->shell_ctx->process, 1);
-		return (EXIT_FAILURE);
-	}
-	if (create_fork(&ctx->pid[0], ctx->shell_ctx->process) == -1)
+	int	last;
+
+	last = ctx->cmd_count - 1;
+	if (create_fork(&ctx->pid[last], ctx->shell_ctx->process) == -1)
 	{
 		close_safe(ctx->fds.fd[0]);
 		close_safe(ctx->fds.fd[1]);
 		return (EXIT_FAILURE);
 	}
-	if (ctx->pid[0] == 0)
+	if (ctx->pid[last] == 0)
 	{
-		first_cmd(&ctx->fds, ctx->cmds[0], ctx->env_array, ctx->shell_ctx);
+		last_cmd(&ctx->fds, ctx->cmds[last], ctx->env_array, ctx->shell_ctx);
 	}
+	close_safe(ctx->fds.fd[0]);
+	close_safe(ctx->fds.fd[1]);
 	return (EXIT_SUCCESS);
 }
 

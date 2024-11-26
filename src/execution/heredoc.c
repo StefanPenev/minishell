@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:05:03 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/21 15:35:56 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/26 14:49:08 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,44 +43,3 @@
 // 		free(data);
 // 	}
 // }
-
-// int	minishell_output_redirection(char *cmd_token, char *filename, t_env env_copy,
-// 		t_process *process)
-// {
-// 	int	newfd;
-// 	int	oldfd;
-
-// 	if (ft_strcmp(cmd_token, ">") == 0)
-// 	{
-// 		newfd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-// 	}
-// 	else if (ft_strcmp(cmd_token, ">>") == 0)
-// 	{
-// 		newfd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-// 	}
-//     //if no permissions
-// 	if (newfd == -1)
-// 	{
-// 		write(2, "minishell: permission denied: ", 30);
-// 		write(2, &filename, ft_strlen(filename));
-// 		write(2, "\n", 1);
-// 		set_exit_status(process, 1);
-// 		return (EXIT_FAILURE);
-// 	}
-//     //save old stdoit
-// 	dup(oldfd);
-//     //redirect new stdoit
-// 	dup2(newfd, STDOUT_FILENO);
-// 	close(newfd);
-// 	// ...
-//     // restore old stdoit
-// 	dup2(oldfd, STDOUT_FILENO);
-// 	close(oldfd);
-// }
-
-// // int	minishell_redirection(char *cmd_token, char *filename, t_env env_copy,
-// // 		t_process *process)
-// // {
-// //     if
-// // 		if (splitted[2] == ">" || splitted[2] == ">>" )
-// // }

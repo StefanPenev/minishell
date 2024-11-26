@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 14:36:21 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/25 16:37:11 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/26 15:40:26 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ int	assign_pid(t_pipes_process_content *ctx)
 int	initialize_pipes_process(t_ast *ast, t_shell_context *shell_ctx,
 		t_pipes_process_content *ctx)
 {
+	ctx->redir_filename = NULL; 
+	ctx->redir_flag = 0; 
 	ctx->pid = NULL;
 	ctx->cmd_count = 0;
 	collect_commands_in_order(ast, ctx->cmds, &ctx->cmd_count);
