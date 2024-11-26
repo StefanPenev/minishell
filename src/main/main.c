@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/25 16:46:39 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/26 10:06:47 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,6 @@ void	process_command(char *input, t_shell_context **shell_ctx)
 	if (!tokens)
 	{
 		lexer_free_tokens(tokens);
-		free(input);
 		return ;
 	}
 	ast = process_parser(tokens);
@@ -146,6 +145,7 @@ int	main(int argc, char **argv, char **envp)
 		process_command(input, &shell_ctx);
 	}
 	free_shell_ctx(shell_ctx);
+	rl_clear_history();
 	restore_terminal(&ctx);
 	return (0);
 }
