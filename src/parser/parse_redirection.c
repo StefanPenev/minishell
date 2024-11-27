@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 09:56:12 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/25 10:59:14 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/27 10:05:26 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,34 +33,64 @@ int	handle_filename(t_parser *parser, t_redirection *redir)
 	return (1);
 }
 
-int	handle_heredoc(t_parser *parser, t_redirection *redir)
-{
-	size_t	content_capacity;
-	size_t	content_length;
-	int		delimiter_found;
+// int	handle_heredoc(t_parser *parser, t_redirection *redir)
+// {
+// 	size_t	content_capacity;
+// 	size_t	content_length;
+// 	int		delimiter_found;
 
-	content_length = 0;
-	delimiter_found = 0;
-	content_capacity = 1024;
-	if (!validate_heredoc_token(parser, redir))
-		return (0);
-	if (!allocate_heredoc_content(redir, content_capacity))
-		return (0);
-	while (parser->current_token && parser->current_token->type != TOKEN_EOF)
-	{
-		if (check_heredoc_delimiter(parser, redir, &delimiter_found))
-			break ;
-		if (!validate_token_value(parser, redir))
-			return (0);
-		if (!reallocate_heredoc_content_if_needed(parser, redir,
-				&content_capacity, &content_length))
-			return (0);
-		append_heredoc_content(parser, redir, &content_length);
-		parser_advance(parser);
-	}
-	if (!delimiter_found)
-		return (handle_missing_delimiter(redir));
-	return (1);
+// 	content_length = 0;
+// 	delimiter_found = 0;
+// 	content_capacity = 1024;
+// 	if (!validate_heredoc_token(parser, redir))
+// 		return (0);
+// 	if (!allocate_heredoc_content(redir, content_capacity))
+// 		return (0);
+// 	while (parser->current_token && parser->current_token->type != TOKEN_EOF)
+// 	{
+// 		if (check_heredoc_delimiter(parser, redir, &delimiter_found))
+// 			break ;
+// 		if (!validate_token_value(parser, redir))
+// 			return (0);
+// 		if (!reallocate_heredoc_content_if_needed(parser, redir,
+// 				&content_capacity, &content_length))
+// 			return (0);
+// 		append_heredoc_content(parser, redir, &content_length);
+// 		parser_advance(parser);
+// 	}
+// 	if (!delimiter_found)
+// 		return (handle_missing_delimiter(redir));
+// 	return (1);
+// }
+int handle_heredoc(t_parser *parser, t_redirection *redir) {
+    char    *line;
+    size_t  content_capacity = 1024;
+    size_t  content_length = 0;
+
+    if (!validate_heredoc_token(parser, redir))
+        return 0;
+    if (!allocate_heredoc_content(redir, content_capacity))
+        return 0;
+
+    while (1) {
+        printf("heredoc> ");
+        line = read_string(); // Read a line from stdin
+        if (!line) {
+            // Handle EOF or read error
+            return handle_missing_delimiter(redir);
+        }
+        if (ft_strcmp(line, redir->filename) == 0) {
+            free(line);
+            break;
+        }
+        if (!reallocate_heredoc_content_if_needed(line, redir, &content_capacity, &content_length)) {
+            free(line);
+            return 0;
+        }
+        append_heredoc_content(line, redir, &content_length);
+        free(line);
+    }
+    return 1;
 }
 
 t_redirection	*allocate_redirection(void)

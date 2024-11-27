@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 11:20:43 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/26 15:55:40 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/27 10:06:54 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,5 +187,10 @@ void							handle_streams(t_pipe_fds *fds, int flag);
 int								handle_redirections(t_command *cmd);
 int								handle_redirections_pipes(t_command *cmd,
 									t_pipe_fds *fds);
+
+/* ************************************************************************** */
+/*                                  Heredoc	                                  */
+/* ************************************************************************** */
+char							*read_string(void);
 
 #endif

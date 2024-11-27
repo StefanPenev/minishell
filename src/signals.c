@@ -6,11 +6,12 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:28:53 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/09 23:39:36 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/27 10:10:30 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "signals.h"
+#include "minishell.h"
 
 // Function to restore original terminal settings
 void	restore_terminal(t_term_context *ctx)

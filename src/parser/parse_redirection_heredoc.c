@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 10:35:42 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/25 10:58:16 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/27 10:03:36 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,36 +74,59 @@ int	validate_token_value(t_parser *parser, t_redirection *redir)
 	return (1);
 }
 
-int	reallocate_heredoc_content_if_needed(t_parser *parser, t_redirection *redir,
-	size_t *content_capacity, size_t *content_length)
-{
-	size_t	token_len;
-	char	*new_content;
+// int	reallocate_heredoc_content_if_needed(t_parser *parser, t_redirection *redir,
+// 	size_t *content_capacity, size_t *content_length)
+// {
+// 	size_t	token_len;
+// 	char	*new_content;
 
-	token_len = ft_strlen(parser->current_token->value) + 1;
-	if (*content_length + token_len + 1 > *content_capacity)
-	{
-		*content_capacity *= 2;
-		new_content = realloc(redir->heredoc_content, *content_capacity);
-		if (!new_content)
-		{
-			fprintf(stderr, "Error: Memory reallocation failed for heredoc content.\n");
-			free(redir->filename);
-			free(redir->heredoc_content);
-			free(redir);
-			return (0);
-		}
-		redir->heredoc_content = new_content;
-	}
-	return (1);
+// 	token_len = ft_strlen(parser->current_token->value) + 1;
+// 	if (*content_length + token_len + 1 > *content_capacity)
+// 	{
+// 		*content_capacity *= 2;
+// 		new_content = realloc(redir->heredoc_content, *content_capacity);
+// 		if (!new_content)
+// 		{
+// 			fprintf(stderr, "Error: Memory reallocation failed for heredoc content.\n");
+// 			free(redir->filename);
+// 			free(redir->heredoc_content);
+// 			free(redir);
+// 			return (0);
+// 		}
+// 		redir->heredoc_content = new_content;
+// 	}
+// 	return (1);
+// }
+int reallocate_heredoc_content_if_needed(char *line, t_redirection *redir,
+    size_t *content_capacity, size_t *content_length) {
+    size_t line_len = ft_strlen(line) + 1;
+
+    if (*content_length + line_len + 1 > *content_capacity) {
+        *content_capacity *= 2;
+        char *new_content = realloc(redir->heredoc_content, *content_capacity);
+        if (!new_content) {
+            fprintf(stderr, "Error: Memory reallocation failed for heredoc content.\n");
+            free(redir->filename);
+            free(redir->heredoc_content);
+            free(redir);
+            return 0;
+        }
+        redir->heredoc_content = new_content;
+    }
+    return 1;
 }
 
-void	append_heredoc_content(t_parser *parser, t_redirection *redir,
-	size_t *content_length)
-{
-	ft_strcat(redir->heredoc_content, parser->current_token->value);
-	ft_strcat(redir->heredoc_content, "\n");
-	*content_length += ft_strlen(parser->current_token->value) + 1;
+// void	append_heredoc_content(t_parser *parser, t_redirection *redir,
+// 	size_t *content_length)
+// {
+// 	ft_strcat(redir->heredoc_content, parser->current_token->value);
+// 	ft_strcat(redir->heredoc_content, "\n");
+// 	*content_length += ft_strlen(parser->current_token->value) + 1;
+// }
+void append_heredoc_content(char *line, t_redirection *redir, size_t *content_length) {
+    ft_strcat(redir->heredoc_content, line);
+    ft_strcat(redir->heredoc_content, "\n");
+    *content_length += ft_strlen(line) + 1;
 }
 
 int handle_missing_delimiter(t_redirection *redir)

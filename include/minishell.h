@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:31:41 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/25 09:43:02 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/27 10:09:47 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 typedef struct s_token		t_token; // anna
 typedef struct s_lexer		t_lexer; // anna

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 20:51:24 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/22 13:10:14 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/27 10:09:41 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@
 
 # include <signal.h>
 # include <termios.h>
-# include <readline/readline.h>
-# include <readline/history.h>
 
 typedef struct s_term_context
 {
