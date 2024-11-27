@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/26 14:32:42 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/27 15:35:02 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,11 @@ int	is_builtin(t_command *cmd)
 	size_t				i;
 
 	i = 0;
+	if (cmd == NULL || cmd->args == NULL || cmd->args[0] == NULL)
+	{
+		printf("Error: Invalid command or arguments.\n");
+		exit(EXIT_FAILURE);
+	}
 	while (i < sizeof(builtins) / sizeof(builtins[0]))
 	{
 		if (ft_strcmp(cmd->args[0], builtins[i]) == 0)
@@ -124,7 +129,7 @@ int	setup_redirections(t_command *cmd, int *saved_stdin, int *saved_stdout,
 	{
 		if (handle_redirections(cmd) == -1)
 		{
-			write(2, "Error handling redirections\n", 28); //delete later
+			write(2, "Error handling redirections\n", 28); // delete later
 			restore_standard_fds(*saved_stdin, *saved_stdout, *saved_stderr);
 			return (-1);
 		}
@@ -170,13 +175,13 @@ void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
 
 void	process_command(char *input, t_shell_context **shell_ctx)
 {
-	t_token		*tokens;
-	t_ast		*ast;
+	t_token	*tokens;
+	t_ast	*ast;
+
 	// t_command	*cmd;
 	// int			saved_stdin;
 	// int			saved_stdout;
 	// int			saved_stderr;
-
 	tokens = process_lexer(input, shell_ctx);
 	if (!tokens)
 	{

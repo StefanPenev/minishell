@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 11:20:43 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/27 10:06:54 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/27 18:39:12 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,15 @@
 # include "lexer.h"
 # include "minishell.h"
 # include <errno.h>
-# include <fcntl.h>
 # include <limits.h>
 # include <linux/limits.h>
 # include <stdbool.h>
+// # include <stdio.h>
+// # include <stdlib.h>
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+#include <fcntl.h>
 
 # define PIPE_FIRST 1
 # define PIPE_MIDDLE 2
@@ -63,8 +65,6 @@ typedef struct s_pipes_process_content
 	t_command					*cmds[1024];
 	int							cmd_count;
 	pid_t						*pid;
-	int							redir_flag;
-	char						*redir_filename;
 }								t_pipes_process_content;
 
 /* ************************************************************************** */
@@ -153,12 +153,12 @@ char							*find_full_path(char *args, char **env_array);
 
 int								main_pipes_process(t_ast *ast,
 									t_shell_context *shell_ctx);
-void							collect_commands_in_order(t_ast *ast,
-									t_command *cmds[], int *count);
+// void							collect_commands_in_order(t_ast *ast,
+// 									t_command *cmds[]);
 void							first_cmd(t_pipe_fds *fds, t_command *cmd,
 									char **env_array,
 									t_shell_context *shell_ctx);
-int								process_middle_cmd(t_pipe_fds *fds, pid_t pid,
+int								process_middle_cmd(t_pipe_fds *fds, pid_t *pid,
 									t_command *cmd,
 									t_pipes_process_content *cmd_ctx);
 void							execute_middle_cmd(t_pipe_fds *fds,
@@ -178,15 +178,16 @@ int								initialize_pipes_process(t_ast *ast,
 int								create_fork(pid_t *pid, t_process *process);
 void							close_safe(int fd);
 void							dup_stream(int fd, int n);
-void							handle_streams(t_pipe_fds *fds, int flag);
+// void							handle_streams(t_pipe_fds *fds, int flag);
+void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag);
 
 /* ************************************************************************** */
 /*                               Redirections                                 */
 /* ************************************************************************** */
 
 int								handle_redirections(t_command *cmd);
-int								handle_redirections_pipes(t_command *cmd,
-									t_pipe_fds *fds);
+// int								handle_redirections_pipes(t_command *cmd,
+// 									t_pipe_fds *fds);
 
 /* ************************************************************************** */
 /*                                  Heredoc	                                  */
