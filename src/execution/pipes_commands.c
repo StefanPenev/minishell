@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 14:43:02 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/27 19:04:55 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/28 14:39:51 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ void	execute_middle_cmd(t_pipe_fds *fds, t_pipes_process_content *cmd_ctx,
 int	process_middle_cmd(t_pipe_fds *fds, pid_t *pid, t_command *cmd,
 		t_pipes_process_content *cmd_ctx)
 {
+	//int status = 0;
 	fds->fd_prev[0] = fds->fd[0];
 	fds->fd_prev[1] = fds->fd[1];
 	if (pipe(cmd_ctx->fds.fd) == -1)
@@ -93,7 +94,25 @@ int	process_middle_cmd(t_pipe_fds *fds, pid_t *pid, t_command *cmd,
 		// printf("[DEBUG] Дочерний процесс создан для middle команды: %s\n",
 		// 	cmd->args[0]);
 		execute_middle_cmd(&cmd_ctx->fds, cmd_ctx, cmd);
+		exit(EXIT_FAILURE); 
 	}
+	// 		else
+	// {
+	// 	// Родительский процесс
+	// 	waitpid(*pid, &status, 0);
+	// 	if (WIFEXITED(status))
+	// 	{
+	// 		int exit_code = WEXITSTATUS(status);
+	// 		if (exit_code != 0)
+	// 		{
+	// 			close_safe(fds->fd_prev[0]);
+	// 			close_safe(fds->fd_prev[1]);
+	// 			cmd_ctx->shell_ctx->process->last_exit_status = exit_code;
+	// 			fprintf(stderr, "[ERROR] Первая команда завершилась с ошибкой: %s\n", cmd->args[0]);
+	// 			return (EXIT_FAILURE);
+	// 		}
+	// 	}
+	// }
 	close_safe(fds->fd_prev[0]);
 	close_safe(fds->fd_prev[1]);
 	return (EXIT_SUCCESS);

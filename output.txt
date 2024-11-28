@@ -1,1 +1,2 @@
-9
+[DEBUG] Handling last input: type = 0, file = input.txt
+[DEBUG] Handling redirection: type = 0, file = input.txt

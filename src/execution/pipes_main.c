@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 15:08:15 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/27 19:05:26 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/28 14:41:52 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	wait_for_children(t_pipes_process_content *ctx,
 int	handle_first_command(t_ast *ast, t_pipes_process_content *ctx)
 {
 	t_command	*cmd;
+	//int status;
 
 	cmd = ast->u_data.command;
 	if (pipe(ctx->fds.fd) == -1)
@@ -55,7 +56,23 @@ int	handle_first_command(t_ast *ast, t_pipes_process_content *ctx)
 	{
 		//printf("[DEBUG] Дочерний процесс создан для first команды: %s\n", cmd->args[0]);
 		first_cmd(&ctx->fds, cmd, ctx->env_array, ctx->shell_ctx);
+		exit(EXIT_FAILURE); 
 	}
+	// else
+	// {
+	// 	// Родительский процесс
+	// 	waitpid(ctx->pid[0], &status, 0);
+	// 	if (WIFEXITED(status))
+	// 	{
+	// 		int exit_code = WEXITSTATUS(status);
+	// 		if (exit_code != 0)
+	// 		{
+	// 			ctx->shell_ctx->process->last_exit_status = exit_code;
+	// 			fprintf(stderr, "[ERROR] Первая команда завершилась с ошибкой: %s\n", cmd->args[0]);
+	// 			return (EXIT_FAILURE);
+	// 		}
+	// 	}
+	// }
 	return (EXIT_SUCCESS);
 }
 
@@ -66,13 +83,6 @@ int	handle_middle_commands(t_ast *ast, t_pipes_process_content *ctx, int index)
 	if (ast->type == AST_COMMAND)
 	{
 		cmd = ast->u_data.command;
-		//printf("[DEBUG] Handling middle command: %s\n", cmd->args[0]);
-		// if (cmd->args[1] != NULL)
-		// {
-		// 	printf("[DEBUG] middle command argument: %s\n", cmd->args[1]);
-		// }
-		// printf("[DEBUG] Current fds: fd[0]: %d, fd[1]: %d, fd_prev[0]: %d, fd_prev[1]: %d\n ", ctx->fds.fd[0], ctx->fds.fd[1],
-		// 	ctx->fds.fd_prev[0], ctx->fds.fd_prev[1]);
 		if (process_middle_cmd(&ctx->fds, &ctx->pid[index], cmd, ctx) == -1)
 		{
 			close(ctx->fds.fd[0]);
@@ -81,8 +91,7 @@ int	handle_middle_commands(t_ast *ast, t_pipes_process_content *ctx, int index)
 			free_splitted(ctx->env_array);
 			return (EXIT_FAILURE);
 		}
-		// printf("[DEBUG] fds in the end: fd[0]: %d, fd[1]: %d, fd_prev[0]: %d,fd_prev[1]: %d\n ", ctx->fds.fd[0], ctx->fds.fd[1],
-		// 	ctx->fds.fd_prev[0], ctx->fds.fd_prev[1]);
+
 	}
 	return (EXIT_SUCCESS);
 }
@@ -90,23 +99,34 @@ int	handle_middle_commands(t_ast *ast, t_pipes_process_content *ctx, int index)
 int	handle_last_command(t_ast *ast, t_pipes_process_content *ctx)
 {
 	t_command	*cmd;
+	//int status = 0;
 
 	cmd = ast->u_data.command;
 	ctx->pid[ctx->cmd_count - 1] = fork();
 	if (ctx->pid[ctx->cmd_count - 1] == -1)
 		return (EXIT_FAILURE);
-	// if (create_fork(&ctx->pid[ctx->cmd_count - 1], ctx->shell_ctx->process) ==
-	// 	-1)
-	// {
-	// 	close_safe(ctx->fds.fd[0]);
-	// 	close_safe(ctx->fds.fd[1]);
-	// 	return (EXIT_FAILURE);
-	// }
 	if (ctx->pid[ctx->cmd_count - 1] == 0)
 	{
-		// printf("[DEBUG] Дочерний процесс создан для last команды: %s\n", cmd->args[0]);
 		last_cmd(&ctx->fds, cmd, ctx->env_array, ctx->shell_ctx);
+		exit(EXIT_FAILURE); 
 	}
+	// 	else
+	// {
+	// 	// Родительский процесс
+	// 	waitpid(ctx->pid[ctx->cmd_count - 1], &status, 0);
+	// 	if (WIFEXITED(status))
+	// 	{
+	// 		int exit_code = WEXITSTATUS(status);
+	// 		if (exit_code != 0)
+	// 		{
+	// 			close_safe(ctx->fds.fd[0]);
+	// 			close_safe(ctx->fds.fd[1]);
+	// 			ctx->shell_ctx->process->last_exit_status = exit_code;
+	// 			fprintf(stderr, "[ERROR] Первая команда завершилась с ошибкой: %s\n", cmd->args[0]);
+	// 			return (EXIT_FAILURE);
+	// 		}
+	// 	}
+	// }
 	close_safe(ctx->fds.fd[0]);
 	close_safe(ctx->fds.fd[1]);
 	return (EXIT_SUCCESS);

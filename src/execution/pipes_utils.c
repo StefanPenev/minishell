@@ -6,25 +6,111 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 14:36:21 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/27 19:14:44 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/28 19:57:19 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
-#include <stdio.h> // Для printf
 
+// void	assign_fds_if_redirection(t_command *cmd)
+// {
+// 	t_redirection	*redir;
+// 	int				fd_out;
+// 	int				fd_append;
+// 	int				fd_in;
+// 	t_redirection	*last_input;
+// 	t_redirection	*last_output;
+
+// 	while (redir)
+// 	{
+// 		if (redir->type == REDIRECT_INPUT)
+// 		{	
+			
+// 		 	printf("[DEBUG] Parsed redirection: type = %d, number: %d, file = %s\n", redir->type, count, redir->filename);
+// 			last_input = redir; 
+// 			count++; //Debug
+// 		}
+// 		if (redir->type == REDIRECT_OUTPUT || REDIRECT_APPEND)
+// 		{
+// 					 	printf("[DEBUG] Parsed redirection: type = %d, number: %d, file = %s\n", redir->type, count, redir->filename);
+// 			last_input = redir; 
+// 			count++; //Debug
+// 		}
+// 		redir = redir->next;
+// 	}
+// 	redir = cmd->redirections;
+// 	while (redir)
+// 	{
+// 		if (redir->type == REDIRECT_OUTPUT)
+// 		{
+// 			fd_out = open(redir->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+// 			if (fd_out < 0)
+// 			{
+// 				perror("Error opening file for output redirection");
+// 				exit(EXIT_FAILURE);
+// 			}
+// 			dup2(fd_out, STDOUT_FILENO); // Дублируем в STDOUT
+// 			close_safe(fd_out);          // Закрываем дескриптор
+// 		}
+// 		else if (redir->type == REDIRECT_APPEND)
+// 		{
+// 			fd_append = open(redir->filename, O_WRONLY | O_CREAT | O_APPEND,
+// 					0644);
+// 			if (fd_append < 0)
+// 			{
+// 				perror("Error opening file for append redirection");
+// 				exit(EXIT_FAILURE);
+// 			}
+// 			dup2(fd_append, STDOUT_FILENO); // Дублируем в STDOUT
+// 			close_safe(fd_append);          // Закрываем дескриптор
+// 		}
+// 		else if (redir->type == REDIRECT_INPUT)
+// 		{
+// 			fd_in = open(redir->filename, O_RDONLY);
+// 			if (fd_in < 0)
+// 			{
+// 				perror("Error opening file for input redirection");
+// 				exit(EXIT_FAILURE);
+// 			}
+// 			dup2(fd_in, STDIN_FILENO); // Дублируем в STDIN
+// 			close_safe(fd_in);         // Закрываем дескриптор
+// 		}
+// 		redir = redir->next; // Переходим к следующему редиректу
+// 	}
+// }
+
+bool	cmd_has_input_redirection(t_command *cmd)
+{
+	t_redirection	*redir;
+
+	redir = cmd->redirections;
+	while (redir)
+	{
+		if (redir->type == REDIRECT_INPUT)
+			return (true);
+		redir = redir->next;
+	}
+	return (false);
+}
+
+bool	cmd_has_output_redirection(t_command *cmd)
+{
+	t_redirection	*redir;
+
+	redir = cmd->redirections;
+	while (redir)
+	{
+		if (redir->type == REDIRECT_OUTPUT || redir->type == REDIRECT_APPEND)
+			return (true);
+		redir = redir->next;
+	}
+	return (false);
+}
 void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag)
 {
-	// Отладочное сообщение перед обработкой редиректов
-	// printf("[DEBUG] Handling redirections and streams. Flag: %d\n", flag);
-	// printf("[DEBUG] Initial fds: fd[0]: %d, fd[1]: %d, fd_prev[0]: %d,
-	//	fd_prev[1]: %d\n",
-	//        fds->fd[0], fds->fd[1], fds->fd_prev[0], fds->fd_prev[1]);
 	if (flag == PIPE_FIRST)
 	{
-		printf("[DEBUG] PIPE_FIRST: Redirecting stdout to fd[1]: %d\n",
-			fds->fd[1]);
 		if (fds->fd[1] >= 0)
 			dup_stream(fds->fd[1], STDOUT_FILENO);
 		close_safe(fds->fd[0]);
@@ -32,10 +118,11 @@ void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag)
 	}
 	else if (flag == PIPE_MIDDLE)
 	{
-		printf("[DEBUG] PIPE_MIDDLE: Redirecting stdin from fd_prev[0]: %d, stdout to fd[1]: %d\n", fds->fd_prev[0], fds->fd[1]);
-		if (fds->fd_prev[0] >= 0)
+		// if (cmd && cmd->redirections)
+		// 	handle_redirections(cmd);
+		if (!cmd_has_input_redirection(cmd) && fds->fd_prev[0] >= 0)
 			dup_stream(fds->fd_prev[0], STDIN_FILENO);
-		if (fds->fd[1] >= 0)
+		if (!cmd_has_output_redirection(cmd) && fds->fd[1] >= 0)
 			dup_stream(fds->fd[1], STDOUT_FILENO);
 		close_safe(fds->fd_prev[0]);
 		close_safe(fds->fd_prev[1]);
@@ -44,54 +131,21 @@ void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag)
 	}
 	else if (flag == PIPE_LAST)
 	{
-		printf("[DEBUG] PIPE_LAST: Redirecting stdin from fd[0]: %d\n",
-			fds->fd[0]);
 		if (fds->fd[0] >= 0)
-			dup_stream(fds->fd[0], STDIN_FILENO);
+			dup_stream(fds->fd[0], STDIN_FILENO); // Используем пайп как вход
 		close_safe(fds->fd[0]);
 		close_safe(fds->fd[1]);
 	}
-	// Обработка редиректов
+	// Обрабатываем редиректы после настройки пайпов
 	if (cmd && cmd->redirections)
 	{
-		printf("[DEBUG] Applying redirections for command: %s\n",cmd->args[0]);
 		if (handle_redirections(cmd) == -1)
 		{
 			fprintf(stderr, "Error handling redirections\n");
 			exit(EXIT_FAILURE);
 		}
 	}
-	// Отладочное сообщение после обработки
-	// printf("[DEBUG] Final fds: fd[0]: %d, fd[1]: %d, fd_prev[0]: %d,
-	//	fd_prev[1]: %d\n",
-	//        fds->fd[0], fds->fd[1], fds->fd_prev[0], fds->fd_prev[1]);
 }
-
-
-// void	handle_streams(t_pipe_fds *fds, int flag)
-// {
-// 	if (flag == PIPE_FIRST)
-// 	{
-// 		dup_stream(fds->fd[1], STDOUT_FILENO);
-// 		close_safe(fds->fd[0]);
-// 		close_safe(fds->fd[1]);
-// 	}
-// 	else if (flag == PIPE_MIDDLE)
-// 	{
-// 		dup_stream(fds->fd_prev[0], STDIN_FILENO);
-// 		dup_stream(fds->fd[1], STDOUT_FILENO);
-// 		close_safe(fds->fd_prev[0]);
-// 		close_safe(fds->fd_prev[1]);
-// 		close_safe(fds->fd[0]);
-// 		close_safe(fds->fd[1]);
-// 	}
-// 	else if (flag == PIPE_LAST)
-// 	{
-// 		dup_stream(fds->fd[0], STDIN_FILENO);
-// 		close_safe(fds->fd[0]);
-// 		close_safe(fds->fd[1]);
-// 	}
-// }
 
 int	assign_pid(t_pipes_process_content *ctx)
 {
@@ -108,7 +162,6 @@ int	assign_pid(t_pipes_process_content *ctx)
 	while (i < ctx->cmd_count)
 	{
 		ctx->pid[i] = -1;
-		// printf("[DEBUG]: pid N %d assigned\n", i);
 		i++;
 	}
 	return (EXIT_SUCCESS);
@@ -121,7 +174,6 @@ void	collect_commands_in_order(t_ast *ast, t_command *cmds[], int *count)
 	if (ast->type == AST_COMMAND)
 	{
 		cmds[*count] = ast->u_data.command;
-		// printf("[DEBUG] Команда %d: %s\n", *count, cmds[*count]->args[0]);
 		(*count)++;
 	}
 	else if (ast->type == AST_PIPELINE)
@@ -151,14 +203,8 @@ int	initialize_pipes_process(t_ast *ast, t_shell_context *shell_ctx,
 	count = 0;
 	ctx->pid = NULL;
 	ctx->cmd_count = count_commands_in_ast(ast);
-	// printf("%d\n", ctx->cmd_count);
 	assign_pid(ctx);
 	collect_commands_in_order(ast, ctx->cmds, &count);
-	// 	for (int i = 0; i < ctx->cmd_count; i++)
-	// {
-	//     printf("[DEBUG] Команда %d после collect_commands_in_order: %s\n", i,
-	//	ctx->cmds[i]->args[0]);
-	// }
 	ctx->env_array = create_env_array(shell_ctx->env_copy);
 	if (!ctx->env_array)
 	{
@@ -172,24 +218,3 @@ int	initialize_pipes_process(t_ast *ast, t_shell_context *shell_ctx,
 	ctx->fds.fd_prev[1] = -1;
 	return (EXIT_SUCCESS);
 }
-
-// int	initialize_pipes_process(t_ast *ast, t_shell_context *shell_ctx,
-// 		t_pipes_process_content *ctx)
-// {
-// 	ctx->pid = NULL;
-// 	ctx->cmd_count = 0;
-// 	collect_commands_in_order(ast, ctx->cmds, &ctx->cmd_count);
-// 	ctx->env_array = create_env_array(shell_ctx->env_copy);
-// 	if (!ctx->env_array)
-// 	{
-// 		perror("malloc");
-// 		return (EXIT_FAILURE);
-// 	}
-// 	ctx->shell_ctx = shell_ctx;
-// 	ctx->fds.fd[0] = -1;
-// 	ctx->fds.fd[1] = -1;
-// 	ctx->fds.fd_prev[0] = -1;
-// 	ctx->fds.fd_prev[1] = -1;
-// 	assign_pid(ctx);
-// 	return (EXIT_SUCCESS);
-// }

@@ -1,32 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipes_utils_2.c                                    :+:      :+:    :+:   */
+/*   loop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lalex-ku <lalex-ku@42sp.org.br>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/25 16:36:38 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/28 16:52:15 by anilchen         ###   ########.fr       */
+/*   Created: 2022/06/22 17:32:45 by lalex-ku          #+#    #+#             */
+/*   Updated: 2022/06/22 17:32:50 by lalex-ku         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-#include "process.h"
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
 
-void	close_safe(int fd)
+int	main(int argc, char const *argv[])
 {
-	if (fd >= 0)
-		close(fd);
-}
+	int	pid;
 
-void	dup_stream(int fd, int n)
-{
-	if (fd >= 0)
+	pid = fork();
+	open("infile", O_RDONLY);
+	while (1)
 	{
-		if (dup2(fd, n) == -1)
-		{
-			perror("dup2 failed");
-			exit(EXIT_FAILURE);
-		}
+		printf("Helloo miniHELL %i\n", pid);
+		sleep(1);
 	}
+	return (0);
 }

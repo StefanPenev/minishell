@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 13:32:28 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/27 19:06:13 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/28 19:12:23 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,25 +48,42 @@ void	handle_child_exit_status(pid_t main_pid, t_process *process)
 		fprintf(stderr, "[ERROR] Invalid PID: %d\n", main_pid);
 		return ;
 	}
+
 	status = 0;
-	//printf("Debug(handle_child_exit_status): Waiting for PID: %d\n", main_pid);
+	printf("Debug(handle_child_exit_status): Waiting for PID: %d\n", main_pid);
+
 	if (waitpid(main_pid, &status, 0) == -1)
 	{
 		perror("[ERROR] waitpid failed");
 		set_exit_status(process, 1);
 		return ;
 	}
+
 	if (WIFEXITED(status))
 	{
-		set_exit_status(process, WEXITSTATUS(status));
+		int exit_code = WEXITSTATUS(status);
+		printf("[DEBUG] Process %d exited with status %d\n", main_pid, exit_code);
+		set_exit_status(process, exit_code);
 	}
 	else if (WIFSIGNALED(status))
 	{
-		printf("Process was killed by signal %d\n", WTERMSIG(status));
-		set_exit_status(process, 128 + WTERMSIG(status));
+		int signal = WTERMSIG(status);
+		printf("[DEBUG] Process %d was killed by signal %d (%s)\n", 
+		       main_pid, signal, strsignal(signal));
+		set_exit_status(process, 128 + signal);
+	}
+	else if (WIFSTOPPED(status))
+	{
+		int signal = WSTOPSIG(status);
+		printf("[DEBUG] Process %d was stopped by signal %d (%s)\n",
+		       main_pid, signal, strsignal(signal));
+		// В зависимости от логики, можно обработать остановленный процесс,
+		// но обычно это не требуется для shell.
+		set_exit_status(process, 1);
 	}
 	else
 	{
+		printf("[DEBUG] Process %d ended in an unknown way\n", main_pid);
 		set_exit_status(process, 1);
 	}
 }

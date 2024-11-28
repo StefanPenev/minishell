@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:11:23 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/25 17:20:52 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/28 20:05:25 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ int	execute_cd(t_command *cmd, t_env *env_copy, t_process *process)
 	int	status;
 
 	status = 0;
-	if (cmd->args[1] == NULL)
+	if (cmd->args[1] == NULL || ft_strcmp(cmd->args[1], "~" == 0))
 	{
 		status = cd_to_home(env_copy, process);
 		return (status);
