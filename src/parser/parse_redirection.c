@@ -6,12 +6,29 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 09:56:12 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/27 10:05:26 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/28 18:33:20 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include "minishell.h"
+
+void	append_redirection(t_redirection **head, t_redirection *new_redir)
+{
+	t_redirection	*last;
+
+	if (!*head)
+	{
+		*head = new_redir;
+	}
+	else
+	{
+		last = *head;
+		while (last->next)
+			last = last->next;
+		last->next = new_redir;
+	}
+}
 
 int	handle_filename(t_parser *parser, t_redirection *redir)
 {
@@ -33,35 +50,6 @@ int	handle_filename(t_parser *parser, t_redirection *redir)
 	return (1);
 }
 
-// int	handle_heredoc(t_parser *parser, t_redirection *redir)
-// {
-// 	size_t	content_capacity;
-// 	size_t	content_length;
-// 	int		delimiter_found;
-
-// 	content_length = 0;
-// 	delimiter_found = 0;
-// 	content_capacity = 1024;
-// 	if (!validate_heredoc_token(parser, redir))
-// 		return (0);
-// 	if (!allocate_heredoc_content(redir, content_capacity))
-// 		return (0);
-// 	while (parser->current_token && parser->current_token->type != TOKEN_EOF)
-// 	{
-// 		if (check_heredoc_delimiter(parser, redir, &delimiter_found))
-// 			break ;
-// 		if (!validate_token_value(parser, redir))
-// 			return (0);
-// 		if (!reallocate_heredoc_content_if_needed(parser, redir,
-// 				&content_capacity, &content_length))
-// 			return (0);
-// 		append_heredoc_content(parser, redir, &content_length);
-// 		parser_advance(parser);
-// 	}
-// 	if (!delimiter_found)
-// 		return (handle_missing_delimiter(redir));
-// 	return (1);
-// }
 int handle_heredoc(t_parser *parser, t_redirection *redir) {
     char    *line;
     size_t  content_capacity = 1024;
@@ -116,14 +104,15 @@ t_redirection	*parse_redirection(t_parser *parser)
 
 	if (!parser->current_token
 		|| !is_redirection_token(parser->current_token->type))
-	{
 		return (NULL);
-	}
+
 	redir = allocate_redirection();
 	if (!redir)
 		return (NULL);
+
 	map_token_to_redirection(parser->current_token->type, &redir->type);
 	parser_advance(parser);
+
 	if (redir->type == HEREDOC)
 	{
 		if (!handle_heredoc(parser, redir))

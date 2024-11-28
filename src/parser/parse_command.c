@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 15:26:03 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/25 10:58:48 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/28 18:32:58 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,12 +111,41 @@ int	validate_command(t_command *cmd, size_t args_size)
 	return (!(args_size == 0 && !cmd->redirections));
 }
 
+void	add_redirection_to_command(t_command *command, t_redirection *new_redir)
+{
+	t_redirection	*current;
+
+	if (!command->redirections)
+	{
+		command->redirections = new_redir;
+		return ;
+	}
+	current = command->redirections;
+	while (current)
+	{
+		if (current->type == new_redir->type)
+		{
+			free(current->filename);
+			free(current);
+			new_redir->next = command->redirections->next;
+			command->redirections = new_redir;
+			return ;
+		}
+		if (!current->next)
+			break ;
+		current = current->next;
+	}
+	new_redir->next = NULL;
+	current->next = new_redir;
+}
+
 t_ast	*parse_command(t_parser *parser)
 {
-	t_ast		*node;
-	t_command	*cmd;
-	size_t		args_size;
-	size_t		args_capacity;
+	t_ast			*node;
+	t_command		*cmd;
+	size_t			args_size;
+	size_t			args_capacity;
+	t_redirection	*redir;
 
 	node = allocate_and_initialize_node();
 	if (!node)
@@ -129,18 +158,35 @@ t_ast	*parse_command(t_parser *parser)
 	}
 	args_size = 0;
 	args_capacity = 10;
-	if (!initialize_arguments(cmd, &args_capacity)
-		|| !collect_arguments(parser, cmd, &args_size, &args_capacity))
+	if (!initialize_arguments(cmd, &args_capacity))
 	{
-		command_free(cmd);
 		free(node);
+		command_free(cmd);
+		return (NULL);
+	}
+	if (!collect_arguments(parser, cmd, &args_size, &args_capacity))
+	{
+		free(node);
+		command_free(cmd);
 		return (NULL);
 	}
 	handle_wildcards(parser, cmd);
-	if (!parse_redirections(parser, cmd) || !validate_command(cmd, args_size))
+	while (parser->current_token
+		&& is_redirection_token(parser->current_token->type))
 	{
-		command_free(cmd);
+		redir = parse_redirection(parser);
+		if (!redir)
+		{
+			free(node);
+			command_free(cmd);
+			return (NULL);
+		}
+		add_redirection_to_command(cmd, redir);
+	}
+	if (!validate_command(cmd, args_size))
+	{
 		free(node);
+		command_free(cmd);
 		return (NULL);
 	}
 	node->u_data.command = cmd;
