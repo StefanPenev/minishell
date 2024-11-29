@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 08:55:59 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/25 11:00:07 by stfn             ###   ########.fr       */
+/*   Updated: 2024/11/28 18:34:01 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,6 +243,7 @@ t_ast	*parse_command_line(t_parser *parser)
 {
 	t_ast			*expr;
 	t_redirection	*redir;
+	t_redirection	*last;
 
 	expr = parse_logical_expression(parser);
 	if (!expr)
@@ -258,14 +259,21 @@ t_ast	*parse_command_line(t_parser *parser)
 		}
 		if (expr->type == AST_COMMAND)
 		{
-			redir->next = expr->u_data.command->redirections;
-			expr->u_data.command->redirections = redir;
+			if (!expr->u_data.command->redirections)
+			{
+				expr->u_data.command->redirections = redir;
+			}
+			else
+			{
+				last = expr->u_data.command->redirections;
+				while (last->next)
+					last = last->next;
+				last->next = redir;
+			}
 		}
 		else
 		{
-			ft_print_error(
-				"Error: Redirection not associated with a command.\n",
-				NULL, NULL);
+			ft_print_error("Error: Redirection not associated with a command.\n", NULL, NULL);
 			ast_free(expr);
 			free_redirections(redir);
 			return (NULL);
