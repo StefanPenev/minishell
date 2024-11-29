@@ -6,14 +6,15 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:39:45 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 16:43:35 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/29 15:03:58 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
 
-// function which sort linked blist
+// Function to sort a linked list of t_env nodes in alphabetical order.
+// Uses a bubble sort algorithm by comparing the `key` of each node.
 
 void	sort_t_process_list(t_env **head)
 {
@@ -43,7 +44,9 @@ void	sort_t_process_list(t_env **head)
 	}
 }
 
-// create copy of node to create full copy of list
+// Function to create a copy of a single node in the t_env list.
+// Allocates new memory for the node and duplicates its `key` and `value`.
+
 t_env	*duplicate_t_process_node(t_env *proc)
 {
 	t_env	*new_proc;
@@ -67,7 +70,9 @@ t_env	*duplicate_t_process_node(t_env *proc)
 	return (new_proc);
 }
 
-// create copy of list to sort it
+// Function to create a full copy of a t_env linked list.
+// Allocates new nodes and duplicates the content of the original list.
+
 t_env	*duplicate_t_process_list(t_env *list)
 {
 	t_env	*new_list;
@@ -89,8 +94,10 @@ t_env	*duplicate_t_process_list(t_env *list)
 	return (new_list);
 }
 
-// export without any arguments just sort env_copy in alphabet order and
-// show this list in specific format
+// Function to handle the `export` command with arguments (key, value).
+// If the variable exists, updates its value; otherwise, creates a new node and
+// adds it to the list.
+
 int	export_no_args(t_env *env_copy)
 {
 	t_env	*sorted_list;
@@ -134,7 +141,7 @@ int	export_with_args(char *key, char *value, t_env *env_copy)
 	if (!found)
 	{
 		new_var = minishell_lstnew(key, value);
-		minishell_lstadd_back(&env_copy, new_var);
+		node_add_back(&env_copy, new_var);
 	}
 	return (EXIT_SUCCESS);
 }

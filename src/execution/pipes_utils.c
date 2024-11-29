@@ -6,146 +6,48 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 14:36:21 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/28 19:57:19 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:22:48 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
 
-// void	assign_fds_if_redirection(t_command *cmd)
-// {
-// 	t_redirection	*redir;
-// 	int				fd_out;
-// 	int				fd_append;
-// 	int				fd_in;
-// 	t_redirection	*last_input;
-// 	t_redirection	*last_output;
+// Duplicates a file descriptor to a specific stream (e.g., stdin, stdout,
+// stderr). Uses dup2 to redirect the given file descriptor (fd) to the
+// target stream (n). If dup2 fails,
+// it prints an error message and exits the program with a failure status.
+// Parameters:
+//   - fd: The source file descriptor to duplicate.
+//   - n: The target file descriptor to overwrite (e.g., STDIN_FILENO,
+//	STDOUT_FILENO).
+// Notes:
+//   - If fd is negative,
+//	the function does nothing (no redirection is performed).
+//   - If dup2 fails, perror is used to log the error,
+//	and the program exits immediately to avoid undefined behavior.
 
-// 	while (redir)
-// 	{
-// 		if (redir->type == REDIRECT_INPUT)
-// 		{	
-			
-// 		 	printf("[DEBUG] Parsed redirection: type = %d, number: %d, file = %s\n", redir->type, count, redir->filename);
-// 			last_input = redir; 
-// 			count++; //Debug
-// 		}
-// 		if (redir->type == REDIRECT_OUTPUT || REDIRECT_APPEND)
-// 		{
-// 					 	printf("[DEBUG] Parsed redirection: type = %d, number: %d, file = %s\n", redir->type, count, redir->filename);
-// 			last_input = redir; 
-// 			count++; //Debug
-// 		}
-// 		redir = redir->next;
-// 	}
-// 	redir = cmd->redirections;
-// 	while (redir)
-// 	{
-// 		if (redir->type == REDIRECT_OUTPUT)
-// 		{
-// 			fd_out = open(redir->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-// 			if (fd_out < 0)
-// 			{
-// 				perror("Error opening file for output redirection");
-// 				exit(EXIT_FAILURE);
-// 			}
-// 			dup2(fd_out, STDOUT_FILENO); // Дублируем в STDOUT
-// 			close_safe(fd_out);          // Закрываем дескриптор
-// 		}
-// 		else if (redir->type == REDIRECT_APPEND)
-// 		{
-// 			fd_append = open(redir->filename, O_WRONLY | O_CREAT | O_APPEND,
-// 					0644);
-// 			if (fd_append < 0)
-// 			{
-// 				perror("Error opening file for append redirection");
-// 				exit(EXIT_FAILURE);
-// 			}
-// 			dup2(fd_append, STDOUT_FILENO); // Дублируем в STDOUT
-// 			close_safe(fd_append);          // Закрываем дескриптор
-// 		}
-// 		else if (redir->type == REDIRECT_INPUT)
-// 		{
-// 			fd_in = open(redir->filename, O_RDONLY);
-// 			if (fd_in < 0)
-// 			{
-// 				perror("Error opening file for input redirection");
-// 				exit(EXIT_FAILURE);
-// 			}
-// 			dup2(fd_in, STDIN_FILENO); // Дублируем в STDIN
-// 			close_safe(fd_in);         // Закрываем дескриптор
-// 		}
-// 		redir = redir->next; // Переходим к следующему редиректу
-// 	}
-// }
-
-bool	cmd_has_input_redirection(t_command *cmd)
+void	dup_stream(int fd, int n)
 {
-	t_redirection	*redir;
-
-	redir = cmd->redirections;
-	while (redir)
+	if (fd >= 0)
 	{
-		if (redir->type == REDIRECT_INPUT)
-			return (true);
-		redir = redir->next;
-	}
-	return (false);
-}
-
-bool	cmd_has_output_redirection(t_command *cmd)
-{
-	t_redirection	*redir;
-
-	redir = cmd->redirections;
-	while (redir)
-	{
-		if (redir->type == REDIRECT_OUTPUT || redir->type == REDIRECT_APPEND)
-			return (true);
-		redir = redir->next;
-	}
-	return (false);
-}
-void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag)
-{
-	if (flag == PIPE_FIRST)
-	{
-		if (fds->fd[1] >= 0)
-			dup_stream(fds->fd[1], STDOUT_FILENO);
-		close_safe(fds->fd[0]);
-		close_safe(fds->fd[1]);
-	}
-	else if (flag == PIPE_MIDDLE)
-	{
-		// if (cmd && cmd->redirections)
-		// 	handle_redirections(cmd);
-		if (!cmd_has_input_redirection(cmd) && fds->fd_prev[0] >= 0)
-			dup_stream(fds->fd_prev[0], STDIN_FILENO);
-		if (!cmd_has_output_redirection(cmd) && fds->fd[1] >= 0)
-			dup_stream(fds->fd[1], STDOUT_FILENO);
-		close_safe(fds->fd_prev[0]);
-		close_safe(fds->fd_prev[1]);
-		close_safe(fds->fd[0]);
-		close_safe(fds->fd[1]);
-	}
-	else if (flag == PIPE_LAST)
-	{
-		if (fds->fd[0] >= 0)
-			dup_stream(fds->fd[0], STDIN_FILENO); // Используем пайп как вход
-		close_safe(fds->fd[0]);
-		close_safe(fds->fd[1]);
-	}
-	// Обрабатываем редиректы после настройки пайпов
-	if (cmd && cmd->redirections)
-	{
-		if (handle_redirections(cmd) == -1)
+		if (dup2(fd, n) == -1)
 		{
-			fprintf(stderr, "Error handling redirections\n");
+			perror("dup2 failed");
 			exit(EXIT_FAILURE);
 		}
 	}
 }
+
+// Allocates memory for storing process IDs for all commands in the pipeline.
+// Initializes all process IDs to -1 to indicate that they are not yet assigned.
+// Parameters:
+//   - ctx: Pointer to the pipeline process context,
+// which contains metadata about the pipeline.
+// Returns:
+//   - EXIT_SUCCESS: If memory allocation and initialization are successful.
+//   - EXIT_FAILURE: If memory allocation fails,
+// logs the error and frees allocated resources.
 
 int	assign_pid(t_pipes_process_content *ctx)
 {
@@ -167,6 +69,18 @@ int	assign_pid(t_pipes_process_content *ctx)
 	return (EXIT_SUCCESS);
 }
 
+// Traverses the AST (Abstract Syntax Tree) to collect all commands in execution
+// order. Populates the provided `cmds` array with pointers to the commands
+// and increments the count.
+// Parameters:
+//   - ast: Pointer to the current AST node.
+//   - cmds: Array to store the collected commands in order of execution.
+//
+//	- count: Pointer to an integer that tracks the number of collected commands.
+// Notes:
+//   - Recursively traverses the AST,
+//	processing commands in the left-to-right order of the pipeline.
+
 void	collect_commands_in_order(t_ast *ast, t_command *cmds[], int *count)
 {
 	if (ast == NULL)
@@ -183,6 +97,13 @@ void	collect_commands_in_order(t_ast *ast, t_command *cmds[], int *count)
 	}
 }
 
+// Counts the total number of commands in the AST (Abstract Syntax Tree).
+// Recursively traverses the AST to sum up all command nodes.
+// Parameters:
+//   - ast: Pointer to the current AST node.
+// Returns:
+//   - The total number of commands in the AST.
+
 int	count_commands_in_ast(t_ast *ast)
 {
 	if (!ast)
@@ -195,12 +116,28 @@ int	count_commands_in_ast(t_ast *ast)
 	return (0);
 }
 
+// Initializes the pipeline process context for executing the commands
+// in the AST. Performs the following steps:
+//   1. Counts the total number of commands in the AST.
+//   2. Allocates memory for storing process IDs for each command.
+//   3. Collects all commands from the AST in execution order.
+//   4. Creates an environment variable array for the process context.
+//   5. Initializes all pipe-related file descriptors to -1.
+// Parameters:
+//   - ast: Pointer to the AST representing the pipeline.
+//   - shell_ctx: Pointer to the shell context, which contains global state.
+//   - ctx: Pointer to the pipeline process context to initialize.
+// Returns:
+//   - EXIT_SUCCESS: If all initialization steps are successful.
+//   - EXIT_FAILURE: If memory allocation fails at any step.
+
 int	initialize_pipes_process(t_ast *ast, t_shell_context *shell_ctx,
 		t_pipes_process_content *ctx)
 {
 	int	count;
 
 	count = 0;
+	ctx->finish = 0;
 	ctx->pid = NULL;
 	ctx->cmd_count = count_commands_in_ast(ast);
 	assign_pid(ctx);

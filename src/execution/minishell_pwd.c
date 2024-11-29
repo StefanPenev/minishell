@@ -6,14 +6,19 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:12:27 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 13:40:53 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/29 15:19:18 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
 
-// pwd shouldnt have any arguments, but if they are, it still works
+// Executes the `pwd` command, which prints the current working directory.
+// The command does not require any arguments, but if arguments are provided,
+// it still works as expected. It searches for the "PWD" environment variable
+// in the linked list and prints its value.
+// If "PWD" is not found, the function still exits successfully with no output.
+
 int	execute_pwd(t_env *env_copy, t_process *process)
 {
 	t_env	*current;

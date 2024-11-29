@@ -6,18 +6,25 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:08:31 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/26 12:42:56 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/29 14:29:06 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
 
+// Executes the `echo` command with support for the `-n` flag to
+// suppress the trailing newline.
+// Arguments are printed to the standard output, separated by spaces.
+// - `cmd->args[i]`: Holds the arguments passed to the `echo` command.
+// - `-n`: If present, suppresses the trailing newline.
+// - `set_exit_status`: Sets the exit status to 0 (success) after execution.
+
 int	execute_echo(t_command *cmd, t_process *process)
 {
 	bool	no_newline;
 	int		i;
-	//printf("hello from echo\n");
+
 	no_newline = false;
 	i = 1;
 	while (cmd->args[i] && ft_strcmp(cmd->args[i], "-n") == 0)

@@ -6,12 +6,17 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 14:43:02 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/28 14:39:51 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/29 16:13:53 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
+
+// Executes the first command in a pipeline.
+// Configures the file descriptors for the pipeline, handles built-in commands,
+// and executes external commands.
+// Exits with the appropriate status if an error occurs.
 
 void	first_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 		t_shell_context *shell_ctx)
@@ -21,7 +26,6 @@ void	first_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 	handle_streams(fds, cmd, PIPE_FIRST);
 	if (is_builtin(cmd))
 	{
-		// handle_streams(fds, PIPE_FIRST);
 		execute_builtin(cmd, shell_ctx->env_copy, shell_ctx->process);
 		exit(shell_ctx->process->last_exit_status);
 	}
@@ -36,87 +40,79 @@ void	first_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 			exit(127);
 		}
 	}
-	// handle_streams(fds, PIPE_FIRST);
 	execve(full_path, cmd->args, env_array);
 	printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));
 	exit(EXIT_FAILURE);
 }
 
-void	execute_middle_cmd(t_pipe_fds *fds, t_pipes_process_content *cmd_ctx,
-		t_command *cmd)
+// Executes a command in the middle of a pipeline.
+// Configures the file descriptors for the pipeline, handles built-in commands,
+// and executes external commands.
+// Exits with the appropriate status if an error occurs.
+
+void	execute_middle_cmd(t_pipe_fds *fds, t_command *cmd,
+		t_pipes_process_content *ctx)
 {
 	char	*full_path;
 
 	handle_streams(fds, cmd, PIPE_MIDDLE);
 	if (is_builtin(cmd))
 	{
-		// handle_streams(fds, PIPE_MIDDLE);
-		execute_builtin(cmd, cmd_ctx->shell_ctx->env_copy,
-			cmd_ctx->shell_ctx->process);
-		exit(cmd_ctx->shell_ctx->process->last_exit_status);
+		execute_builtin(cmd, ctx->shell_ctx->env_copy,
+			ctx->shell_ctx->process);
+		exit(ctx->shell_ctx->process->last_exit_status);
 	}
 	if (is_executable(cmd->args[0]))
 		full_path = cmd->args[0];
 	else
 	{
-		full_path = find_full_path(cmd->args[0], cmd_ctx->env_array);
+		full_path = find_full_path(cmd->args[0], ctx->env_array);
 		if (!full_path)
 		{
 			printf("minishell: %s: No such file or directory\n", cmd->args[0]);
 			exit(127);
 		}
 	}
-	//	handle_streams(fds, PIPE_MIDDLE);
-	execve(full_path, cmd->args, cmd_ctx->env_array);
+	execve(full_path, cmd->args, ctx->env_array);
 	printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));
 	exit(EXIT_FAILURE);
 }
 
+// Creates a process for a middle command in a pipeline.
+// Sets up the necessary pipes, forks a new process,
+//	and executes the middle command.
+
 int	process_middle_cmd(t_pipe_fds *fds, pid_t *pid, t_command *cmd,
-		t_pipes_process_content *cmd_ctx)
+		t_pipes_process_content *ctx)
 {
-	//int status = 0;
 	fds->fd_prev[0] = fds->fd[0];
 	fds->fd_prev[1] = fds->fd[1];
-	if (pipe(cmd_ctx->fds.fd) == -1)
+	if (pipe(ctx->fds.fd) == -1)
 	{
 		ft_putstr_fd("Pipe failed\n", 2);
-		set_exit_status(cmd_ctx->shell_ctx->process, 1);
-		free_splitted(cmd_ctx->env_array);
+		set_exit_status(ctx->shell_ctx->process, 1);
+		free_splitted(ctx->env_array);
 		return (EXIT_FAILURE);
 	}
-	//printf("[DEBUG] middle cmd - pipe created\n");
 	*pid = fork();
 	if (*pid == -1)
+	{
+		ft_putstr_fd("Fork failed: Unable to create new process\n", 2);
 		return (-1);
+	}
 	if (*pid == 0)
 	{
-		// printf("[DEBUG] Дочерний процесс создан для middle команды: %s\n",
-		// 	cmd->args[0]);
-		execute_middle_cmd(&cmd_ctx->fds, cmd_ctx, cmd);
-		exit(EXIT_FAILURE); 
+		execute_middle_cmd(&ctx->fds, cmd, ctx);
+		exit(EXIT_FAILURE);
 	}
-	// 		else
-	// {
-	// 	// Родительский процесс
-	// 	waitpid(*pid, &status, 0);
-	// 	if (WIFEXITED(status))
-	// 	{
-	// 		int exit_code = WEXITSTATUS(status);
-	// 		if (exit_code != 0)
-	// 		{
-	// 			close_safe(fds->fd_prev[0]);
-	// 			close_safe(fds->fd_prev[1]);
-	// 			cmd_ctx->shell_ctx->process->last_exit_status = exit_code;
-	// 			fprintf(stderr, "[ERROR] Первая команда завершилась с ошибкой: %s\n", cmd->args[0]);
-	// 			return (EXIT_FAILURE);
-	// 		}
-	// 	}
-	// }
 	close_safe(fds->fd_prev[0]);
 	close_safe(fds->fd_prev[1]);
 	return (EXIT_SUCCESS);
 }
+
+// Executes the last command in a pipeline.
+// Configures the file descriptors for the pipeline,
+// handles built-in commands, and executes external commands.
 
 void	last_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 		t_shell_context *shell_ctx)
@@ -126,7 +122,6 @@ void	last_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 	handle_streams(fds, cmd, PIPE_LAST);
 	if (is_builtin(cmd))
 	{
-		// handle_streams(fds,PIPE_LAST);
 		execute_builtin(cmd, shell_ctx->env_copy, shell_ctx->process);
 		exit(shell_ctx->process->last_exit_status);
 	}
@@ -141,7 +136,6 @@ void	last_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 			exit(127);
 		}
 	}
-	// handle_streams(fds, PIPE_LAST);
 	execve(full_path, cmd->args, env_array);
 	printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));
 	exit(EXIT_FAILURE);

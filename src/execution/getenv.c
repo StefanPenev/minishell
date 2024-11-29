@@ -6,27 +6,18 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:09:36 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/22 14:49:54 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:11:31 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
 
-// // debug function, delete afterwards
-// void	printList(t_env *head)
-// {
-// 	t_env	*current;
+// This function retrieves the value of an environment variable from
+// the linked list.
+// If the variable name is "?", it returns the last exit status as a string.
+// If the variable is not found, it returns an empty string.
 
-// 	current = head;
-// 	while (current != NULL)
-// 	{
-// 		printf("Key: %s, Value: %s\n", current->key, current->value);
-// 		current = current->next;
-// 	}
-// }
-
-// get anv value
 char	*get_env_value(char *name, t_env *env_copy, t_process *process)
 {
 	t_env	*cur;
@@ -49,8 +40,11 @@ char	*get_env_value(char *name, t_env *env_copy, t_process *process)
 	return (ft_strdup(""));
 }
 
-// create node
-t_env	*create_node(char *env_str)
+// This function creates a new node for the environment linked list.
+// It takes a key=value string, separates them, and stores them in the node.
+// If there is no '=', it sets the value to NULL.
+
+t_env	*create_env_node(char *env_str)
 {
 	t_env	*node;
 	char	*equal;
@@ -75,7 +69,10 @@ t_env	*create_node(char *env_str)
 	return (node);
 }
 
-// create linked list
+// This function initializes the environment linked list from the envp array.
+// It iterates over envp, creates a node for each entry,
+//	and appends it to the list.
+
 t_env	*init_env(char **envp)
 {
 	t_env	*env_copy;
@@ -86,14 +83,17 @@ t_env	*init_env(char **envp)
 	i = 0;
 	while (envp[i] != NULL)
 	{
-		new_var = create_node(envp[i]);
-		minishell_lstadd_back(&env_copy, new_var);
+		new_var = create_env_node(envp[i]);
+		node_add_back(&env_copy, new_var);
 		i++;
 	}
 	return (env_copy);
 }
 
-// set env value
+// This function updates or adds an environment variable in the linked list.
+// If the key exists, it updates its value. If not,
+// it frees the value without adding.
+
 void	my_setenv(char *key, char *value, t_env *env_copy)
 {
 	t_env	*current;
@@ -112,7 +112,10 @@ void	my_setenv(char *key, char *value, t_env *env_copy)
 	free(value);
 }
 
-//creatre env_array from list
+// This function converts the environment linked list into a
+// NULL-terminated array. Each entry is formatted as key=value.
+// It allocates memory dynamically for the array.
+
 char	**create_env_array(t_env *env_copy)
 {
 	t_env	*cur;
@@ -121,10 +124,8 @@ char	**create_env_array(t_env *env_copy)
 	char	**env_array;
 	char	*key_value;
 
-	env_count = minishell_lstsize(env_copy);
-	// +1 for NULL
+	env_count = lstsize(env_copy);
 	env_array = malloc(sizeof(char *) * (env_count + 1));
-	// copying from list to array
 	cur = env_copy;
 	i = 0;
 	while (cur != NULL)

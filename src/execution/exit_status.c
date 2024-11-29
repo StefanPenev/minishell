@@ -6,25 +6,15 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 15:25:48 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/20 14:47:46 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/29 13:45:42 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "process.h"
 
-// void	call_exit_status(t_process *process)
-// {
-// 	char	*status_str;
-
-// 	status_str = ft_itoa(process->last_exit_status);
-// 	write(1, status_str, ft_strlen(status_str));
-// 	free(status_str);
-// }
+// Updates the last exit status in the process structure.
 
 void	set_exit_status(t_process *process, int status)
 {
 	process->last_exit_status = status;
 }
-
-	// printf("Debug(set_exit_status): status updated, code %d\n",
-	//	process->last_exit_status);

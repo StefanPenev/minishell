@@ -6,38 +6,18 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 13:32:28 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/28 19:12:23 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:24:49 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
 
-void	handle_child_process(t_command *cmd, char **env_array)
-{
-	char	*full_path;
-
-	// if path provided, like /bin/ls -l
-	if (is_executable(cmd->args[0]))
-		execve(cmd->args[0], cmd->args, env_array);
-	// if not we have to search for path
-	else
-	{
-		full_path = find_full_path(cmd->args[0], env_array);
-		if (!full_path)
-		{
-			printf("minishell: Command '%s' not found\n", cmd->args[0]);
-			// printf("minishell: %s: No such file or directory\n",
-			//	cmd->args[0]);
-			exit(127);
-		}
-		execve(full_path, cmd->args, env_array);
-		free(full_path);
-	}
-	// If execve fails
-	printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));
-	exit(1);
-}
+// Waits for a child process to finish and processes its exit status.
+// Updates the process exit status based on the child's termination type.
+// Parameters:
+//   - main_pid: PID of the child process to wait for.
+//   - process: Pointer to the process structure to update the exit status.
 
 void	handle_child_exit_status(pid_t main_pid, t_process *process)
 {
@@ -45,48 +25,67 @@ void	handle_child_exit_status(pid_t main_pid, t_process *process)
 
 	if (main_pid <= 0)
 	{
-		fprintf(stderr, "[ERROR] Invalid PID: %d\n", main_pid);
+		printf("[ERROR] Invalid PID: %d\n", main_pid);
+		set_exit_status(process, 1);
 		return ;
 	}
-
-	status = 0;
-	printf("Debug(handle_child_exit_status): Waiting for PID: %d\n", main_pid);
-
 	if (waitpid(main_pid, &status, 0) == -1)
 	{
 		perror("[ERROR] waitpid failed");
 		set_exit_status(process, 1);
 		return ;
 	}
-
 	if (WIFEXITED(status))
-	{
-		int exit_code = WEXITSTATUS(status);
-		printf("[DEBUG] Process %d exited with status %d\n", main_pid, exit_code);
-		set_exit_status(process, exit_code);
-	}
+		set_exit_status(process, WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))
-	{
-		int signal = WTERMSIG(status);
-		printf("[DEBUG] Process %d was killed by signal %d (%s)\n", 
-		       main_pid, signal, strsignal(signal));
-		set_exit_status(process, 128 + signal);
-	}
-	else if (WIFSTOPPED(status))
-	{
-		int signal = WSTOPSIG(status);
-		printf("[DEBUG] Process %d was stopped by signal %d (%s)\n",
-		       main_pid, signal, strsignal(signal));
-		// В зависимости от логики, можно обработать остановленный процесс,
-		// но обычно это не требуется для shell.
+		set_exit_status(process, 128 + WTERMSIG(status));
+	else
 		set_exit_status(process, 1);
+}
+
+// Handles the execution of a child process in a shell-like environment.
+// Executes a command by either finding it in the PATH or directly running it.
+// Handles errors such as missing commands or invalid paths.
+// Parameters:
+//   - cmd: Pointer to the command structure containing arguments.
+//   - env_array: Array of environment variables for the process.
+
+void	handle_child_process(t_command *cmd, char **env_array)
+{
+	char		*full_path;
+	struct stat	path_stat;
+
+	if (stat(cmd->args[0], &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
+	{
+		printf("minishell: %s: Is a directory\n", cmd->args[0]);
+		exit(126);
 	}
+	if (is_executable(cmd->args[0]))
+		execve(cmd->args[0], cmd->args, env_array);
 	else
 	{
-		printf("[DEBUG] Process %d ended in an unknown way\n", main_pid);
-		set_exit_status(process, 1);
+		full_path = find_full_path(cmd->args[0], env_array);
+		if (!full_path)
+		{
+			printf("minishell: Command '%s' not found\n", cmd->args[0]);
+			exit(127);
+		}
+		execve(full_path, cmd->args, env_array);
+		free(full_path);
 	}
+	printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));
+	exit(1);
 }
+
+// Executes an external command by forking a new process and waiting for it.
+// Handles both direct executable paths and commands resolved via PATH.
+// Parameters:
+//   - cmd: Pointer to the command structure containing arguments.
+//   - env_copy: Pointer to the environment variable list.
+//   - process: Pointer to the process structure to manage the exit status.
+// Returns:
+//   - EXIT_SUCCESS: If the command is executed successfully.
+//   - EXIT_FAILURE: If an error occurs.
 
 int	execute_external_commands(t_command *cmd, t_env *env_copy,
 		t_process *process)
@@ -94,7 +93,6 @@ int	execute_external_commands(t_command *cmd, t_env *env_copy,
 	pid_t	main_pid;
 	char	**env_array;
 
-	// ask Stefan about checking for NULL arguments, delete if he have it
 	if (cmd->args == NULL || cmd->args[0] == NULL)
 	{
 		printf("minishell: Command not found\n");

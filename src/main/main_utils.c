@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:05 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/29 12:43:55 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:52:52 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ t_token	*process_lexer(char *input, t_shell_context **shell_ctx)
 		free(input);
 		return (NULL);
 	}
-	print_tokens(tokens);
+	//print_tokens(tokens);
 	return (tokens);
 }
 
@@ -51,7 +51,7 @@ t_ast	*process_parser(t_token *tokens)
 		lexer_free_tokens(tokens);
 		return (NULL);
 	}
-	print_ast(ast, 0);
+	//print_ast(ast, 0);
 	return (ast);
 }
 

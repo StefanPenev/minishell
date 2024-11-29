@@ -6,35 +6,39 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:14:41 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/21 12:37:19 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/29 15:12:37 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
 
+// Validates if the given string `arg` is a valid identifier.
+// An identifier must start with a letter or underscore (_) and can contain
+// only letters, digits, or underscores.
+
 int	is_valid(char *arg)
 {
 	int	i;
 
+	i = 1;
 	if (!arg || arg[0] == '\0')
 		return (0);
-	if (!((arg[0] >= 'A' && arg[0] <= 'Z') || (arg[0] >= 'a' && arg[0] <= 'z')
-			|| arg[0] == '_'))
+	if (!ft_isalpha(arg[0]) && arg[0] != '_')
 		return (0);
-	i = 1;
 	while (arg[i] != '\0')
 	{
-		if (!((arg[i] >= 'A' && arg[i] <= 'Z') || (arg[i] >= 'a'
-					&& arg[i] <= 'z') || (arg[i] >= '0' && arg[i] <= '9')
-				|| arg[i] == '_'))
-		{
+		if (!ft_isalnum(arg[i]) && arg[i] != '_')
 			return (0);
-		}
 		i++;
 	}
 	return (1);
 }
+
+// Splits the argument `arg` into a key and a value based on the '=' character.
+// If '=' is found, `key` will be the part before '=' and `value` will be the
+// part after it. If '=' is not found, the entire `arg` becomes the key,
+//	and `value` is set to NULL.
 
 void	split_key_value(char *arg, char **key, char **value)
 {
@@ -55,6 +59,10 @@ void	split_key_value(char *arg, char **key, char **value)
 	}
 }
 
+// Processes the given `key` and `value` for the export command.
+// If the `key` is invalid, prints an error and sets the process exit status.
+// Otherwise, adds or updates the variable in the environment.
+
 int	process_export_argument(char *key, char *value, t_env *env_copy,
 		t_process *process)
 {
@@ -70,7 +78,10 @@ int	process_export_argument(char *key, char *value, t_env *env_copy,
 	return (EXIT_SUCCESS);
 }
 
-// main export
+// Main function to handle the `export` command. If no arguments are
+// provided, calls `export_no_args` to list environment variables.
+// Otherwise, processes each argument to add or update variables.
+
 int	execute_export(t_command *cmd, t_env *env_copy, t_process *process)
 {
 	int		i;

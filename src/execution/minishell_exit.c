@@ -6,12 +6,18 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 13:38:22 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/25 15:25:55 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/29 15:02:07 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
+
+// Handles the `exit` command output and error messages based on 
+// the action_flag:
+// - action_flag == 0: Normal exit with the last process exit status.
+// - action_flag == 1: Error for too many arguments.
+// - action_flag == 2: Error for a non-numeric argument, exits with code 2.
 
 void	exit_msgs(t_command *cmd, t_process *process, int action_flag)
 {
@@ -36,6 +42,9 @@ void	exit_msgs(t_command *cmd, t_process *process, int action_flag)
 	}
 }
 
+// Checks if the provided argument is a valid numeric string.
+// Supports optional '+' or '-' at the start.
+
 int	is_numeric_argument(const char *arg)
 {
 	int	i;
@@ -52,18 +61,30 @@ int	is_numeric_argument(const char *arg)
 	return (1);
 }
 
-int	calculate_exit_code(const char *arg)
+// Calculates the exit code by taking the numeric value modulo 256.
+// Ensures the exit code is always between 0 and 255.
+int	calculate_exit_code(const char *arg, t_command *cmd, t_process *process)
 {
-	int	exit_code;
+	long	exit_code;
+	int		overflow;
 
-	exit_code = ft_atoi(arg);
+	overflow = 0;
+	exit_code = ft_atol(arg, &overflow);
+	if (overflow)
+	{
+		exit_msgs(cmd, process, 2);
+	}
 	exit_code = exit_code % 256;
 	if (exit_code < 0)
 	{
 		exit_code += 256;
 	}
-	return (exit_code);
+	return ((int)exit_code);
 }
+
+// Executes the `exit` command.
+// Handles cases for no arguments, too many arguments,
+//	and non-numeric arguments.
 
 void	execute_exit(t_command *cmd, t_process *process)
 {
@@ -79,7 +100,7 @@ void	execute_exit(t_command *cmd, t_process *process)
 	}
 	if (!is_numeric_argument(cmd->args[1]))
 		exit_msgs(cmd, process, 2);
-	exit_code = calculate_exit_code(cmd->args[1]);
+	exit_code = calculate_exit_code(cmd->args[1], cmd, process);
 	write(1, "exit\n", 5);
 	exit(exit_code);
 }

@@ -6,29 +6,37 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 17:53:05 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/26 12:35:31 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/29 14:34:00 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
 
+// Executes the `env` command by printing all environment variables.
+// - Iterates through the environment linked list (`env_copy`).
+// - Only prints variables that have a non-NULL value.
+// - Sets the process exit status to success (0).
+
 int	execute_env(t_env *env_copy, t_process *process)
 {
 	t_env	*cur;
+	size_t	key_len;
+	size_t	value_len;
 
 	cur = env_copy;
 	while (cur != NULL)
 	{
-		if (cur->value == NULL)
+		if (cur->value != NULL)
 		{
-			cur = cur->next;
+			key_len = ft_strlen(cur->key);
+			value_len = ft_strlen(cur->value);
+			write(STDOUT_FILENO, cur->key, key_len);
+			write(STDOUT_FILENO, "=", 1);
+			write(STDOUT_FILENO, cur->value, value_len);
+			write(STDOUT_FILENO, "\n", 1);
 		}
-		else
-		{
-			printf("%s=%s\n", cur->key, cur->value);
-			cur = cur->next;
-		}
+		cur = cur->next;
 	}
 	set_exit_status(process, 0);
 	return (EXIT_SUCCESS);
