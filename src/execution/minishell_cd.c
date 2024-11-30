@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_cd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:11:23 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/29 17:24:08 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/30 12:20:03 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ int	cd_to_home(t_env *env_copy, t_process *process)
 	char	*old_path;
 
 	old_path = NULL;
+	new_path = NULL;
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		return (handle_cd_error(ERR_CWD, new_path, old_path, process));
 	old_path = ft_strdup(cwd);
@@ -115,6 +116,7 @@ int	cd_to_path(const char *path, t_env *env_copy, t_process *process)
 	char	*old_path;
 
 	old_path = NULL;
+	new_path = NULL;
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		return (handle_cd_error(ERR_CWD, new_path, old_path, process));
 	old_path = ft_strdup(cwd);

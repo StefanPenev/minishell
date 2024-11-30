@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_unset.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 12:57:45 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/29 15:33:13 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/11/30 12:16:32 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,9 @@ void	del_node(t_env **head, char *key)
 
 int	execute_unset(t_command *cmd, t_env *env_copy, t_process *process)
 {
-	t_env	*cur;
 	int		i;
 
 	i = 1;
-	cur = env_copy;
 	if (cmd->args[1] == NULL)
 	{
 		set_exit_status(process, 0);
