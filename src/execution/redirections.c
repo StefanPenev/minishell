@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 13:33:29 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/29 17:34:42 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/01 01:05:35 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,16 +47,26 @@ int	redir_out(t_redirection *redir)
 	return (0);
 }
 
-int	redir_in(t_redirection *redir)
+int	redir_in(t_redirection *redir, t_command *cmd)
 {
-	if (redir->type == REDIRECT_INPUT || redir->type == HEREDOC)
+	if (redir->type == REDIRECT_INPUT)
 	{
 		if (redir_input(redir) == -1)
 			return (-1);
 	}
 	else if (redir->type == HEREDOC)
 	{
-		// code ../
+		if (heredoc(redir) == -1)
+			return (-1);
+		if (is_builtin(cmd))
+		{
+			if (dup2(redir->fd, STDIN_FILENO) == -1)
+			{
+				perror("dup2");
+				return (-1);
+			}
+			close(redir->fd);
+		}
 	}
 	return (0);
 }
@@ -76,7 +86,7 @@ int	handle_redirections(t_command *cmd)
 		}
 		else if (redir->type == REDIRECT_INPUT || redir->type == HEREDOC)
 		{
-			if (redir_in(redir) == -1)
+			if (redir_in(redir, cmd) == -1)
 				return (-1);
 		}
 		else

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 11:20:43 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/29 17:35:53 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/01 00:38:32 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,5 +199,6 @@ int								redir_input(t_redirection *redir);
 /*                                  Heredoc									  */
 /* ************************************************************************** */
 char							*read_string(void);
+int								heredoc(t_redirection *redir);
 
 #endif

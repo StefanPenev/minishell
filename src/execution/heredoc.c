@@ -6,67 +6,17 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:05:03 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/27 11:25:59 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/01 01:17:07 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "process.h"
 #include "minishell.h"
 
-// static char	*read_string(void)
-// {
-// 	char	buffer[1024];
-// 	ssize_t	bytes_read;
-
-// 	bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer) - 1);
-// 	if (bytes_read <= 0)
-// 		return (NULL);
-// 	buffer[bytes_read] = '\0';
-// 	return (ft_strdup(buffer));
-// }
-char	*read_string(void)
+int	handle_missing_delimiter(t_redirection *redir)
 {
-	char	*input;
-
-	input = readline("");
-	if (!input)
-		return (NULL);
-	return (input);
-}
-
-
-// void	here_doc(char *limiter, some_arguments)
-// {
-// 	char	*data;
-
-// 	while (1)
-// 	{
-// 		ft_printf("heredoc> ");
-// 		data = read_string();
-// 		if (ft_strncmp(data, limiter, ft_strlen(limiter)) == 0
-// 			&& data[ft_strlen(limiter)] == '\n')
-// 		{
-// 			free(data);
-// 			break ;
-// 		}
-// 		write(arg_list->file1, data, ft_strlen(data));
-// 		free(data);
-// 	}
-// }
-
-void	create_temp_file(char *temp_file)
-{
-	char	*pid_str;
-
-	pid_str = ft_itoa(getpid());
-	if (pid_str == NULL)
-	{
-		perror("ft_itoa");
-		exit(1);
-	}
-	strcpy(temp_file, "/tmp/heredoc_");
-	strcat(temp_file, pid_str);
-	free(pid_str);
+    fprintf(stderr, "Error: Expected heredoc delimiter '%s' not found before end of input.\n", redir->filename);
+	return (0);
 }
 
 int	open_temp_file(char *temp_file)
@@ -82,69 +32,58 @@ int	open_temp_file(char *temp_file)
 	return (temp_fd);
 }
 
-void	write_to_temp_file(int temp_fd, char *limiter)
-{
-	char	*data;
-
-	while (1)
-	{
-		printf("heredoc> ");
-		data = readline(NULL);
-		if (!data)
-			break ;
-		if (strcmp(data, limiter) == 0)
-		{
-			free(data);
-			break ;
-		}
-		write(temp_fd, data, strlen(data));
-		write(temp_fd, "\n", 1);
-		free(data);
-	}
-}
-
-void	execute_child_process(char *temp_file)
-{
-	int	temp_fd;
-
-	temp_fd = open(temp_file, O_RDONLY);
-	if (temp_fd == -1)
-	{
-		perror("open");
-		exit(1);
-	}
-	dup2(temp_fd, STDIN_FILENO);
-	close(temp_fd);
-	execlp("cat", "cat", NULL);
-	perror("execlp");
-	exit(1);
-}
-
-void	handle_process(char *temp_file)
+void	create_temp_file(char *temp_file)
 {
 	pid_t	pid;
 
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		exit(1);
-	}
-	if (pid == 0)
-		execute_child_process(temp_file);
-	else
-		wait(NULL);
+	pid = getpid();
+	sprintf(temp_file, "/tmp/heredoc_%d", pid);
 }
 
-void	here_doc(char *limiter)
+char	*read_string(void)
 {
-	char	temp_file[64];
+	char	*input;
+
+	input = readline(NULL);
+	if (!input)
+		return (NULL);
+	return (input);
+}
+
+int	heredoc(t_redirection *redir)
+{
+	char	*line;
 	int		temp_fd;
+	char	temp_file[64];
 
 	create_temp_file(temp_file);
 	temp_fd = open_temp_file(temp_file);
-	write_to_temp_file(temp_fd, limiter);
+	while (1)
+	{
+		line = readline("heredoc> ");
+		if (!line)
+		{
+			close(temp_fd);
+			unlink(temp_file);
+			return (handle_missing_delimiter(redir));
+		}
+		if (ft_strcmp(line, redir->filename) == 0)
+		{
+			free(line);
+			break ;
+		}
+		write(temp_fd, line, ft_strlen(line));
+		write(temp_fd, "\n", 1);
+		free(line);
+	}
 	close(temp_fd);
-	handle_process(temp_file);
+	redir->fd = open(temp_file, O_RDONLY);
+	if (redir->fd == -1)
+	{
+		perror("open");
+		unlink(temp_file);
+		return (-1);
+	}
 	unlink(temp_file);
+	return (0);
 }

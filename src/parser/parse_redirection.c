@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 09:56:12 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/28 18:33:20 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/01 00:43:51 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,35 +50,11 @@ int	handle_filename(t_parser *parser, t_redirection *redir)
 	return (1);
 }
 
-int handle_heredoc(t_parser *parser, t_redirection *redir) {
-    char    *line;
-    size_t  content_capacity = 1024;
-    size_t  content_length = 0;
-
-    if (!validate_heredoc_token(parser, redir))
-        return 0;
-    if (!allocate_heredoc_content(redir, content_capacity))
-        return 0;
-
-    while (1) {
-        printf("heredoc> ");
-        line = read_string(); // Read a line from stdin
-        if (!line) {
-            // Handle EOF or read error
-            return handle_missing_delimiter(redir);
-        }
-        if (ft_strcmp(line, redir->filename) == 0) {
-            free(line);
-            break;
-        }
-        if (!reallocate_heredoc_content_if_needed(line, redir, &content_capacity, &content_length)) {
-            free(line);
-            return 0;
-        }
-        append_heredoc_content(line, redir, &content_length);
-        free(line);
-    }
-    return 1;
+int	handle_heredoc(t_parser *parser, t_redirection *redir)
+{
+	if (!validate_heredoc_token(parser, redir))
+		return (0);
+	return (1);
 }
 
 t_redirection	*allocate_redirection(void)
@@ -109,10 +85,8 @@ t_redirection	*parse_redirection(t_parser *parser)
 	redir = allocate_redirection();
 	if (!redir)
 		return (NULL);
-
 	map_token_to_redirection(parser->current_token->type, &redir->type);
 	parser_advance(parser);
-
 	if (redir->type == HEREDOC)
 	{
 		if (!handle_heredoc(parser, redir))

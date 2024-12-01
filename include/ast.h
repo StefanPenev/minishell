@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:17:30 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/24 17:06:46 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/01 00:37:33 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_redirection
 	t_redirection_type		type;
 	char					*filename;
 	char					*heredoc_content;
+	int						fd;
 	struct s_redirection	*next;
 }	t_redirection;
 

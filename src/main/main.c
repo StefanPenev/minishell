@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/29 17:47:10 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/01 00:36:21 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,25 +115,65 @@ int	setup_redirections(t_command *cmd, int *saved_stdin, int *saved_stdout,
 	return (0);
 }
 
-void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
-{
-	int saved_stdin, saved_stdout, saved_stderr;
-	if (setup_redirections(cmd, &saved_stdin, &saved_stdout, &saved_stderr) ==
-		-1)
-	{
-		set_exit_status((*shell_ctx)->process, 1);
-		return ;
-	}
-	if (is_builtin(cmd))
-	{
-		execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
-	}
-	else
-	{
-		execute_external_commands(cmd, (*shell_ctx)->env_copy,
-			(*shell_ctx)->process);
-	}
-	restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+// void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
+// {
+// 	int saved_stdin, saved_stdout, saved_stderr;
+// 	if (setup_redirections(cmd, &saved_stdin, &saved_stdout, &saved_stderr) ==
+// 		-1)
+// 	{
+// 		set_exit_status((*shell_ctx)->process, 1);
+// 		return ;
+// 	}
+// 	if (is_builtin(cmd))
+// 	{
+// 		execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
+// 	}
+// 	else
+// 	{
+// 		execute_external_commands(cmd, (*shell_ctx)->env_copy,
+// 			(*shell_ctx)->process);
+// 	}
+// 	restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+// }
+void execute_ast_command(t_command *cmd, t_shell_context **shell_ctx) {
+    int saved_stdin, saved_stdout, saved_stderr;
+
+    if (setup_redirections(cmd, &saved_stdin, &saved_stdout, &saved_stderr) == -1)
+        return;
+
+    if (is_builtin(cmd)) {
+        execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
+    } else {
+        pid_t pid = fork();
+        if (pid == -1) {
+            perror("fork");
+            restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+            return;
+        }
+        if (pid == 0) {
+            // Child process
+            t_redirection *redir = cmd->redirections;
+            while (redir) {
+                if (redir->type == HEREDOC) {
+                    if (dup2(redir->fd, STDIN_FILENO) == -1) {
+                        perror("dup2");
+                        exit(EXIT_FAILURE);
+                    }
+                    close(redir->fd);
+                }
+                // Handle other input/output redirections if necessary
+                redir = redir->next;
+            }
+            // Execute the external command
+            execute_external_commands(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
+            exit(EXIT_SUCCESS);
+        } else {
+            // Parent process
+            waitpid(pid, NULL, 0);
+        }
+    }
+
+    restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
 }
 
 void	process_command(char *input, t_shell_context **shell_ctx)
@@ -211,129 +251,3 @@ int	main(int argc, char **argv, char **envp)
 	restore_terminal(&ctx);
 	return (0);
 }
-
-// For test purposes to isolate lexer and parser from execution
-// void test_lexer_parser(char *input, t_shell_context **shell_ctx)
-// {
-//     t_token *tokens;
-//     t_ast *ast;
-
-//     tokens = process_lexer(input, shell_ctx);
-//     if (!tokens)
-//     {
-//         free(input);
-//         return ;
-//     }
-//     ast = process_parser(tokens);
-//     if (!ast)
-//     {
-//         lexer_free_tokens(tokens);
-//         free(input);
-//         return ;
-//     }
-//     // Free the AST node and tokens
-//     ast_free(ast);
-//     lexer_free_tokens(tokens);
-//     free(input);
-// }
-
-// int main(int argc, char **argv, char **envp)
-// {
-//     t_term_context ctx;
-//     char *input;
-//     t_env *env_copy;
-//     t_shell_context *shell_ctx;
-
-//     shell_ctx = NULL;
-//     (void)argc;
-//     (void)argv;
-//     setup_signals(&ctx);
-//     shell_ctx = malloc(sizeof(t_shell_context));
-//     env_copy = init_env(envp);
-//     shell_ctx->env_copy = env_copy;
-//     while (1)
-//     {
-//         input = read_input();
-//         if (!input)
-//             break ;
-//         test_lexer_parser(input, &shell_ctx);
-//     }
-//     free_shell_ctx(shell_ctx);
-//     restore_terminal(&ctx);
-//     return (0);
-// }
-
-////////////////////////////////////////////////////////////////////
-// just saved it to be sure, delete after testing
-// void	process_command(char *input, t_shell_context **shell_ctx)
-// {
-// 	t_token		*tokens;
-// 	t_ast		*ast;
-// 	t_command	*cmd;
-// 	int			saved_stdin;
-// 	int			saved_stdout;
-// 	int			saved_stderr;
-
-// 	tokens = process_lexer(input, shell_ctx);
-// 	if (!tokens)
-// 	{
-// 		lexer_free_tokens(tokens);
-// 		return ;
-// 	}
-// 	ast = process_parser(tokens);
-// 	if (!ast)
-// 	{
-// 		free(input);
-// 		return ;
-// 	}
-// 	// Execute command
-// 	if (ast->type == AST_COMMAND)
-// 	{
-// 		cmd = ast->u_data.command;
-// 		saved_stdin = dup(STDIN_FILENO);
-// 		saved_stdout = dup(STDOUT_FILENO);
-// 		saved_stderr = dup(STDERR_FILENO);
-// 		if (saved_stdin == -1 || saved_stdout == -1 || saved_stderr == -1)
-// 			perror("dup");
-// 		if (cmd->redirections)
-// 		{
-// 			if (handle_redirections(cmd) == -1)
-// 			{
-// 				printf("Error handling redirections\n");
-// 				dup2(saved_stdin, STDIN_FILENO);
-// 				dup2(saved_stdout, STDOUT_FILENO);
-// 				dup2(saved_stderr, STDERR_FILENO);
-// 				close(saved_stdin);
-// 				close(saved_stdout);
-// 				close(saved_stderr);
-// 				return ;
-// 			}
-// 		}
-// 		if (is_builtin(cmd))
-// 			execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
-// 		// new added, maybe move somethere
-// 		else if (ft_strncmp(cmd->args[0], "./", 2) == 0 || is_builtin(cmd) == 0)
-// 			execute_external_commands(cmd, (*shell_ctx)->env_copy,
-// 				(*shell_ctx)->process);
-// 		// else if ((is_builtin(cmd) == 0))
-// 		// {
-// 		// 	execute_external_commands(cmd, (*shell_ctx)->env_copy,
-// 		// 		(*shell_ctx)->process);
-// 		// }
-// 		// end
-// 		else
-// 			printf("%s\n", "Execution Test");
-// 		dup2(saved_stdin, STDIN_FILENO);
-// 		dup2(saved_stdout, STDOUT_FILENO);
-// 		dup2(saved_stderr, STDERR_FILENO);
-// 		close(saved_stdin);
-// 		close(saved_stdout);
-// 		close(saved_stderr);
-// 	}
-// 	else if (ast->type == AST_PIPELINE)
-// 	{
-// 		main_pipes_process(ast, *shell_ctx);
-// 	}
-// 	ast_free(ast);
-// 	cleanup(tokens, input);
-// }
