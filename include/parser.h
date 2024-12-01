@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 23:27:57 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/27 10:00:55 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/01 16:54:21 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,8 @@ int				allocate_heredoc_content(t_redirection *redir,
 int				check_heredoc_delimiter(t_parser *parser, t_redirection *redir,
 					int *delimiter_found);
 int				validate_token_value(t_parser *parser, t_redirection *redir);
-// int				reallocate_heredoc_content_if_needed(t_parser *parser,
-// 					t_redirection *redir, size_t *content_capacity, size_t *content_length);
-// void			append_heredoc_content(t_parser *parser, t_redirection *redir,
-// 					size_t *content_length);
-int reallocate_heredoc_content_if_needed(char *line, t_redirection *redir,
-    size_t *content_capacity, size_t *content_length);
-void append_heredoc_content(char *line, t_redirection *redir,
-    size_t *content_length);
+void			append_heredoc_content(char *line, t_redirection *redir,
+					size_t *content_length);
 int				handle_missing_delimiter(t_redirection *redir);
 
 #endif 

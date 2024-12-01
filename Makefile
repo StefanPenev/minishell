@@ -3,17 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+         #
+#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/11/29 17:36:11 by anilchen         ###   ########.fr        #
+#    Updated: 2024/12/01 17:53:00 by stfn             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 
 CC = cc
-CFLAGS = -g -Wall -Wextra -Werror -I./include
+CFLAGS = -Wall -Wextra -Werror -I./include
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
@@ -28,9 +28,8 @@ COLOR_RESET = \033[0m
 
 # Source directory
 SRC_DIR = src
-SRCS = $(SRC_DIR)/signals.c \
-       $(SRC_DIR)/ast_tester.c \
-
+SRCS = $(SRC_DIR)/ast_tester.c \
+       
 # Main
 SRCS += $(SRC_DIR)/main/main.c \
 		$(SRC_DIR)/main/main_utils.c \
@@ -83,6 +82,9 @@ SRCS += $(SRC_DIR)/execution/getenv.c \
 		$(SRC_DIR)/execution/redirections_2.c \
 		$(SRC_DIR)/execution/heredoc.c \
 
+# Signals
+SRCS += $(SRC_DIR)/signals/signals.c \
+		$(SRC_DIR)/signals/terminal_sig_utils.c \
 
 # Object files
 OBJ_DIR = obj

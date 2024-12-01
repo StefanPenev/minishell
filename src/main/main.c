@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/01 00:36:21 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/01 16:45:01 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@
 #include "process.h"
 #include "signals.h"
 
-void	setup_signals(t_term_context *ctx)
+void	setup_signals()
 {
-	handle_signals();
-	disable_echoctl(ctx);
+	sig_init();
+    suppress_output();
 }
 
 char	*read_input(void)
@@ -222,7 +222,6 @@ void	assign_vars(t_shell_context **shell_ctx, t_process *process,
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_term_context	ctx;
 	char			*input;
 	t_env			*env_copy;
 	t_process		process;
@@ -232,7 +231,7 @@ int	main(int argc, char **argv, char **envp)
 	env_copy = NULL;
 	(void)argc;
 	(void)argv;
-	setup_signals(&ctx);
+	setup_signals();
 	assign_vars(&shell_ctx, &process, &env_copy, envp);
 	// shell_ctx = malloc(sizeof(t_shell_context));
 	// process.last_exit_status = 0;
@@ -248,6 +247,5 @@ int	main(int argc, char **argv, char **envp)
 	}
 	free_shell_ctx(shell_ctx);
 	rl_clear_history();
-	restore_terminal(&ctx);
 	return (0);
 }

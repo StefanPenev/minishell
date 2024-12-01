@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:13:20 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/25 00:15:26 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/01 21:45:05 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,18 @@ void	ft_print_error(char *prefix, char *dynamic_part, char *suffix)
 		ft_putstr_fd(dynamic_part, STDERR_FILENO);
 	if (suffix)
 		ft_putstr_fd(suffix, STDERR_FILENO);
+}
+
+char	*ft_strcpy(char *dest, char *src)
+{
+	int	i;
+
+	i = 0;
+	while (src[i] != '\0')
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
 }

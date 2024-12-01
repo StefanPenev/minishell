@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes_main.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 15:08:15 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/29 16:49:02 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/01 17:12:12 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,10 +166,10 @@ int	main_pipes_process(t_ast *ast, t_shell_context *shell_ctx)
 // 					}
 // 					else
 // 					{
-// 						if (handle_middle_commands(current->u_data.pipeline.left,
+// 				if (handle_middle_commands(current->u_data.pipeline.left,
 // 								ctx, index) == EXIT_FAILURE)
 // 						{
-// 							// printf("[ERROR] Ошибка обработки промежуточной команды
+// 				// printf("[ERROR] Ошибка обработки промежуточной команды
 // 							// 	%s\n", left_cmd->args[0]);
 // 							return (EXIT_FAILURE);
 // 						}
@@ -182,7 +182,7 @@ int	main_pipes_process(t_ast *ast, t_shell_context *shell_ctx)
 // 				}
 // 				else
 // 				{
-// 					// printf("[ERROR] Неподдерживаемый тип в левой части пайплайна:% d(индекс:
+// 	// printf("[ERROR] Неподдерживаемый тип в левой части пайплайна:% d(индекс:
 // 					// 	% d).\n ",
 // 					// 				current->u_data.pipeline.left->type, index);
 // 					return (EXIT_FAILURE);

@@ -1,31 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.h                                          :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/09 20:51:24 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/01 16:52:46 by stfn             ###   ########.fr       */
+/*   Created: 2024/11/09 21:28:53 by stfn              #+#    #+#             */
+/*   Updated: 2024/12/01 17:56:50 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SIGNALS_H
-# define SIGNALS_H
+#include "signals.h"
+#include "minishell.h"
 
-# define _POSIX_C_SOURCE 200809L
-# define _GNU_SOURCE
+/* SIGNAL FUNCTIONS */
+void	sig_init(void)
+{
+	signal(SIGINT, reprompt);
+	signal(SIGQUIT, sigquit);
+}
 
-# include <signal.h>
-# include <termios.h>
+void	sig_default(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
 
-void	suppress_output(void);
-void	reprompt(int sig);
-void	sigquit(int sig);
-void	interrupt(int sig);
-void	sig_init(void);
-void	sig_default(void);
-void	sig_ignore(void);
-void	sig_heredoc(void);
+void	sig_ignore(void)
+{
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+}
 
-#endif
+void	sig_heredoc(void)
+{
+	signal(SIGINT, interrupt);
+	signal(SIGQUIT, SIG_IGN);
+}

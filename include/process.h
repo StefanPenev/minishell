@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 11:20:43 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/01 00:38:32 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/01 16:55:58 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,8 @@ long							ft_atol(const char *str, int *overflow);
 void							free_splitted(char **splitted);
 void							free_env(t_env **node);
 void							free_node(t_env *node);
-void							cleanup_pipes_process(t_pipes_process_content *ctx);
+void							cleanup_pipes_process(
+									t_pipes_process_content *ctx);
 
 /* ************************************************************************** */
 /*                                 Enviroment                                 */
@@ -198,7 +199,6 @@ int								redir_input(t_redirection *redir);
 /* ************************************************************************** */
 /*                                  Heredoc									  */
 /* ************************************************************************** */
-char							*read_string(void);
 int								heredoc(t_redirection *redir);
 
 #endif
