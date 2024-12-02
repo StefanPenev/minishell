@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 15:08:15 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/02 15:42:18 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/02 16:03:47 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,9 +116,9 @@ int	main_pipes_process(t_ast *ast, t_shell_context *shell_ctx)
 {
 	t_pipes_process_content	ctx;
 
-	if (initialize_pipes_process(ast, shell_ctx, &ctx) == EXIT_FAILURE)
+	if (process_all_heredocs(ast) == -1)
 		return (EXIT_FAILURE);
-	if (process_all_heredocs(ast, &ctx) == -1)
+	if (initialize_pipes_process(ast, shell_ctx, &ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	if (handle_ast_pipeline(ast, &ctx) == EXIT_FAILURE)
 	{

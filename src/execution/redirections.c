@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 13:33:29 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/02 15:38:09 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/02 16:14:51 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,9 @@ int	redir_in(t_redirection *redir, t_command *cmd)
 	}
 	else if (redir->type == HEREDOC)
 	{
-		printf("im in heredoc\n");
+		if (redir->was_processed)
+			return (0);
+		printf("[DEBUG]: im in heredoc\n");
 		if (heredoc(redir) == -1)
 			return (-1);
 		if (is_builtin(cmd))
@@ -76,7 +78,6 @@ int	handle_redirections(t_command *cmd)
 {
 	t_redirection	*redir;
 
-	redir = cmd->redirections;
 	redir = cmd->redirections;
 	while (redir)
 	{

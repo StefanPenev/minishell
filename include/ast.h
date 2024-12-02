@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:17:30 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/01 00:37:33 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/02 16:15:15 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct s_redirection
 	char					*filename;
 	char					*heredoc_content;
 	int						fd;
+	int    					was_processed; //anna
 	struct s_redirection	*next;
 }	t_redirection;
 

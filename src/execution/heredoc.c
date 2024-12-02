@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 17:05:03 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/02 15:13:24 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/02 16:12:20 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,7 @@ int	heredoc(t_redirection *redir)
 		}
 		redir->fd = temp_fd;
 		unlink(temp_file);
+		redir->was_processed = 1; //anna
 		return (0);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:36:38 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/02 15:54:39 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/02 16:05:00 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ bool	cmd_has_input_redirection(t_command *cmd)
 	redir = cmd->redirections;
 	while (redir)
 	{
-		// if (redir->type == REDIRECT_INPUT)
+		//if (redir->type == REDIRECT_INPUT)
 		if (redir->type == REDIRECT_INPUT || redir->type == HEREDOC)
 			return (true);
 		redir = redir->next;
@@ -116,12 +116,28 @@ void	middle_commands_streams(t_pipe_fds *fds, t_command *cmd)
 
 void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag)
 {
+	t_redirection	*redir;
+
 	if (cmd && cmd->redirections)
 	{
 		if (handle_redirections(cmd) == -1)
 		{
 			printf("Error handling redirections\n");
 			exit(EXIT_FAILURE);
+		}
+		redir = cmd->redirections;
+		while (redir)
+		{
+			if (redir->type == HEREDOC && redir->fd != -1)
+			{
+				if (dup2(redir->fd, STDIN_FILENO) == -1)
+				{
+					perror("dup2");
+					exit(EXIT_FAILURE);
+				}
+				close_safe(redir->fd);
+			}
+			redir = redir->next;
 		}
 	}
 	if (flag == PIPE_FIRST)
