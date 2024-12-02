@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 13:33:29 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/01 01:05:35 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/02 15:38:09 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ int	redir_in(t_redirection *redir, t_command *cmd)
 	}
 	else if (redir->type == HEREDOC)
 	{
+		printf("im in heredoc\n");
 		if (heredoc(redir) == -1)
 			return (-1);
 		if (is_builtin(cmd))

@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 14:43:02 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/29 16:13:53 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/02 15:48:44 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,7 @@ void	execute_middle_cmd(t_pipe_fds *fds, t_command *cmd,
 	handle_streams(fds, cmd, PIPE_MIDDLE);
 	if (is_builtin(cmd))
 	{
-		execute_builtin(cmd, ctx->shell_ctx->env_copy,
-			ctx->shell_ctx->process);
+		execute_builtin(cmd, ctx->shell_ctx->env_copy, ctx->shell_ctx->process);
 		exit(ctx->shell_ctx->process->last_exit_status);
 	}
 	if (is_executable(cmd->args[0]))
@@ -139,4 +138,33 @@ void	last_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 	execve(full_path, cmd->args, env_array);
 	printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));
 	exit(EXIT_FAILURE);
+}
+
+int	process_all_heredocs(t_ast *ast)
+{
+	t_command		*cmd;
+	t_redirection	*redir;
+
+	if (ast->type == AST_COMMAND)
+	{
+		cmd = ast->u_data.command;
+		redir = cmd->redirections;
+		while (redir)
+		{
+			if (redir->type == HEREDOC)
+			{
+				if (heredoc(redir) == -1)
+					return (-1);
+			}
+			redir = redir->next;
+		}
+	}
+	else if (ast->type == AST_PIPELINE)
+	{
+		if (process_all_heredocs(ast->u_data.pipeline.left) == -1)
+			return (-1);
+		if (process_all_heredocs(ast->u_data.pipeline.right) == -1)
+			return (-1);
+	}
+	return (0);
 }

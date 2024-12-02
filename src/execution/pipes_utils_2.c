@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes_utils_2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:36:38 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/01 17:12:49 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/02 15:54:39 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ bool	cmd_has_input_redirection(t_command *cmd)
 	redir = cmd->redirections;
 	while (redir)
 	{
-		if (redir->type == REDIRECT_INPUT)
+		// if (redir->type == REDIRECT_INPUT)
+		if (redir->type == REDIRECT_INPUT || redir->type == HEREDOC)
 			return (true);
 		redir = redir->next;
 	}
@@ -115,6 +116,14 @@ void	middle_commands_streams(t_pipe_fds *fds, t_command *cmd)
 
 void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag)
 {
+	if (cmd && cmd->redirections)
+	{
+		if (handle_redirections(cmd) == -1)
+		{
+			printf("Error handling redirections\n");
+			exit(EXIT_FAILURE);
+		}
+	}
 	if (flag == PIPE_FIRST)
 	{
 		if (!cmd_has_output_redirection(cmd) && fds->fd[1] >= 0)
@@ -130,13 +139,5 @@ void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag)
 			dup_stream(fds->fd[0], STDIN_FILENO);
 		close_safe(fds->fd[0]);
 		close_safe(fds->fd[1]);
-	}
-	if (cmd && cmd->redirections)
-	{
-		if (handle_redirections(cmd) == -1)
-		{
-			fprintf(stderr, "Error handling redirections\n");
-			exit(EXIT_FAILURE);
-		}
 	}
 }
