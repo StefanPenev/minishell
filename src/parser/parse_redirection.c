@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 09:56:12 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/01 00:43:51 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/02 23:50:50 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ t_redirection	*allocate_redirection(void)
 	redir->type = 0;
 	redir->filename = NULL;
 	redir->heredoc_content = NULL;
+	redir->was_processed = 0;
 	redir->next = NULL;
 	return (redir);
 }
