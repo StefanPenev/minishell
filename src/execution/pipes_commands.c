@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 14:43:02 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/02 15:48:44 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/02 16:31:18 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,13 @@ void	last_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 	printf("minishell: %s: %s\n", cmd->args[0], strerror(errno));
 	exit(EXIT_FAILURE);
 }
+
+// This function processes all HEREDOC redirections in the abstract syntax
+// tree (AST). It traverses the tree, and for each command node,
+// it iterates through its redirections. If a HEREDOC is found,
+// it calls the heredoc function to handle it. In case of nested pipelines,
+// it recursively processes the left and right branches of the pipeline.
+// Returns -1 if any HEREDOC processing fails, otherwise 0.
 
 int	process_all_heredocs(t_ast *ast)
 {
