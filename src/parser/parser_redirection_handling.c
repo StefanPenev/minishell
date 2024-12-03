@@ -1,34 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_redirection.c                                :+:      :+:    :+:   */
+/*   parser_redirection_handling.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/25 09:56:12 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/02 23:50:50 by stfn             ###   ########.fr       */
+/*   Created: 2024/12/03 21:17:13 by stfn              #+#    #+#             */
+/*   Updated: 2024/12/03 22:48:32 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include "minishell.h"
-
-void	append_redirection(t_redirection **head, t_redirection *new_redir)
-{
-	t_redirection	*last;
-
-	if (!*head)
-	{
-		*head = new_redir;
-	}
-	else
-	{
-		last = *head;
-		while (last->next)
-			last = last->next;
-		last->next = new_redir;
-	}
-}
 
 int	handle_filename(t_parser *parser, t_redirection *redir)
 {
@@ -50,29 +33,82 @@ int	handle_filename(t_parser *parser, t_redirection *redir)
 	return (1);
 }
 
-int	handle_heredoc(t_parser *parser, t_redirection *redir)
+int	map_token_to_redirection(t_token_type token_type,
+	t_redirection_type *redir_type)
 {
-	if (!validate_heredoc_token(parser, redir))
+	if (!redir_type)
 		return (0);
-	return (1);
+	if (token_type == TOKEN_REDIRECT_IN)
+	{
+		*redir_type = REDIRECT_INPUT;
+		return (1);
+	}
+	else if (token_type == TOKEN_REDIRECT_OUT)
+	{
+		*redir_type = REDIRECT_OUTPUT;
+		return (1);
+	}
+	else if (token_type == TOKEN_APPEND)
+	{
+		*redir_type = REDIRECT_APPEND;
+		return (1);
+	}
+	else if (token_type == TOKEN_HEREDOC)
+	{
+		*redir_type = HEREDOC;
+		return (1);
+	}
+	else
+		return (0);
 }
 
-t_redirection	*allocate_redirection(void)
+void	append_redirection(t_redirection **head, t_redirection *new_redir)
 {
-	t_redirection	*redir;
+	t_redirection	*last;
 
-	redir = malloc(sizeof(t_redirection));
-	if (!redir)
+	if (!*head)
 	{
-		ft_putstr_fd("Error: Memory allocation failed for redirection.\n", STDERR_FILENO);
-		return (NULL);
+		*head = new_redir;
 	}
-	redir->type = 0;
-	redir->filename = NULL;
-	redir->heredoc_content = NULL;
-	redir->was_processed = 0;
-	redir->next = NULL;
-	return (redir);
+	else
+	{
+		last = *head;
+		while (last->next)
+			last = last->next;
+		last->next = new_redir;
+	}
+}
+
+void add_redirection_to_command(t_command *command, t_redirection *new_redir)
+{
+    t_redirection *current = command->redirections;
+    t_redirection *previous = NULL;
+
+    if (!current)
+    {
+        command->redirections = new_redir;
+        return;
+    }
+
+    while (current)
+    {
+        if (current->type == new_redir->type)
+        {
+            if (previous)
+                previous->next = new_redir;
+            else
+                command->redirections = new_redir;
+            new_redir->next = current->next;
+            free(current->filename);
+            free(current);
+            return;
+        }
+        previous = current;
+        current = current->next;
+    }
+
+    previous->next = new_redir;
+    new_redir->next = NULL;
 }
 
 t_redirection	*parse_redirection(t_parser *parser)
@@ -82,7 +118,6 @@ t_redirection	*parse_redirection(t_parser *parser)
 	if (!parser->current_token
 		|| !is_redirection_token(parser->current_token->type))
 		return (NULL);
-
 	redir = allocate_redirection();
 	if (!redir)
 		return (NULL);

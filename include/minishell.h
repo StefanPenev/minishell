@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:31:41 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/03 01:30:31 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/03 20:06:00 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
-typedef struct s_token		t_token; // anna
-typedef struct s_lexer		t_lexer; // anna
-typedef struct s_process	t_process; // anna
-typedef struct s_env		t_env; // anna
+typedef struct s_token		t_token;
+typedef struct s_lexer		t_lexer;
+typedef struct s_process	t_process;
+typedef struct s_env		t_env;
 
 typedef struct s_shell_context
 {
@@ -69,11 +69,16 @@ char			*ft_strcat(char *dest, char *src);
 void			*ft_realloc(void *ptr, size_t new_size);
 char			*ft_strcpy(char *dest, char *src);
 
-char *lexer_expand_dollar(t_lexer *lexer, t_token *head, t_shell_context **shell_ctx);
-t_token *lexer_handle_word(t_lexer *lexer, t_shell_context **shell_ctx);
-char *lexer_collect_word(t_lexer *lexer, t_shell_context **shell_ctx);
-char *lexer_collect_subword(t_lexer *lexer, t_shell_context **shell_ctx);
-char *lexer_collect_quoted(t_lexer *lexer, char quote_type, t_shell_context **shell_ctx);
-t_token				*lexer_handle_quotes(t_lexer *lexer, t_shell_context **shell_ctx);
+char			*lexer_expand_dollar(t_lexer *lexer, t_token *head,
+					t_shell_context **shell_ctx);
+t_token			*lexer_handle_word(t_lexer *lexer, t_shell_context **shell_ctx);
+char			*lexer_collect_word(t_lexer *lexer,
+					t_shell_context **shell_ctx);
+char			*lexer_collect_subword(t_lexer *lexer,
+					t_shell_context **shell_ctx);
+char			*lexer_collect_quoted(t_lexer *lexer, char quote_type,
+					t_shell_context **shell_ctx);
+t_token			*lexer_handle_quotes(t_lexer *lexer,
+					t_shell_context **shell_ctx);
 
 #endif

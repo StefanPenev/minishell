@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/03 01:31:34 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/03 20:03:49 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,17 +76,12 @@ t_token				*lexer_new_token(t_token_type type, char *value);
 char				*lexer_expand_variable(t_lexer *lexer, size_t *length,
 						t_env *env_copy, int last_exit_status);
 
-//char				*lexer_collect_quoted(t_lexer *lexer, char quote_type, t_shell_context **shell_ctx);
-
 // lexer_operators.c
 t_token				*handle_pipe(t_lexer *lexer);
 t_token				*handle_wildcard(t_lexer *lexer);
 t_token				*handle_ampersand(t_lexer *lexer);
 t_token				*handle_redirect_in(t_lexer *lexer);
 t_token				*handle_redirect_out(t_lexer *lexer);
-
-// lexer_tokens.c
-//t_token				*lexer_handle_word(t_lexer *lexer);
 
 t_token				*lexer_finalize_tokens(t_token *head, t_token **current);
 
@@ -104,7 +99,5 @@ char				*ft_getenv(char *var_name, t_env *env_copy);
 // utils.c
 int					ft_isspace(int c);
 char				*ft_strndup(const char *s, size_t n);
-
-void				free_token(t_token *token);
 
 #endif

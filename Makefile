@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+         #
+#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/12/03 17:07:10 by anilchen         ###   ########.fr        #
+#    Updated: 2024/12/03 21:32:16 by stfn             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,10 +52,11 @@ SRCS += $(SRC_DIR)/utils/utils.c \
 SRCS += $(SRC_DIR)/ast/ast.c \
 
 # Parser 
-SRCS += $(SRC_DIR)/parser/parser.c \
-		$(SRC_DIR)/parser/parse_command.c \
-		$(SRC_DIR)/parser/parse_redirection.c \
-		$(SRC_DIR)/parser/parse_redirection_heredoc.c \
+SRCS += $(SRC_DIR)/parser/parse_expression.c \
+		$(SRC_DIR)/parser/parser_heredoc_handling.c \
+		$(SRC_DIR)/parser/parser_command_handling.c \
+		$(SRC_DIR)/parser/parser_argument_handling.c \
+		$(SRC_DIR)/parser/parser_redirection_handling.c \
 
 # Execution
 SRCS += $(SRC_DIR)/execution/getenv.c \

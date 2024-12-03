@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   parse_expression.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 08:55:59 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/28 18:34:01 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/03 22:19:03 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,117 +14,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
-// Advance the parser to the next token
-void	parser_advance(t_parser *parser)
-{
-	if (!parser->current_token || parser->current_token->type == TOKEN_EOF
-		|| parser->current_token->type == TOKEN_ERROR)
-	{
-		return ;
-	}
-	parser->current_token = parser->current_token->next;
-}
-
-int	map_token_to_redirection(t_token_type token_type,
-	t_redirection_type *redir_type)
-{
-	if (!redir_type)
-		return (0);
-	if (token_type == TOKEN_REDIRECT_IN)
-	{
-		*redir_type = REDIRECT_INPUT;
-		return (1);
-	}
-	else if (token_type == TOKEN_REDIRECT_OUT)
-	{
-		*redir_type = REDIRECT_OUTPUT;
-		return (1);
-	}
-	else if (token_type == TOKEN_APPEND)
-	{
-		*redir_type = REDIRECT_APPEND;
-		return (1);
-	}
-	else if (token_type == TOKEN_HEREDOC)
-	{
-		*redir_type = HEREDOC;
-		return (1);
-	}
-	else
-		return (0);
-}
-
-void	add_argument_to_command(t_command *command, const char *arg)
-{
-	size_t	args_count;
-	size_t	new_capacity;
-
-	args_count = 0;
-	while (command->args[args_count] != NULL)
-		args_count++;
-	if (args_count >= command->args_capacity - 1)
-	{
-		new_capacity = command->args_capacity * 2;
-		command->args = realloc(command->args, new_capacity * sizeof(char *));
-		if (!command->args)
-		{
-			ft_putstr_fd("Failed to allocate memory for arguments\n",
-				STDERR_FILENO);
-			exit(EXIT_FAILURE);
-		}
-		command->args_capacity = new_capacity;
-	}
-	command->args[args_count] = strdup(arg);
-	command->args[args_count + 1] = NULL;
-}
-
-void	parse_wildcard(t_token *token, t_command *command)
-{
-	int		i;
-	char	**expanded_files;
-
-	if (token->type == TOKEN_WILDCARD)
-	{
-		expanded_files = expand_wildcard();
-		if (!expanded_files)
-		{
-			ft_putstr_fd("Wildcard expansion failed\n", STDERR_FILENO);
-			return ;
-		}
-		i = 0;
-		while (command->args[i] != NULL)
-		{
-			add_argument_to_command(command, expanded_files[i]);
-			free(expanded_files[i]);
-			i++;
-		}
-		free(expanded_files);
-	}
-}
-
-// Helper function to check if a token is a redirection token
-int	is_redirection_token(t_token_type token_type)
-{
-	return (token_type == TOKEN_REDIRECT_OUT
-		|| token_type == TOKEN_REDIRECT_IN
-		|| token_type == TOKEN_APPEND
-		|| token_type == TOKEN_HEREDOC);
-}
-
-void	free_redirections(t_redirection *redir)
-{
-	t_redirection	*next;
-
-	while (redir)
-	{
-		next = redir->next;
-		if (redir->filename)
-			free(redir->filename);
-		free(redir);
-		redir = next;
-	}
-}
 
 t_ast	*parse_pipeline(t_parser *parser)
 {

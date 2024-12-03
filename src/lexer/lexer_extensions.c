@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:22:50 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/03 11:05:09 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/04 00:09:24 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,44 +128,244 @@ char *lexer_collect_quoted(t_lexer *lexer, char quote_type, t_shell_context **sh
     return (expanded_str);
 }
 
-char    *lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy,
-    int last_exit_status)
+// char    *lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy,
+//     int last_exit_status)
+// {
+//     size_t  start;
+//     char    *var_name;
+//     char    *value;
+
+//     start = lexer->pos + 1;
+
+//     if (lexer->input[start] == '\0')
+//     {
+//         // Handle '$' at the end of input
+//         *length = 1;
+//         return (ft_strdup("$"));
+//     }
+//     else if (lexer->input[start] == '"' || lexer->input[start] == '\'')
+//     {
+//         char    quote_type;
+//         size_t  end;
+
+//         quote_type = lexer->input[start];
+//         lexer->pos += 2; // Skip '$' and opening quote
+//         start = lexer->pos; // Start of the quoted string
+
+//         // Find the closing quote
+//         while (lexer->input[lexer->pos] && lexer->input[lexer->pos] != quote_type)
+//             lexer->pos++;
+
+//         if (!lexer->input[lexer->pos])
+//         {
+//             // Unclosed quote, handle error as needed
+//             return (NULL);
+//         }
+
+//         end = lexer->pos;
+//         lexer->pos++; // Move past the closing quote
+
+//         *length = (end - start) + 3; // '$', opening quote, content, closing quote
+//         return (ft_strndup(lexer->input + start, end - start));
+//     }
+//     else if (lexer->input[start] == '?')
+//     {
+//         *length = 2;
+//         return (ft_itoa(last_exit_status));
+//     }
+//     else if (ft_isdigit(lexer->input[start]))
+//     {
+//         // Handle positional parameters (e.g., $1, $2)
+//         // Since positional parameters are not implemented, return empty string
+//         *length = 2; // '$' + digit
+//         return (ft_strdup(""));
+//     }
+//     else if (ft_isalpha(lexer->input[start]) || lexer->input[start] == '_')
+//     {
+//         size_t  var_len = 0;
+
+//         // Collect valid variable name characters
+//         while (ft_isalnum(lexer->input[start + var_len]) || lexer->input[start + var_len] == '_')
+//             var_len++;
+
+//         *length = var_len + 1; // Include '$' in the length
+
+//         var_name = ft_strndup(lexer->input + start, var_len);
+//         if (!var_name)
+//             return (NULL);
+
+//         value = ft_getenv(var_name, env_copy);
+//         free(var_name);
+
+//         if (value)
+//             return (ft_strdup(value));
+//         else
+//             return (ft_strdup("")); // Undefined variables expand to empty string
+//     }
+//     else
+//     {
+//         // Invalid variable name or special character after '$'
+//         *length = 1;
+//         return (ft_strdup("$"));
+//     }
+// }
+
+////////////
+// char *lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy, int last_exit_status)
+// {
+//     size_t start;
+//     char *var_name;
+//     char *value;
+
+//     start = lexer->pos + 1;
+
+//     if (lexer->input[start] == '\0')
+//     {
+//         // Handle '$' at the end of input
+//         *length = 1;
+//         return (ft_strdup("$"));
+//     }
+//     else if ((lexer->input[start] == '"' || lexer->input[start] == '\''))
+//     {
+//         // Check if '$' is followed by a quote and nothing else
+//         if (lexer->input[start + 1] == '\0')
+//         {
+//             // Treat '$' followed by a quote and end of input as literal '$'
+//             *length = 1;
+//             return (ft_strdup("$"));
+//         }
+//         else
+//         {
+//             char    quote_type;
+//         size_t  end;
+
+//         quote_type = lexer->input[start];
+//         lexer->pos += 2; // Skip '$' and opening quote
+//         start = lexer->pos; // Start of the quoted string
+
+//         // Find the closing quote
+//         while (lexer->input[lexer->pos] && lexer->input[lexer->pos] != quote_type)
+//             lexer->pos++;
+
+//         if (!lexer->input[lexer->pos])
+//         {
+//             // Unclosed quote, handle error as needed
+//             return (NULL);
+//         }
+
+//         end = lexer->pos;
+//         lexer->pos++; // Move past the closing quote
+
+//         *length = (end - start) + 3; // '$', opening quote, content, closing quote
+//         return (ft_strndup(lexer->input + start, end - start));
+//         }
+//     }
+//     else if (lexer->input[start] == '?')
+//     {
+//         *length = 2;
+//         return (ft_itoa(last_exit_status));
+//     }
+//     else if (ft_isdigit(lexer->input[start]))
+//     {
+//         // Handle positional parameters (e.g., $1, $2)
+//         // Since positional parameters are not implemented, return empty string
+//         *length = 2; // '$' + digit
+//         return (ft_strdup(""));
+//     }
+//     else if (ft_isalpha(lexer->input[start]) || lexer->input[start] == '_')
+//     {
+//         size_t var_len = 0;
+
+//         // Collect valid variable name characters
+//         while (ft_isalnum(lexer->input[start + var_len]) || lexer->input[start + var_len] == '_')
+//             var_len++;
+
+//         *length = var_len + 1; // Include '$' in the length
+
+//         var_name = ft_strndup(lexer->input + start, var_len);
+//         if (!var_name)
+//             return (NULL);
+
+//         value = ft_getenv(var_name, env_copy);
+//         free(var_name);
+
+//         if (value)
+//             return (ft_strdup(value));
+//         else
+//             return (ft_strdup("")); // Undefined variables expand to empty string
+//     }
+//     else
+//     {
+//         // Invalid variable name or special character after '$'
+//         *length = 1;
+//         return (ft_strdup("$"));
+//     }
+// }
+
+char *lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy, int last_exit_status)
 {
-    size_t  start;
-    char    *var_name;
-    char    *value;
+    size_t start;
+    char *var_name;
+    char *value;
 
-    start = lexer->pos + 1;
+    start = lexer->pos + 1; // Position after '$'
 
-    // Check if the character after '$' is a quote
-    if (lexer->input[start] == '"' || lexer->input[start] == '\'')
+    if (lexer->input[start] == '\0')
     {
-        char    quote_type;
-        size_t  end;
+        // Handle '$' at the end of input
+        *length = 1;
+        return (ft_strdup("$"));
+    }
+    else if (lexer->input[start] == '"' || lexer->input[start] == '\'')
+    {
+        char quote_type;
+        size_t end;
 
         quote_type = lexer->input[start];
-        lexer->pos += 2; // Skip '$' and opening quote
-        start = lexer->pos; // Start of the quoted string
 
-        // Find the closing quote
-        while (lexer->input[lexer->pos] && lexer->input[lexer->pos] != quote_type)
-            lexer->pos++;
-
-        if (!lexer->input[lexer->pos])
+        // Check if '$' is followed by a quote and nothing else
+        if (lexer->input[start + 1] == '\0')
         {
-            // Unclosed quote, handle error as needed
-            return (NULL);
+            // Treat '$' followed by a quote and end of input as literal '$'
+            *length = 1;
+            return (ft_strdup("$"));
         }
+        else
+        {
+            // Find the closing quote without modifying lexer->pos
+            end = start + 1;
+            while (lexer->input[end] && lexer->input[end] != quote_type)
+                end++;
 
-        end = lexer->pos;
-        lexer->pos++; // Move past the closing quote
+            if (!lexer->input[end])
+            {
+                // Unclosed quote, handle error as needed
+                // For simplicity, treat it as literal '$'
+                *length = 1;
+                return (ft_strdup("$"));
+            }
 
-        *length = (end - start) + 3; // '$', opening quote, content, closing quote
-        return (ft_strndup(lexer->input + start, end - start));
+            // Calculate the length consumed: '$' + opening quote + content + closing quote
+            // Total length = (end - lexer->pos) + 1
+            *length = (end - lexer->pos) + 1;
+
+            // Extract the quoted string
+            // Exclude the quotes themselves
+            size_t quoted_length = end - (start + 1);
+            char *quoted_str = ft_strndup(lexer->input + start + 1, quoted_length);
+            if (!quoted_str)
+                return (NULL);
+
+            // For this implementation, we treat the quoted string as a literal
+            // If variable expansion inside the quotes is needed, implement it here
+            char *expanded_str = ft_strdup(quoted_str);
+            free(quoted_str);
+            return (expanded_str);
+        }
     }
     else if (lexer->input[start] == '?')
     {
-        *length = 2;
+        *length = 2; // '$' + '?'
         return (ft_itoa(last_exit_status));
     }
     else if (ft_isdigit(lexer->input[start]))
@@ -177,7 +377,7 @@ char    *lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy,
     }
     else if (ft_isalpha(lexer->input[start]) || lexer->input[start] == '_')
     {
-        size_t  var_len = 0;
+        size_t var_len = 0;
 
         // Collect valid variable name characters
         while (ft_isalnum(lexer->input[start + var_len]) || lexer->input[start + var_len] == '_')

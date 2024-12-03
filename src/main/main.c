@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/03 16:11:02 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/03 23:00:55 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,6 @@
 #include "parser.h"
 #include "process.h"
 #include "signals.h"
-
-void	setup_signals(void)
-{
-	sig_init();
-	suppress_output();
-}
 
 char	*read_input(void)
 {
