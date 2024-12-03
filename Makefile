@@ -6,7 +6,7 @@
 #    By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/12/03 14:32:52 by anilchen         ###   ########.fr        #
+#    Updated: 2024/12/03 17:07:10 by anilchen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -62,26 +62,26 @@ SRCS += $(SRC_DIR)/execution/getenv.c \
 		$(SRC_DIR)/execution/exit_status.c \
 		$(SRC_DIR)/execution/minishell_utils.c \
 		$(SRC_DIR)/execution/minishell_utils_2.c \
-		$(SRC_DIR)/execution/minishell_pwd.c \
-		$(SRC_DIR)/execution/minishell_exit.c \
-		$(SRC_DIR)/execution/minishell_env.c \
-		$(SRC_DIR)/execution/minishell_export.c \
-		$(SRC_DIR)/execution/minishell_export_2.c \
-		$(SRC_DIR)/execution/minishell_unset.c \
-		$(SRC_DIR)/execution/minishell_cd.c \
-		$(SRC_DIR)/execution/!cleanup.c \
-		$(SRC_DIR)/execution/minishell_echo.c \
+		$(SRC_DIR)/execution/buildins/minishell_pwd.c \
+		$(SRC_DIR)/execution/buildins/minishell_exit.c \
+		$(SRC_DIR)/execution/buildins/minishell_env.c \
+		$(SRC_DIR)/execution/buildins/minishell_export.c \
+		$(SRC_DIR)/execution/buildins/minishell_export_2.c \
+		$(SRC_DIR)/execution/buildins/minishell_unset.c \
+		$(SRC_DIR)/execution/buildins/minishell_cd.c \
+		$(SRC_DIR)/execution/buildins/minishell_echo.c \
 		$(SRC_DIR)/execution/external_commands.c \
 		$(SRC_DIR)/execution/handle_path.c \
-		$(SRC_DIR)/execution/pipes_main.c \
-		$(SRC_DIR)/execution/pipes_main_2.c \
-		$(SRC_DIR)/execution/pipes_commands.c \
-		$(SRC_DIR)/execution/pipes_utils.c \
-		$(SRC_DIR)/execution/pipes_utils_2.c \
-		$(SRC_DIR)/execution/pipes_utils_3.c \
+		$(SRC_DIR)/execution/pipeline/pipes_main.c \
+		$(SRC_DIR)/execution/pipeline/pipes_main_2.c \
+		$(SRC_DIR)/execution/pipeline/pipes_commands.c \
+		$(SRC_DIR)/execution/pipeline/pipes_utils.c \
+		$(SRC_DIR)/execution/pipeline/pipes_utils_2.c \
+		$(SRC_DIR)/execution/pipeline/pipes_utils_3.c \
 		$(SRC_DIR)/execution/redirections.c \
 		$(SRC_DIR)/execution/redirections_2.c \
 		$(SRC_DIR)/execution/heredoc.c \
+		$(SRC_DIR)/execution/!cleanup.c \
 
 # Signals
 SRCS += $(SRC_DIR)/signals/signals.c \

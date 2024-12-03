@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:10:17 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/29 17:51:12 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/03 17:01:19 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	free_node(t_env *node)
 //- Handles cases where the context members (`pid` or `env_array`) are
 // already NULL.
 
-void	cleanup_pipes_process(t_pipes_process_content *ctx)
+void	cleanup_pipes(t_pipes_process_content *ctx)
 {
 	if (ctx->pid)
 	{

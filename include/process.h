@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 11:20:43 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/02 15:48:54 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/03 17:01:04 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ long							ft_atol(const char *str, int *overflow);
 void							free_splitted(char **splitted);
 void							free_env(t_env **node);
 void							free_node(t_env *node);
-void							cleanup_pipes_process(t_pipes_process_content *ctx);
+void							cleanup_pipes(t_pipes_process_content *ctx);
 
 /* ************************************************************************** */
 /*                                 Enviroment                                 */
@@ -197,7 +197,7 @@ int								redir_input(t_redirection *redir);
 int								process_all_heredocs(t_ast *ast);
 
 /* ************************************************************************** */
-/*                                  Heredoc										*/
+/*                                    Heredoc                                 */
 /* ************************************************************************** */
 int								heredoc(t_redirection *redir);
 

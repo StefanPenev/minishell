@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 15:08:15 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/03 14:23:11 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/03 17:01:45 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,10 +122,10 @@ int	main_pipes_process(t_ast *ast, t_shell_context *shell_ctx)
 		return (EXIT_FAILURE);
 	if (handle_ast_pipeline(ast, &ctx) == EXIT_FAILURE)
 	{
-		cleanup_pipes_process(&ctx);
+		cleanup_pipes(&ctx);
 		return (EXIT_FAILURE);
 	}
 	wait_for_children(&ctx, shell_ctx);
-	cleanup_pipes_process(&ctx);
+	cleanup_pipes(&ctx);
 	return (EXIT_SUCCESS);
 }
