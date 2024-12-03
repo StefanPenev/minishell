@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 18:15:02 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/03 00:53:04 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/03 11:03:12 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 /* Check if a character is a special shell character */
 int	is_special_char(char c)
 {
-	return (c == '|' || c == '<' || c == '>'
-		|| c == '&' || c == '(' || c == ')' || c == '*');
+	return (c == '|' || c == '<' || c == '>' || c == '&' || c == '('
+		|| c == ')' || c == '*');
 }
 
 /* Advance the lexer by one character */
@@ -67,13 +67,4 @@ void	lexer_free_tokens(t_token *head)
 		free(current);
 		current = next;
 	}
-}
-
-void	free_token(t_token *token)
-{
-	if (!token)
-		return ;
-	if (token->value)
-		free(token->value);
-	free(token);
 }

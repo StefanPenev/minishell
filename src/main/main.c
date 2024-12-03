@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/01 16:45:01 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/03 11:02:11 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@
 #include "process.h"
 #include "signals.h"
 
-void	setup_signals()
+void	setup_signals(void)
 {
 	sig_init();
-    suppress_output();
+	suppress_output();
 }
 
 char	*read_input(void)
@@ -60,8 +60,8 @@ void	execute_builtin(t_command *cmd, t_env *env_copy, t_process *process)
 int	is_builtin(t_command *cmd)
 {
 	static const char	*builtins[] = {"echo", "cd", "pwd", "export", "unset",
-			"env", "exit", "/usr/bin/echo", "/bin/pwd", "/usr/bin/env",
-			"/bin/echo"};
+		"env", "exit", "/usr/bin/echo", "/bin/pwd", "/usr/bin/env",
+		"/bin/echo"};
 	size_t				i;
 
 	i = 0;
@@ -78,7 +78,6 @@ int	is_builtin(t_command *cmd)
 		}
 		i++;
 	}
-	// DO NOT FORGET TO DELETE -G FROM MAKEFILE
 	return (0);
 }
 
@@ -115,65 +114,54 @@ int	setup_redirections(t_command *cmd, int *saved_stdin, int *saved_stdout,
 	return (0);
 }
 
-// void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
-// {
-// 	int saved_stdin, saved_stdout, saved_stderr;
-// 	if (setup_redirections(cmd, &saved_stdin, &saved_stdout, &saved_stderr) ==
-// 		-1)
-// 	{
-// 		set_exit_status((*shell_ctx)->process, 1);
-// 		return ;
-// 	}
-// 	if (is_builtin(cmd))
-// 	{
-// 		execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
-// 	}
-// 	else
-// 	{
-// 		execute_external_commands(cmd, (*shell_ctx)->env_copy,
-// 			(*shell_ctx)->process);
-// 	}
-// 	restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
-// }
-void execute_ast_command(t_command *cmd, t_shell_context **shell_ctx) {
-    int saved_stdin, saved_stdout, saved_stderr;
+void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
+{
+	int				saved_stdin;
+	int				saved_stdout;
+	int				saved_stderr;
+	pid_t			pid;
+	t_redirection	*redir;
 
-    if (setup_redirections(cmd, &saved_stdin, &saved_stdout, &saved_stderr) == -1)
-        return;
-
-    if (is_builtin(cmd)) {
-        execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
-    } else {
-        pid_t pid = fork();
-        if (pid == -1) {
-            perror("fork");
-            restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
-            return;
-        }
-        if (pid == 0) {
-            // Child process
-            t_redirection *redir = cmd->redirections;
-            while (redir) {
-                if (redir->type == HEREDOC) {
-                    if (dup2(redir->fd, STDIN_FILENO) == -1) {
-                        perror("dup2");
-                        exit(EXIT_FAILURE);
-                    }
-                    close(redir->fd);
-                }
-                // Handle other input/output redirections if necessary
-                redir = redir->next;
-            }
-            // Execute the external command
-            execute_external_commands(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
-            exit(EXIT_SUCCESS);
-        } else {
-            // Parent process
-            waitpid(pid, NULL, 0);
-        }
-    }
-
-    restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+	if (setup_redirections(cmd, &saved_stdin, &saved_stdout,
+			&saved_stderr) == -1)
+		return ;
+	if (is_builtin(cmd))
+	{
+		execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
+	}
+	else
+	{
+		pid = fork();
+		if (pid == -1)
+		{
+			perror("fork");
+			restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+			return ;
+		}
+		if (pid == 0)
+		{
+			redir = cmd->redirections;
+			while (redir)
+			{
+				if (redir->type == HEREDOC)
+				{
+					if (dup2(redir->fd, STDIN_FILENO) == -1)
+					{
+						perror("dup2");
+						exit(EXIT_FAILURE);
+					}
+					close(redir->fd);
+				}
+				redir = redir->next;
+			}
+			execute_external_commands(cmd, (*shell_ctx)->env_copy,
+				(*shell_ctx)->process);
+			exit(EXIT_SUCCESS);
+		}
+		else
+			waitpid(pid, NULL, 0);
+	}
+	restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
 }
 
 void	process_command(char *input, t_shell_context **shell_ctx)
@@ -233,11 +221,6 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	setup_signals();
 	assign_vars(&shell_ctx, &process, &env_copy, envp);
-	// shell_ctx = malloc(sizeof(t_shell_context));
-	// process.last_exit_status = 0;
-	// env_copy = init_env(envp);
-	// shell_ctx->process = &process;
-	// shell_ctx->env_copy = env_copy;
 	while (1)
 	{
 		input = read_input();
