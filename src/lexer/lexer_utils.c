@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 18:15:02 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/24 18:26:40 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/03 00:53:04 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 /* Check if a character is a special shell character */
 int	is_special_char(char c)
 {
-	return (c == '|' || c == '<' || c == '>' || c == '$'
+	return (c == '|' || c == '<' || c == '>'
 		|| c == '&' || c == '(' || c == ')' || c == '*');
 }
 

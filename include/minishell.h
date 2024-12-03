@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:31:41 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/01 21:46:04 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/03 01:30:31 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,5 +68,12 @@ void			ft_print_error(char *prefix, char *dynamic_part, char *suffix);
 char			*ft_strcat(char *dest, char *src);
 void			*ft_realloc(void *ptr, size_t new_size);
 char			*ft_strcpy(char *dest, char *src);
+
+char *lexer_expand_dollar(t_lexer *lexer, t_token *head, t_shell_context **shell_ctx);
+t_token *lexer_handle_word(t_lexer *lexer, t_shell_context **shell_ctx);
+char *lexer_collect_word(t_lexer *lexer, t_shell_context **shell_ctx);
+char *lexer_collect_subword(t_lexer *lexer, t_shell_context **shell_ctx);
+char *lexer_collect_quoted(t_lexer *lexer, char quote_type, t_shell_context **shell_ctx);
+t_token				*lexer_handle_quotes(t_lexer *lexer, t_shell_context **shell_ctx);
 
 #endif

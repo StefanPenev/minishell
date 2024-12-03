@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/23 22:59:26 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/03 01:31:34 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,12 @@ void				lexer_skip_whitespace(t_lexer *lexer);
 const char			*lexer_get_error_message(t_token *token);
 
 // lexer_extensions.c
-char				*lexer_collect_word(t_lexer *lexer);
+//char				*lexer_collect_word(t_lexer *lexer);
 t_token				*lexer_new_token(t_token_type type, char *value);
 char				*lexer_expand_variable(t_lexer *lexer, size_t *length,
 						t_env *env_copy, int last_exit_status);
-char				*lexer_collect_quoted(t_lexer *lexer, char quote_type);
+
+//char				*lexer_collect_quoted(t_lexer *lexer, char quote_type, t_shell_context **shell_ctx);
 
 // lexer_operators.c
 t_token				*handle_pipe(t_lexer *lexer);
@@ -85,8 +86,8 @@ t_token				*handle_redirect_in(t_lexer *lexer);
 t_token				*handle_redirect_out(t_lexer *lexer);
 
 // lexer_tokens.c
-t_token				*lexer_handle_word(t_lexer *lexer);
-t_token				*lexer_handle_quotes(t_lexer *lexer);
+//t_token				*lexer_handle_word(t_lexer *lexer);
+
 t_token				*lexer_finalize_tokens(t_token *head, t_token **current);
 
 // lexer_wildcard.c
