@@ -6,38 +6,12 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 14:36:21 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/29 17:22:48 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/03 14:01:29 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
-
-// Duplicates a file descriptor to a specific stream (e.g., stdin, stdout,
-// stderr). Uses dup2 to redirect the given file descriptor (fd) to the
-// target stream (n). If dup2 fails,
-// it prints an error message and exits the program with a failure status.
-// Parameters:
-//   - fd: The source file descriptor to duplicate.
-//   - n: The target file descriptor to overwrite (e.g., STDIN_FILENO,
-//	STDOUT_FILENO).
-// Notes:
-//   - If fd is negative,
-//	the function does nothing (no redirection is performed).
-//   - If dup2 fails, perror is used to log the error,
-//	and the program exits immediately to avoid undefined behavior.
-
-void	dup_stream(int fd, int n)
-{
-	if (fd >= 0)
-	{
-		if (dup2(fd, n) == -1)
-		{
-			perror("dup2 failed");
-			exit(EXIT_FAILURE);
-		}
-	}
-}
 
 // Allocates memory for storing process IDs for all commands in the pipeline.
 // Initializes all process IDs to -1 to indicate that they are not yet assigned.

@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 17:34:56 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/29 17:37:41 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/03 16:08:31 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,8 @@ int	redir_input(t_redirection *redir)
 
 	if (access(redir->filename, F_OK | R_OK) != 0)
 	{
-		perror("access");
+		write(2, "minishell: ", 11);
+		perror(redir->filename);
 		return (-1);
 	}
 	fd = open(redir->filename, O_RDONLY);

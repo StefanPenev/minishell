@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 14:43:02 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/02 16:31:18 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/03 16:48:02 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,9 @@ void	first_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 		full_path = find_full_path(cmd->args[0], env_array);
 		if (!full_path)
 		{
-			printf("minishell: %s: No such file or directory\n", cmd->args[0]);
+			write(2, "minishell: ", 11);
+			write(2, cmd->args[0], ft_strlen(cmd->args[0]));
+			write(2, ": No such file or directory\n", 28);
 			exit(127);
 		}
 	}
@@ -68,7 +70,9 @@ void	execute_middle_cmd(t_pipe_fds *fds, t_command *cmd,
 		full_path = find_full_path(cmd->args[0], ctx->env_array);
 		if (!full_path)
 		{
-			printf("minishell: %s: No such file or directory\n", cmd->args[0]);
+			write(2, "minishell: ", 11);
+			write(2, cmd->args[0], ft_strlen(cmd->args[0]));
+			write(2, ": No such file or directory\n", 28);
 			exit(127);
 		}
 	}
@@ -131,7 +135,9 @@ void	last_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 		full_path = find_full_path(cmd->args[0], env_array);
 		if (!full_path)
 		{
-			printf("minishell: %s: No such file or directory\n", cmd->args[0]);
+			write(2, "minishell: ", 11);
+			write(2, cmd->args[0], ft_strlen(cmd->args[0]));
+			write(2, ": No such file or directory\n", 28);
 			exit(127);
 		}
 	}

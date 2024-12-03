@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
+#    By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/12/01 17:53:00 by stfn             ###   ########.fr        #
+#    Updated: 2024/12/03 14:32:52 by anilchen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -78,6 +78,7 @@ SRCS += $(SRC_DIR)/execution/getenv.c \
 		$(SRC_DIR)/execution/pipes_commands.c \
 		$(SRC_DIR)/execution/pipes_utils.c \
 		$(SRC_DIR)/execution/pipes_utils_2.c \
+		$(SRC_DIR)/execution/pipes_utils_3.c \
 		$(SRC_DIR)/execution/redirections.c \
 		$(SRC_DIR)/execution/redirections_2.c \
 		$(SRC_DIR)/execution/heredoc.c \

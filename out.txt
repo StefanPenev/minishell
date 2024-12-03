@@ -1,5 +1,1 @@
- hi hi hi hi hi hi hi hi hi hi
- hi hi hi hi hi hi hi hi hi
- hi hi hi hi hi hi hi
- hi hi hi hi hi 
- hi hi hi hi
+[DEBUG] handle_redirections: redirecting to: output.txt/n[DEBUG] handle_redirections: redirecting to: out.txt/n

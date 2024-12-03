@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 15:08:15 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/02 16:03:47 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/03 14:23:11 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,105 +129,3 @@ int	main_pipes_process(t_ast *ast, t_shell_context *shell_ctx)
 	cleanup_pipes_process(&ctx);
 	return (EXIT_SUCCESS);
 }
-
-// int	handle_ast_pipeline(t_ast *ast, t_pipes_process_content *ctx)
-// {
-// 	t_ast		*current;
-// 	static int	index;
-// 	t_command	*left_cmd;
-// 	t_command	*right_cmd;
-
-// 	current = ast;
-// 	index = 0;
-// 	if (!current)
-// 	{
-// 		fprintf(stderr, "[ERROR] AST is NULL.\n");
-// 		return (EXIT_FAILURE);
-// 	}
-// 	while (current)
-// 	{
-// 		if (current->type == AST_PIPELINE)
-// 		{
-// 			if (current->u_data.pipeline.left)
-// 			{
-// 				if (current->u_data.pipeline.left->type == AST_COMMAND)
-// 				{
-// 					left_cmd = current->u_data.pipeline.left->u_data.command;
-// 					// if (execute_left_command(index, left_cmd, current,
-// 					// 		ctx) == EXIT_FAILURE)
-// 					// 	return (EXIT_FAILURE);
-// 					if (index == 0)
-// 					{
-// 						if (handle_first_command(current->u_data.pipeline.left,
-// 								ctx) == EXIT_FAILURE)
-// 						{
-// 							// printf("[ERROR] Ошибка обработки первой команды
-// 							// 	%s\n", left_cmd->args[0]);
-// 							return (EXIT_FAILURE);
-// 						}
-// 					}
-// 					else
-// 					{
-// 				if (handle_middle_commands(current->u_data.pipeline.left,
-// 								ctx, index) == EXIT_FAILURE)
-// 						{
-// 				// printf("[ERROR] Ошибка обработки промежуточной команды
-// 							// 	%s\n", left_cmd->args[0]);
-// 							return (EXIT_FAILURE);
-// 						}
-// 					}
-// 					index++;
-// 				}
-// 				else if (current->u_data.pipeline.left->type == AST_PIPELINE)
-// 				{
-// 					handle_ast_pipeline(current->u_data.pipeline.left, ctx);
-// 				}
-// 				else
-// 				{
-// 	// printf("[ERROR] Неподдерживаемый тип в левой части пайплайна:% d(индекс:
-// 					// 	% d).\n ",
-// 					// 				current->u_data.pipeline.left->type, index);
-// 					return (EXIT_FAILURE);
-// 				}
-// 			}
-// 		}
-// 		if (current->type == AST_PIPELINE && current->u_data.pipeline.right
-// 			&& current->u_data.pipeline.right->type == AST_COMMAND)
-// 		{
-// 			right_cmd = current->u_data.pipeline.right->u_data.command;
-// 			if (index < ctx->cmd_count - 1)
-// 			{
-// 				if (handle_middle_commands(current->u_data.pipeline.right, ctx,
-// 						index) == EXIT_FAILURE)
-// 				{
-// 					// fprintf(stderr,
-// 					// 	"[ERROR] Ошибка обработки промежуточной команды:
-// 					// 	%s\n", right_cmd->args[0]);
-// 					return (EXIT_FAILURE);
-// 				}
-// 			}
-// 			else
-// 			{
-// 				if (handle_last_command(current->u_data.pipeline.right,
-// 						ctx) == EXIT_FAILURE)
-// 				{
-// 					// fprintf(stderr,
-// 					// 	"[ERROR] Ошибка обработки последней команды:
-// 					// // 	%s\n", right_cmd->args[0]);
-// 					return (EXIT_FAILURE);
-// 				}
-// 				break ;
-// 			}
-// 			index++;
-// 		}
-// 		if (current->type == AST_PIPELINE)
-// 		{
-// 			current = current->u_data.pipeline.right;
-// 		}
-// 		else
-// 		{
-// 			current = NULL;
-// 		}
-// 	}
-// 	return (EXIT_SUCCESS);
-// }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/03 11:02:11 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/03 16:11:02 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ void	execute_builtin(t_command *cmd, t_env *env_copy, t_process *process)
 int	is_builtin(t_command *cmd)
 {
 	static const char	*builtins[] = {"echo", "cd", "pwd", "export", "unset",
-		"env", "exit", "/usr/bin/echo", "/bin/pwd", "/usr/bin/env",
-		"/bin/echo"};
+			"env", "exit", "/usr/bin/echo", "/bin/pwd", "/usr/bin/env",
+			"/bin/echo"};
 	size_t				i;
 
 	i = 0;
@@ -84,35 +84,61 @@ int	is_builtin(t_command *cmd)
 void	restore_standard_fds(int saved_stdin, int saved_stdout,
 		int saved_stderr)
 {
-	dup2(saved_stdin, STDIN_FILENO);
-	dup2(saved_stdout, STDOUT_FILENO);
-	dup2(saved_stderr, STDERR_FILENO);
-	close(saved_stdin);
-	close(saved_stdout);
-	close(saved_stderr);
+	if (saved_stdin != -1 && isatty(saved_stdin))
+	{
+		if (dup2(saved_stdin, STDIN_FILENO) == -1)
+		{
+			perror("Failed to restore stdin");
+		}
+		close(saved_stdin);
+	}
+	if (saved_stdout != -1 && isatty(saved_stdout))
+	{
+		if (dup2(saved_stdout, STDOUT_FILENO) == -1)
+		{
+			perror("Failed to restore stdout");
+		}
+		close(saved_stdout);
+	}
+	if (saved_stderr != -1 && isatty(saved_stderr))
+	{
+		if (dup2(saved_stderr, STDERR_FILENO) == -1)
+		{
+			perror("Failed to restore stderr");
+		}
+		close(saved_stderr);
+	}
 }
 
 int	setup_redirections(t_command *cmd, int *saved_stdin, int *saved_stdout,
 		int *saved_stderr)
 {
-	*saved_stdin = dup(STDIN_FILENO);
-	*saved_stdout = dup(STDOUT_FILENO);
-	*saved_stderr = dup(STDERR_FILENO);
-	if (*saved_stdin == -1 || *saved_stdout == -1 || *saved_stderr == -1)
-	{
-		perror("dup");
-		return (-1);
-	}
 	if (cmd->redirections)
 	{
+		*saved_stdin = dup(STDIN_FILENO);
+		*saved_stdout = dup(STDOUT_FILENO);
+		*saved_stderr = dup(STDERR_FILENO);
+		if (*saved_stdin == -1 || *saved_stdout == -1 || *saved_stderr == -1)
+		{
+			perror("dup");
+			return (-1);
+		}
 		if (handle_redirections(cmd) == -1)
 		{
 			restore_standard_fds(*saved_stdin, *saved_stdout, *saved_stderr);
 			return (-1);
 		}
+		return (1);
 	}
-	return (0);
+	else
+	{
+		*saved_stdin = -1;
+		*saved_stdout = -1;
+		*saved_stderr = -1;
+		return (0);
+	}
 }
+
 
 void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
 {
@@ -121,45 +147,75 @@ void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
 	int				saved_stderr;
 	pid_t			pid;
 	t_redirection	*redir;
+	int				requires_fork;
+	int				redirections_set;
 
-	if (setup_redirections(cmd, &saved_stdin, &saved_stdout,
-			&saved_stderr) == -1)
+	redirections_set = 0;
+	requires_fork = 0;
+	redir = cmd->redirections;
+	while (redir)
+	{
+		if (redir->type == HEREDOC)
+		{
+			requires_fork = 1;
+			break ;
+		}
+		redir = redir->next;
+	}
+	redirections_set = setup_redirections(cmd, &saved_stdin, &saved_stdout,
+			&saved_stderr);
+	if (redirections_set == -1)
+	{
+		set_exit_status((*shell_ctx)->process, 1);
 		return ;
-	if (is_builtin(cmd))
+	}
+	// if (setup_redirections(cmd, &saved_stdin, &saved_stdout,
+	//		&saved_stderr) ==
+	// 	-1)
+	// 	return ;
+	if (is_builtin(cmd) && !requires_fork && !redirections_set)
 	{
 		execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
+		restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+		return ;
+	}
+	if (!requires_fork && !redirections_set)
+	{
+		execute_external_commands(cmd, (*shell_ctx)->env_copy,
+			(*shell_ctx)->process);
+		restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+		return ;
+	}
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+		return ;
+	}
+	if (pid == 0)
+	{
+		redir = cmd->redirections;
+		while (redir)
+		{
+			if (redir->type == HEREDOC)
+			{
+				if (dup2(redir->fd, STDIN_FILENO) == -1)
+				{
+					perror("dup2");
+					exit(EXIT_FAILURE);
+				}
+				close(redir->fd);
+			}
+			redir = redir->next;
+		}
+		execute_external_commands(cmd, (*shell_ctx)->env_copy,
+			(*shell_ctx)->process);
+		exit(EXIT_SUCCESS);
 	}
 	else
 	{
-		pid = fork();
-		if (pid == -1)
-		{
-			perror("fork");
-			restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
-			return ;
-		}
-		if (pid == 0)
-		{
-			redir = cmd->redirections;
-			while (redir)
-			{
-				if (redir->type == HEREDOC)
-				{
-					if (dup2(redir->fd, STDIN_FILENO) == -1)
-					{
-						perror("dup2");
-						exit(EXIT_FAILURE);
-					}
-					close(redir->fd);
-				}
-				redir = redir->next;
-			}
-			execute_external_commands(cmd, (*shell_ctx)->env_copy,
-				(*shell_ctx)->process);
-			exit(EXIT_SUCCESS);
-		}
-		else
-			waitpid(pid, NULL, 0);
+		handle_child_exit_status(pid, (*shell_ctx)->process);
 	}
 	restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
 }
@@ -232,3 +288,69 @@ int	main(int argc, char **argv, char **envp)
 	rl_clear_history();
 	return (0);
 }
+
+// void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
+// {
+// 	int				saved_stdin;
+// 	int				saved_stdout;
+// 	int				saved_stderr;
+// 	pid_t			pid;
+// 	t_redirection	*redir;
+
+// 	printf("[DEBUG] execute_ast_command start: Process pointer: %p,
+//		Last exit status: %d\n",
+// 		(void *)(*shell_ctx)->process, (*shell_ctx)->process->last_exit_status);
+// 	if (setup_redirections(cmd, &saved_stdin, &saved_stdout, &saved_stderr) ==
+// 		-1)
+// 		return ;
+// 	if (is_builtin(cmd))
+// 		execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
+// 	else
+// 	{
+// 		pid = fork();
+// 		if (pid == -1)
+// 		{
+// 			perror("fork");
+// 			restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+// 			return ;
+// 		}
+// 		if (pid == 0)
+// 		{
+// 			redir = cmd->redirections;
+// 			while (redir)
+// 			{
+// 				if (redir->type == HEREDOC)
+// 				{
+// 					if (dup2(redir->fd, STDIN_FILENO) == -1)
+// 					{
+// 						perror("dup2");
+// 						exit(EXIT_FAILURE);
+// 					}
+// 					close(redir->fd);
+// 				}
+// 				redir = redir->next;
+// 			}
+// 			printf("[DEBUG] execute_ast_command before calling execute_external_commands: Process pointer:
+//				%p, Last exit status: %d\n",
+// 			(void *)(*shell_ctx)->process,
+//				(*shell_ctx)->process->last_exit_status);
+// 			execute_external_commands(cmd, (*shell_ctx)->env_copy,
+// 				(*shell_ctx)->process);
+// 			printf("[DEBUG] execute_ast_command after calling execute_external_commands: Process pointer:
+//				%p, Last exit status: %d\n",
+// 			(void *)(*shell_ctx)->process,
+//				(*shell_ctx)->process->last_exit_status);
+// 			exit(EXIT_SUCCESS);
+// 		}
+// 		else
+// 			handle_child_exit_status(pid, (*shell_ctx)->process);
+// 	//waitpid(pid, NULL, 0);
+// 	}
+// 	printf("[DEBUG] before restore_standard_fds: Process pointer: %p,
+//		Last exit status: %d\n",
+//     (void *)(*shell_ctx)->process, (*shell_ctx)->process->last_exit_status);
+// 	restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+// 	printf("[DEBUG] execute_ast_command end: Process pointer: %p,
+//		Last exit status: %d\n",
+//     (void *)(*shell_ctx)->process, (*shell_ctx)->process->last_exit_status);
+// }

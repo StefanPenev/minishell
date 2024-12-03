@@ -6,28 +6,12 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:36:38 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/02 16:38:27 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/03 14:23:07 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "process.h"
-
-// Safely closes a file descriptor if it is valid (greater than or equal to 0).
-// Prevents attempts to close an invalid file descriptor, which could
-// lead to errors or undefined behavior.
-// Parameters:
-//   - fd: The file descriptor to close.
-// Notes:
-//   - If fd is negative, the function does nothing.
-//   - This is a helper function to simplify file descriptor management
-// and ensure robust error handling.
-
-void	close_safe(int fd)
-{
-	if (fd >= 0)
-		close(fd);
-}
 
 // Checks if the given command has an input redirection (e.g., `< filename`).
 // Iterates through the command's redirections and looks for one with the type
