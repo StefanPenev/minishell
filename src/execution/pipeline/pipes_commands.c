@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 14:43:02 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/03 16:48:02 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/04 14:58:11 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ void	last_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 // it recursively processes the left and right branches of the pipeline.
 // Returns -1 if any HEREDOC processing fails, otherwise 0.
 
-int	process_all_heredocs(t_ast *ast)
+int	process_all_heredocs(t_ast *ast, t_shell_context *shell_ctx)
 {
 	t_command		*cmd;
 	t_redirection	*redir;
@@ -166,7 +166,7 @@ int	process_all_heredocs(t_ast *ast)
 		{
 			if (redir->type == HEREDOC)
 			{
-				if (heredoc(redir) == -1)
+				if (heredoc(redir, shell_ctx->process) == -1)
 					return (-1);
 			}
 			redir = redir->next;
@@ -174,9 +174,9 @@ int	process_all_heredocs(t_ast *ast)
 	}
 	else if (ast->type == AST_PIPELINE)
 	{
-		if (process_all_heredocs(ast->u_data.pipeline.left) == -1)
+		if (process_all_heredocs(ast->u_data.pipeline.left, shell_ctx) == -1)
 			return (-1);
-		if (process_all_heredocs(ast->u_data.pipeline.right) == -1)
+		if (process_all_heredocs(ast->u_data.pipeline.right, shell_ctx) == -1)
 			return (-1);
 	}
 	return (0);

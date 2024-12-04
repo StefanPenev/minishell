@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:05 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 11:57:39 by spenev           ###   ########.fr       */
+/*   Updated: 2024/12/04 15:02:32 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ void	assign_vars(t_shell_context **shell_ctx, t_process *process,
 int	is_builtin(t_command *cmd)
 {
 	static const char	*builtins[] = {"echo", "cd", "pwd", "export", "unset",
-		"env", "exit", "/usr/bin/echo", "/bin/pwd", "/usr/bin/env",
-		"/bin/echo"};
+			"env", "exit", "/usr/bin/echo", "/bin/pwd", "/usr/bin/env",
+			"/bin/echo"};
 	size_t				i;
 
 	i = 0;
@@ -51,60 +51,60 @@ int	is_builtin(t_command *cmd)
 	return (0);
 }
 
-void	restore_standard_fds(int saved_stdin, int saved_stdout,
-		int saved_stderr)
+void	restore_standard_fds(t_fd_backup *fd_backup)
 {
-	if (saved_stdin != -1 && isatty(saved_stdin))
+	if (fd_backup->saved_stdin != -1 && isatty(fd_backup->saved_stdin))
 	{
-		if (dup2(saved_stdin, STDIN_FILENO) == -1)
+		if (dup2(fd_backup->saved_stdin, STDIN_FILENO) == -1)
 		{
 			perror("Failed to restore stdin");
 		}
-		close(saved_stdin);
+		close(fd_backup->saved_stdin);
 	}
-	if (saved_stdout != -1 && isatty(saved_stdout))
+	if (fd_backup->saved_stdout != -1 && isatty(fd_backup->saved_stdout))
 	{
-		if (dup2(saved_stdout, STDOUT_FILENO) == -1)
+		if (dup2(fd_backup->saved_stdout, STDOUT_FILENO) == -1)
 		{
 			perror("Failed to restore stdout");
 		}
-		close(saved_stdout);
+		close(fd_backup->saved_stdout);
 	}
-	if (saved_stderr != -1 && isatty(saved_stderr))
+	if (fd_backup->saved_stderr != -1 && isatty(fd_backup->saved_stderr))
 	{
-		if (dup2(saved_stderr, STDERR_FILENO) == -1)
+		if (dup2(fd_backup->saved_stderr, STDERR_FILENO) == -1)
 		{
 			perror("Failed to restore stderr");
 		}
-		close(saved_stderr);
+		close(fd_backup->saved_stderr);
 	}
 }
 
-int	setup_redirections(t_command *cmd, int *saved_stdin, int *saved_stdout,
-		int *saved_stderr)
+int	setup_redirections(t_command *cmd, t_fd_backup *fd_backup,
+		t_process *process)
 {
 	if (cmd->redirections)
 	{
-		*saved_stdin = dup(STDIN_FILENO);
-		*saved_stdout = dup(STDOUT_FILENO);
-		*saved_stderr = dup(STDERR_FILENO);
-		if (*saved_stdin == -1 || *saved_stdout == -1 || *saved_stderr == -1)
+		fd_backup->saved_stdin = dup(STDIN_FILENO);
+		fd_backup->saved_stdout = dup(STDOUT_FILENO);
+		fd_backup->saved_stderr = dup(STDERR_FILENO);
+		if (fd_backup->saved_stdin == -1 || fd_backup->saved_stdout == -1
+			|| fd_backup->saved_stderr == -1)
 		{
 			perror("dup");
 			return (-1);
 		}
-		if (handle_redirections(cmd) == -1)
+		if (handle_redirections(cmd, process) == -1)
 		{
-			restore_standard_fds(*saved_stdin, *saved_stdout, *saved_stderr);
+			restore_standard_fds(fd_backup);
 			return (-1);
 		}
 		return (1);
 	}
 	else
 	{
-		*saved_stdin = -1;
-		*saved_stdout = -1;
-		*saved_stderr = -1;
+		fd_backup->saved_stdin = -1;
+		fd_backup->saved_stdout = -1;
+		fd_backup->saved_stderr = -1;
 		return (0);
 	}
 }

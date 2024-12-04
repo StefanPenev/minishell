@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 11:20:43 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/03 17:01:04 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/04 15:05:41 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,13 @@ typedef struct s_pipes_process_content
 	pid_t						*pid;
 	int							finish;
 }								t_pipes_process_content;
+
+typedef struct s_fd_backup
+{
+	int							saved_stdin;
+	int							saved_stdout;
+	int							saved_stderr;
+}								t_fd_backup;
 
 /* ************************************************************************** */
 /*                           Builtins commands                                */
@@ -189,16 +196,18 @@ void							handle_streams(t_pipe_fds *fds, t_command *cmd,
 /* ************************************************************************** */
 /*                               Redirections                                 */
 /* ************************************************************************** */
-
-int								handle_redirections(t_command *cmd);
+int								handle_redirections(t_command *cmd,
+									t_process *process);
 int								redir_output(t_redirection *redir);
 int								redir_append(t_redirection *redir);
 int								redir_input(t_redirection *redir);
-int								process_all_heredocs(t_ast *ast);
+int								process_all_heredocs(t_ast *ast,
+									t_shell_context *shell_ctx);
 
 /* ************************************************************************** */
 /*                                    Heredoc                                 */
 /* ************************************************************************** */
-int								heredoc(t_redirection *redir);
+int								heredoc(t_redirection *redir,
+									t_process *process);
 
 #endif

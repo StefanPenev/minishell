@@ -3,21 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   main_workflow.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:43:07 by spenev            #+#    #+#             */
-/*   Updated: 2024/12/04 11:59:54 by spenev           ###   ########.fr       */
+/*   Updated: 2024/12/04 15:02:27 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
 #include "minishell.h"
+#include "parser.h"
 
 void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
 {
-	int				saved_stdin;
-	int				saved_stdout;
-	int				saved_stderr;
+	t_fd_backup		fd_backup;
 	pid_t			pid;
 	t_redirection	*redir;
 	int				requires_fork;
@@ -35,8 +33,7 @@ void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
 		}
 		redir = redir->next;
 	}
-	redirections_set = setup_redirections(cmd, &saved_stdin, &saved_stdout,
-			&saved_stderr);
+	redirections_set = setup_redirections(cmd, &fd_backup, (*shell_ctx)->process);
 	if (redirections_set == -1)
 	{
 		set_exit_status((*shell_ctx)->process, 1);
@@ -49,21 +46,21 @@ void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
 	if (is_builtin(cmd) && !requires_fork && !redirections_set)
 	{
 		execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
-		restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+		restore_standard_fds(&fd_backup);
 		return ;
 	}
 	if (!requires_fork && !redirections_set)
 	{
 		execute_external_commands(cmd, (*shell_ctx)->env_copy,
 			(*shell_ctx)->process);
-		restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+		restore_standard_fds(&fd_backup);
 		return ;
 	}
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("fork");
-		restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+		restore_standard_fds(&fd_backup);
 		return ;
 	}
 	if (pid == 0)
@@ -90,7 +87,7 @@ void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
 	{
 		handle_child_exit_status(pid, (*shell_ctx)->process);
 	}
-	restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
+	restore_standard_fds(&fd_backup);
 }
 
 // Execute buildins
@@ -102,9 +99,9 @@ void	execute_builtin(t_command *cmd, t_env *env_copy, t_process *process)
 	else if (ft_strcmp(cmd->args[0], "echo") == 0 || ft_strcmp(cmd->args[0],
 			"/usr/bin/echo") == 0 || ft_strcmp(cmd->args[0], "/bin/echo") == 0)
 		execute_echo(cmd, process);
-	else if (strcmp(cmd->args[0], "cd") == 0)
+	else if (ft_strcmp(cmd->args[0], "cd") == 0)
 		execute_cd(cmd, env_copy, process);
-	else if (strcmp(cmd->args[0], "export") == 0)
+	else if (ft_strcmp(cmd->args[0], "export") == 0)
 		execute_export(cmd, env_copy, process);
 	else if (strcmp(cmd->args[0], "unset") == 0)
 		execute_unset(cmd, env_copy, process);

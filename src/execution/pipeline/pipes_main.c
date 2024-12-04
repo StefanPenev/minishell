@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 15:08:15 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/03 17:01:45 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/04 15:03:57 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,7 @@
 
 // ls -l | grep ".txt" | wc -l
 // echo 123 | ls -l | wc -l
-/// bin/ps aux | /bin/grep "bash" | /usr/bin/awk '{print $2}'
-
+// bin/ps aux | /bin/grep "bash" | /usr/bin/awk '{print $2}'
 // Waits for all child processes in the pipeline to complete.
 // Iterates over all process IDs in the pipeline and handles their
 // exit statuses.
@@ -116,7 +115,7 @@ int	main_pipes_process(t_ast *ast, t_shell_context *shell_ctx)
 {
 	t_pipes_process_content	ctx;
 
-	if (process_all_heredocs(ast) == -1)
+	if (process_all_heredocs(ast, shell_ctx) == -1)
 		return (EXIT_FAILURE);
 	if (initialize_pipes_process(ast, shell_ctx, &ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);

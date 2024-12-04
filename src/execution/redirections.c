@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 13:33:29 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/03 16:21:22 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/04 15:04:22 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	redir_out(t_redirection *redir)
 	return (0);
 }
 
-int	redir_in(t_redirection *redir, t_command *cmd)
+int	redir_in(t_redirection *redir, t_process *process)
 {
 	if (redir->type == REDIRECT_INPUT)
 	{
@@ -58,22 +58,13 @@ int	redir_in(t_redirection *redir, t_command *cmd)
 	{
 		if (redir->was_processed)
 			return (0);
-		if (heredoc(redir) == -1)
+		if (heredoc(redir, process) == -1)
 			return (-1);
-		if (is_builtin(cmd))
-		{
-			if (dup2(redir->fd, STDIN_FILENO) == -1)
-			{
-				perror("dup2");
-				return (-1);
-			}
-			close(redir->fd);
-		}
 	}
 	return (0);
 }
 
-int	handle_redirections(t_command *cmd)
+int	handle_redirections(t_command *cmd, t_process *process)
 {
 	t_redirection	*redir;
 
@@ -82,14 +73,12 @@ int	handle_redirections(t_command *cmd)
 	{
 		if (redir->type == REDIRECT_OUTPUT || redir->type == REDIRECT_APPEND)
 		{
-			//printf("[DEBUG] handle_redirections: redirecting to: %s\n", redir->filename);
 			if (redir_out(redir) == -1)
 				return (-1);
 		}
 		else if (redir->type == REDIRECT_INPUT || redir->type == HEREDOC)
 		{
-			//printf("[DEBUG] handle_redirections: redirecting from: %s\n", redir->filename);
-			if (redir_in(redir, cmd) == -1)
+			if (redir_in(redir, process) == -1)
 				return (-1);
 		}
 		else
