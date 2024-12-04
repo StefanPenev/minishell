@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 14:43:02 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/04 14:58:11 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/04 15:37:12 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	first_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 {
 	char	*full_path;
 
-	handle_streams(fds, cmd, PIPE_FIRST);
+	handle_streams(fds, cmd, PIPE_FIRST, shell_ctx->process);
 	if (is_builtin(cmd))
 	{
 		execute_builtin(cmd, shell_ctx->env_copy, shell_ctx->process);
@@ -57,7 +57,7 @@ void	execute_middle_cmd(t_pipe_fds *fds, t_command *cmd,
 {
 	char	*full_path;
 
-	handle_streams(fds, cmd, PIPE_MIDDLE);
+	handle_streams(fds, cmd, PIPE_MIDDLE, ctx->shell_ctx->process);
 	if (is_builtin(cmd))
 	{
 		execute_builtin(cmd, ctx->shell_ctx->env_copy, ctx->shell_ctx->process);
@@ -122,7 +122,7 @@ void	last_cmd(t_pipe_fds *fds, t_command *cmd, char **env_array,
 {
 	char	*full_path;
 
-	handle_streams(fds, cmd, PIPE_LAST);
+	handle_streams(fds, cmd, PIPE_LAST, shell_ctx->process);
 	if (is_builtin(cmd))
 	{
 		execute_builtin(cmd, shell_ctx->env_copy, shell_ctx->process);

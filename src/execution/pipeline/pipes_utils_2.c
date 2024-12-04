@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:36:38 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/03 14:23:07 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/04 15:35:23 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,13 +92,13 @@ void	middle_commands_streams(t_pipe_fds *fds, t_command *cmd)
 //   - 0 on success.
 //   - Exits with an error if a dup2 or HEREDOC handling fails.
 
-void	handle_redirections_with_heredoc(t_command *cmd)
+void	handle_redirections_with_heredoc(t_command *cmd, t_process *process)
 {
 	t_redirection	*redir;
 
 	if (cmd && cmd->redirections)
 	{
-		if (handle_redirections(cmd) == -1)
+		if (handle_redirections(cmd, process) == -1)
 		{
 			printf("Error handling redirections\n");
 			exit(EXIT_FAILURE);
@@ -134,9 +134,9 @@ void	handle_redirections_with_heredoc(t_command *cmd)
 //       - PIPE_MIDDLE: Middle command in the pipeline.
 //       - PIPE_LAST: Last command in the pipeline.
 
-void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag)
+void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag, t_process *process)
 {
-	handle_redirections_with_heredoc(cmd);
+	handle_redirections_with_heredoc(cmd, process);
 	if (flag == PIPE_FIRST)
 	{
 		if (!cmd_has_output_redirection(cmd) && fds->fd[1] >= 0)

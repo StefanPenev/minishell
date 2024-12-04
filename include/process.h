@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 11:20:43 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/04 15:05:41 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/04 15:35:54 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,8 +190,10 @@ int								initialize_pipes_process(t_ast *ast,
 int								create_fork(pid_t *pid, t_process *process);
 void							close_safe(int fd);
 void							dup_stream(int fd, int n);
+// void							handle_streams(t_pipe_fds *fds, t_command *cmd,
+// 									int flag);
 void							handle_streams(t_pipe_fds *fds, t_command *cmd,
-									int flag);
+									int flag, t_process *process);
 
 /* ************************************************************************** */
 /*                               Redirections                                 */
