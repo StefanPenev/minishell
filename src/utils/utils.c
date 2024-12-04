@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:13:20 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/01 21:45:05 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/04 10:56:26 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,16 +70,6 @@ void	*ft_realloc(void *ptr, size_t new_size)
 int	ft_isspace(int c)
 {
 	return ((c >= 9 && c <= 13) || c == 32);
-}
-
-void	ft_print_error(char *prefix, char *dynamic_part, char *suffix)
-{
-	if (prefix)
-		ft_putstr_fd(prefix, STDERR_FILENO);
-	if (dynamic_part)
-		ft_putstr_fd(dynamic_part, STDERR_FILENO);
-	if (suffix)
-		ft_putstr_fd(suffix, STDERR_FILENO);
 }
 
 char	*ft_strcpy(char *dest, char *src)

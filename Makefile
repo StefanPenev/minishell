@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
+#    By: spenev <spenev@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/12/03 21:32:16 by stfn             ###   ########.fr        #
+#    Updated: 2024/12/04 10:57:55 by spenev           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,6 +47,7 @@ SRCS += $(SRC_DIR)/lexer/lexer.c \
 
 # Utils 
 SRCS += $(SRC_DIR)/utils/utils.c \
+		$(SRC_DIR)/utils/errors.c \
 
 # AST 
 SRCS += $(SRC_DIR)/ast/ast.c \

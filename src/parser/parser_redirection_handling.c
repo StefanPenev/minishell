@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_redirection_handling.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:17:13 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/03 22:48:32 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/04 10:54:45 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,36 +79,36 @@ void	append_redirection(t_redirection **head, t_redirection *new_redir)
 	}
 }
 
-void add_redirection_to_command(t_command *command, t_redirection *new_redir)
+void	add_redirection_to_command(t_command *command, t_redirection *new_redir)
 {
-    t_redirection *current = command->redirections;
-    t_redirection *previous = NULL;
+	t_redirection	*current;
+	t_redirection	*previous;
 
-    if (!current)
-    {
-        command->redirections = new_redir;
-        return;
-    }
-
-    while (current)
-    {
-        if (current->type == new_redir->type)
-        {
-            if (previous)
-                previous->next = new_redir;
-            else
-                command->redirections = new_redir;
-            new_redir->next = current->next;
-            free(current->filename);
-            free(current);
-            return;
-        }
-        previous = current;
-        current = current->next;
-    }
-
-    previous->next = new_redir;
-    new_redir->next = NULL;
+	current = command->redirections;
+	previous = NULL;
+	if (!current)
+	{
+		command->redirections = new_redir;
+		return ;
+	}
+	while (current)
+	{
+		if (current->type == new_redir->type)
+		{
+			if (previous)
+				previous->next = new_redir;
+			else
+				command->redirections = new_redir;
+			new_redir->next = current->next;
+			free(current->filename);
+			free(current);
+			return ;
+		}
+		previous = current;
+		current = current->next;
+	}
+	previous->next = new_redir;
+	new_redir->next = NULL;
 }
 
 t_redirection	*parse_redirection(t_parser *parser)
