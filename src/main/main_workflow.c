@@ -6,7 +6,7 @@
 /*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:43:07 by spenev            #+#    #+#             */
-/*   Updated: 2024/12/04 11:59:54 by spenev           ###   ########.fr       */
+/*   Updated: 2024/12/04 13:22:27 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,11 +102,11 @@ void	execute_builtin(t_command *cmd, t_env *env_copy, t_process *process)
 	else if (ft_strcmp(cmd->args[0], "echo") == 0 || ft_strcmp(cmd->args[0],
 			"/usr/bin/echo") == 0 || ft_strcmp(cmd->args[0], "/bin/echo") == 0)
 		execute_echo(cmd, process);
-	else if (strcmp(cmd->args[0], "cd") == 0)
+	else if (ft_strcmp(cmd->args[0], "cd") == 0)
 		execute_cd(cmd, env_copy, process);
-	else if (strcmp(cmd->args[0], "export") == 0)
+	else if (ft_strcmp(cmd->args[0], "export") == 0)
 		execute_export(cmd, env_copy, process);
-	else if (strcmp(cmd->args[0], "unset") == 0)
+	else if (ft_strcmp(cmd->args[0], "unset") == 0)
 		execute_unset(cmd, env_copy, process);
 	else if (ft_strcmp(cmd->args[0], "env") == 0 || ft_strcmp(cmd->args[0],
 			"/usr/bin/env") == 0)

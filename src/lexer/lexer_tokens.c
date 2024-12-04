@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_tokens.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 16:27:07 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/03 11:09:20 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/04 12:43:19 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ t_token	*lexer_process_token(t_lexer *lexer, t_token *head,
 	}
 	else
 	{
-		printf("Character '%c' is not required to interpret\n", lexer->current_char);
+		printf("Character '%c' is not required to interpret\n",
+			lexer->current_char);
 		new_tok = lexer_new_token(TOKEN_ERROR, "Invalid character encountered");
 		lexer->current_char = '\0';
 	}

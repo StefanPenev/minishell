@@ -6,7 +6,7 @@
 /*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 19:33:08 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 10:34:49 by spenev           ###   ########.fr       */
+/*   Updated: 2024/12/04 12:39:06 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,33 +27,77 @@ char	*ft_getenv(char *var_name, t_env *env_copy)
 	return (getenv(var_name));
 }
 
+// char	*lexer_expand_dollar(t_lexer *lexer, t_token *head,
+// 	t_shell_context **shell_ctx)
+// {
+// 	char	*value;
+// 	char	*expanded_value;
+// 	char	*tmp;
+// 	size_t	var_len;
+
+// 	expanded_value = ft_strdup("");
+// 	if (!expanded_value)
+// 		return (NULL);
+// 	while (lexer->current_char == '$')
+// 	{
+// 		value = lexer_expand_variable(lexer, &var_len, (*shell_ctx)->env_copy,
+// 				(*shell_ctx)->process->last_exit_status);
+// 		if (!value)
+// 		{
+// 			lexer_free_tokens(head);
+// 			free(expanded_value);
+// 			return (NULL);
+// 		}
+// 		tmp = expanded_value;
+// 		expanded_value = ft_strjoin(expanded_value, value);
+// 		free(tmp);
+// 		free(value);
+// 		lexer->pos += var_len;
+// 		lexer->current_char = lexer->input[lexer->pos];
+// 	}
+// 	return (expanded_value);
+// }
+
+// Helper function to process a single variable and append its value.
+static char	*lexer_process_variable(t_lexer *lexer, char *expanded_value,
+	t_shell_context **shell_ctx, t_token *head)
+{
+	char	*value;
+	char	*tmp;
+	size_t	var_len;
+
+	value = lexer_expand_variable(lexer, &var_len, (*shell_ctx)->env_copy,
+			(*shell_ctx)->process->last_exit_status);
+	if (!value)
+	{
+		lexer_free_tokens(head);
+		free(expanded_value);
+		return (NULL);
+	}
+	tmp = expanded_value;
+	expanded_value = ft_strjoin(expanded_value, value);
+	free(tmp);
+	free(value);
+	lexer->pos += var_len;
+	lexer->current_char = lexer->input[lexer->pos];
+	return (expanded_value);
+}
+
+// Main function orchestrating the expansion process.
 char	*lexer_expand_dollar(t_lexer *lexer, t_token *head,
 	t_shell_context **shell_ctx)
 {
-	char	*value;
 	char	*expanded_value;
-	char	*tmp;
-	size_t	var_len;
 
 	expanded_value = ft_strdup("");
 	if (!expanded_value)
 		return (NULL);
 	while (lexer->current_char == '$')
 	{
-		value = lexer_expand_variable(lexer, &var_len, (*shell_ctx)->env_copy,
-				(*shell_ctx)->process->last_exit_status);
-		if (!value)
-		{
-			lexer_free_tokens(head);
-			free(expanded_value);
+		expanded_value = lexer_process_variable(lexer, expanded_value,
+				shell_ctx, head);
+		if (!expanded_value)
 			return (NULL);
-		}
-		tmp = expanded_value;
-		expanded_value = ft_strjoin(expanded_value, value);
-		free(tmp);
-		free(value);
-		lexer->pos += var_len;
-		lexer->current_char = lexer->input[lexer->pos];
 	}
 	return (expanded_value);
 }
