@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/03 20:03:49 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/04 12:04:06 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,5 @@ int					resize_array(char ***files, int *capacity,
 
 // lexer_env_variables.c
 char				*ft_getenv(char *var_name, t_env *env_copy);
-
-// utils.c
-int					ft_isspace(int c);
-char				*ft_strndup(const char *s, size_t n);
 
 #endif

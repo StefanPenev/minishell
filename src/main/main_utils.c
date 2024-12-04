@@ -3,67 +3,108 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:05 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/03 22:49:32 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/04 11:57:39 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "lexer.h"
-#include "parser.h"
-#include "process.h"
 
-void	cleanup(t_token *tokens, char *input)
+void	assign_vars(t_shell_context **shell_ctx, t_process *process,
+		t_env **env_copy, char **envp)
 {
-	lexer_free_tokens(tokens);
-	free(input);
-}
-
-t_token	*process_lexer(char *input, t_shell_context **shell_ctx)
-{
-	t_token	*tokens;
-
-	tokens = lexer_tokenize(input, shell_ctx);
-	if (!tokens || tokens->type == TOKEN_ERROR)
+	*shell_ctx = malloc(sizeof(t_shell_context));
+	if (!*shell_ctx)
 	{
-		if (tokens)
-		{
-			printf("Error: %s\n", lexer_get_error_message(tokens));
-			lexer_free_tokens(tokens);
-		}
-		free(input);
-		return (NULL);
-	}
-	//print_tokens(tokens);
-	return (tokens);
-}
-
-t_ast	*process_parser(t_token *tokens)
-{
-	t_ast	*ast;
-
-	ast = parse_tokens(tokens);
-	if (!ast)
-	{
-		fprintf(stderr, "Parsing error\n");
-		lexer_free_tokens(tokens);
-		return (NULL);
-	}
-	//print_ast(ast, 0);
-	return (ast);
-}
-
-void	free_shell_ctx(t_shell_context *shell_ctx)
-{
-	if (!shell_ctx)
+		printf("malloc");
 		return ;
-	if (shell_ctx->env_copy)
-	{
-		free_env(&(shell_ctx->env_copy));
-		shell_ctx->env_copy = NULL;
 	}
-	free(shell_ctx);
-	shell_ctx = NULL;
+	process->last_exit_status = 0;
+	*env_copy = init_env(envp);
+	(*shell_ctx)->process = process;
+	(*shell_ctx)->env_copy = *env_copy;
+}
+
+int	is_builtin(t_command *cmd)
+{
+	static const char	*builtins[] = {"echo", "cd", "pwd", "export", "unset",
+		"env", "exit", "/usr/bin/echo", "/bin/pwd", "/usr/bin/env",
+		"/bin/echo"};
+	size_t				i;
+
+	i = 0;
+	if (cmd == NULL || cmd->args == NULL || cmd->args[0] == NULL)
+	{
+		printf("Error: Invalid command or arguments.\n");
+		exit(EXIT_FAILURE);
+	}
+	while (i < sizeof(builtins) / sizeof(builtins[0]))
+	{
+		if (ft_strcmp(cmd->args[0], builtins[i]) == 0)
+		{
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
+void	restore_standard_fds(int saved_stdin, int saved_stdout,
+		int saved_stderr)
+{
+	if (saved_stdin != -1 && isatty(saved_stdin))
+	{
+		if (dup2(saved_stdin, STDIN_FILENO) == -1)
+		{
+			perror("Failed to restore stdin");
+		}
+		close(saved_stdin);
+	}
+	if (saved_stdout != -1 && isatty(saved_stdout))
+	{
+		if (dup2(saved_stdout, STDOUT_FILENO) == -1)
+		{
+			perror("Failed to restore stdout");
+		}
+		close(saved_stdout);
+	}
+	if (saved_stderr != -1 && isatty(saved_stderr))
+	{
+		if (dup2(saved_stderr, STDERR_FILENO) == -1)
+		{
+			perror("Failed to restore stderr");
+		}
+		close(saved_stderr);
+	}
+}
+
+int	setup_redirections(t_command *cmd, int *saved_stdin, int *saved_stdout,
+		int *saved_stderr)
+{
+	if (cmd->redirections)
+	{
+		*saved_stdin = dup(STDIN_FILENO);
+		*saved_stdout = dup(STDOUT_FILENO);
+		*saved_stderr = dup(STDERR_FILENO);
+		if (*saved_stdin == -1 || *saved_stdout == -1 || *saved_stderr == -1)
+		{
+			perror("dup");
+			return (-1);
+		}
+		if (handle_redirections(cmd) == -1)
+		{
+			restore_standard_fds(*saved_stdin, *saved_stdout, *saved_stderr);
+			return (-1);
+		}
+		return (1);
+	}
+	else
+	{
+		*saved_stdin = -1;
+		*saved_stdout = -1;
+		*saved_stderr = -1;
+		return (0);
+	}
 }

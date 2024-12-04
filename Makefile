@@ -6,7 +6,7 @@
 #    By: spenev <spenev@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/12/04 10:57:55 by spenev           ###   ########.fr        #
+#    Updated: 2024/12/04 11:44:39 by spenev           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,8 @@ SRCS = $(SRC_DIR)/ast_tester.c \
 # Main
 SRCS += $(SRC_DIR)/main/main.c \
 		$(SRC_DIR)/main/main_utils.c \
+		$(SRC_DIR)/main/main_cleanup.c \
+		$(SRC_DIR)/main/main_workflow.c \
 
 # Lexer 
 SRCS += $(SRC_DIR)/lexer/lexer.c \
