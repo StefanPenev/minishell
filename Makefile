@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: spenev <spenev@student.42.fr>              +#+  +:+       +#+         #
+#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/12/04 11:44:39 by spenev           ###   ########.fr        #
+#    Updated: 2024/12/04 22:30:04 by stfn             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,10 +55,16 @@ SRCS += $(SRC_DIR)/utils/utils.c \
 SRCS += $(SRC_DIR)/ast/ast.c \
 
 # Parser 
-SRCS += $(SRC_DIR)/parser/parse_expression.c \
+SRCS += $(SRC_DIR)/parser/parser_utils.c \
+		$(SRC_DIR)/parser/parse_wildcard.c \
+		$(SRC_DIR)/parser/parse_expression.c \
+		$(SRC_DIR)/parser/parse_command_line.c \
 		$(SRC_DIR)/parser/parser_heredoc_handling.c \
 		$(SRC_DIR)/parser/parser_command_handling.c \
+		$(SRC_DIR)/parser/parser_expression_utils.c \
+		$(SRC_DIR)/parser/parser_redirection_utils.c \
 		$(SRC_DIR)/parser/parser_argument_handling.c \
+		$(SRC_DIR)/parser/parser_logical_expression.c \
 		$(SRC_DIR)/parser/parser_redirection_handling.c \
 
 # Execution

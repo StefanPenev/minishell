@@ -6,21 +6,12 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:24:13 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/03 21:45:33 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/04 22:08:02 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include "minishell.h"
-
-// Helper function to check if a token is a redirection token
-int	is_redirection_token(t_token_type token_type)
-{
-	return (token_type == TOKEN_REDIRECT_OUT
-		|| token_type == TOKEN_REDIRECT_IN
-		|| token_type == TOKEN_APPEND
-		|| token_type == TOKEN_HEREDOC);
-}
 
 void	free_redirections(t_redirection *redir)
 {
@@ -57,7 +48,12 @@ int	validate_heredoc_token(t_parser *parser, t_redirection *redir)
 	if (!parser->current_token || parser->current_token->type != TOKEN_WORD
 		|| !parser->current_token->value)
 	{
-		ft_print_error("Error: Expected heredoc delimiter after '<<', but found ", parser->current_token ? parser->current_token->value : "NULL", ".\n");
+		if (parser->current_token)
+			ft_print_error("Error: Expected heredoc delimiter after '<<',"
+				"but found ", parser->current_token->value, ".\n");
+		else
+			ft_print_error("Error: Expected heredoc delimiter after '<<',"
+				"but found NULL.\n", NULL, NULL);
 		free(redir);
 		return (0);
 	}

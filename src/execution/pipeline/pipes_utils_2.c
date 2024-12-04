@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes_utils_2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:36:38 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/04 15:35:23 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/04 21:39:03 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,8 @@ void	handle_redirections_with_heredoc(t_command *cmd, t_process *process)
 //       - PIPE_MIDDLE: Middle command in the pipeline.
 //       - PIPE_LAST: Last command in the pipeline.
 
-void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag, t_process *process)
+void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag,
+	t_process *process)
 {
 	handle_redirections_with_heredoc(cmd, process);
 	if (flag == PIPE_FIRST)
