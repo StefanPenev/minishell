@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 17:53:05 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/29 14:34:00 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/05 13:22:49 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	execute_env(t_env *env_copy, t_process *process)
 	cur = env_copy;
 	while (cur != NULL)
 	{
-		if (cur->value != NULL)
+		if (ft_strcmp(cur->value, "") != 0)
 		{
 			key_len = ft_strlen(cur->key);
 			value_len = ft_strlen(cur->value);

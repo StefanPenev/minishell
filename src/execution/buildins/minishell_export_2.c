@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:39:45 by anilchen          #+#    #+#             */
-/*   Updated: 2024/11/29 15:03:58 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/05 13:21:14 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ int	export_no_args(t_env *env_copy)
 	current = sorted_list;
 	while (current != NULL)
 	{
-		if (current->key != NULL && current->value != NULL)
+		if (current->key != NULL && ft_strcmp(current->value, "") != 0)
 			printf("declare -x %s=\"%s\"\n", current->key, current->value);
 		else if (current->key != NULL)
 			printf("declare -x %s\n", current->key);
