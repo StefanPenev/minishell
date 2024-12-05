@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 16:36:38 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/05 15:19:34 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/05 15:46:58 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,10 +99,7 @@ void	handle_redirections_with_heredoc(t_command *cmd, t_process *process)
 	if (cmd && cmd->redirections)
 	{
 		if (handle_redirections(cmd, process) == -1)
-		{
-			//printf("Error handling redirections\n");
 			exit(EXIT_FAILURE);
-		}
 		redir = cmd->redirections;
 		while (redir)
 		{
@@ -135,7 +132,7 @@ void	handle_redirections_with_heredoc(t_command *cmd, t_process *process)
 //       - PIPE_LAST: Last command in the pipeline.
 
 void	handle_streams(t_pipe_fds *fds, t_command *cmd, int flag,
-	t_process *process)
+		t_process *process)
 {
 	handle_redirections_with_heredoc(cmd, process);
 	if (flag == PIPE_FIRST)
