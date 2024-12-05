@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 17:51:50 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/01 17:57:17 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/05 14:06:17 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	interrupt(int sig)
 	(void)sig;
 	suppress_output();
 	write(STDOUT_FILENO, "\n", 1);
-	exit(1);
+	exit(130);
 }
 
 /* Restore terminal settings */

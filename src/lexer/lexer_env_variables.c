@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 19:33:08 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/05 00:48:39 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/05 14:14:14 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,47 +84,47 @@ static char	*lexer_process_variable(t_lexer *lexer, char *expanded_value,
 }
 
 // Main function orchestrating the expansion process.
-// char	*lexer_expand_dollar(t_lexer *lexer, t_token *head,
-// 	t_shell_context **shell_ctx)
-// {
-// 	char	*expanded_value;
-
-// 	expanded_value = ft_strdup("");
-// 	if (!expanded_value)
-// 		return (NULL);
-// 	while (lexer->current_char == '$')
-// 	{
-// 		expanded_value = lexer_process_variable(lexer, expanded_value,
-// 				shell_ctx, head);
-// 		if (!expanded_value)
-// 			return (NULL);
-// 	}
-// 	return (expanded_value);
-// }
 char	*lexer_expand_dollar(t_lexer *lexer, t_token *head,
-     t_shell_context **shell_ctx)
+	t_shell_context **shell_ctx)
 {
-    char	*expanded_value;
+	char	*expanded_value;
 
-    expanded_value = ft_strdup("");
-    if (!expanded_value)
-        return (NULL);
-    while (lexer->current_char == '$')
-    {
-        // Check next character to prevent consuming quotes
-        if (lexer->input[lexer->pos + 1] == '"' || lexer->input[lexer->pos + 1] == '\'')
-        {
-            // Advance past the '$' to prevent infinite loop
-            lexer_advance(lexer);
-            break;
-        }
-        expanded_value = lexer_process_variable(lexer, expanded_value,
-                shell_ctx, head);
-        if (!expanded_value)
-            return (NULL);
-    }
-    return (expanded_value);
+	expanded_value = ft_strdup("");
+	if (!expanded_value)
+		return (NULL);
+	while (lexer->current_char == '$')
+	{
+		expanded_value = lexer_process_variable(lexer, expanded_value,
+				shell_ctx, head);
+		if (!expanded_value)
+			return (NULL);
+	}
+	return (expanded_value);
 }
+// char	*lexer_expand_dollar(t_lexer *lexer, t_token *head,
+//      t_shell_context **shell_ctx)
+// {
+//     char	*expanded_value;
+
+//     expanded_value = ft_strdup("");
+//     if (!expanded_value)
+//         return (NULL);
+//     while (lexer->current_char == '$')
+//     {
+//         // Check next character to prevent consuming quotes
+//         if (lexer->input[lexer->pos + 1] == '"' || lexer->input[lexer->pos + 1] == '\'')
+//         {
+//             // Advance past the '$' to prevent infinite loop
+//             lexer_advance(lexer);
+//             break;
+//         }
+//         expanded_value = lexer_process_variable(lexer, expanded_value,
+//                 shell_ctx, head);
+//         if (!expanded_value)
+//             return (NULL);
+//     }
+//     return (expanded_value);
+// }
 
 char	*lexer_collect_dollar(t_lexer *lexer, t_token *head,
 	t_shell_context **shell_ctx)
