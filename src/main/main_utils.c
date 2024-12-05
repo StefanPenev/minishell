@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 18:59:05 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 15:02:32 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/04 23:13:57 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ void	assign_vars(t_shell_context **shell_ctx, t_process *process,
 int	is_builtin(t_command *cmd)
 {
 	static const char	*builtins[] = {"echo", "cd", "pwd", "export", "unset",
-			"env", "exit", "/usr/bin/echo", "/bin/pwd", "/usr/bin/env",
-			"/bin/echo"};
+		"env", "exit", "/usr/bin/echo", "/bin/pwd", "/usr/bin/env",
+		"/bin/echo"};
 	size_t				i;
 
 	i = 0;

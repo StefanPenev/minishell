@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 21:41:55 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 11:57:34 by spenev           ###   ########.fr       */
+/*   Updated: 2024/12/04 23:15:21 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,69 +82,3 @@ int	main(int argc, char **argv, char **envp)
 	rl_clear_history();
 	return (0);
 }
-
-// void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
-// {
-// 	int				saved_stdin;
-// 	int				saved_stdout;
-// 	int				saved_stderr;
-// 	pid_t			pid;
-// 	t_redirection	*redir;
-
-// 	printf("[DEBUG] execute_ast_command start: Process pointer: %p,
-//		Last exit status: %d\n",
-// 		(void *)(*shell_ctx)->process, (*shell_ctx)->process->last_exit_status);
-// 	if (setup_redirections(cmd, &saved_stdin, &saved_stdout, &saved_stderr) ==
-// 		-1)
-// 		return ;
-// 	if (is_builtin(cmd))
-// 		execute_builtin(cmd, (*shell_ctx)->env_copy, (*shell_ctx)->process);
-// 	else
-// 	{
-// 		pid = fork();
-// 		if (pid == -1)
-// 		{
-// 			perror("fork");
-// 			restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
-// 			return ;
-// 		}
-// 		if (pid == 0)
-// 		{
-// 			redir = cmd->redirections;
-// 			while (redir)
-// 			{
-// 				if (redir->type == HEREDOC)
-// 				{
-// 					if (dup2(redir->fd, STDIN_FILENO) == -1)
-// 					{
-// 						perror("dup2");
-// 						exit(EXIT_FAILURE);
-// 					}
-// 					close(redir->fd);
-// 				}
-// 				redir = redir->next;
-// 			}
-// 			printf("[DEBUG] execute_ast_command before calling execute_external_commands: Process pointer:
-//				%p, Last exit status: %d\n",
-// 			(void *)(*shell_ctx)->process,
-//				(*shell_ctx)->process->last_exit_status);
-// 			execute_external_commands(cmd, (*shell_ctx)->env_copy,
-// 				(*shell_ctx)->process);
-// 			printf("[DEBUG] execute_ast_command after calling execute_external_commands: Process pointer:
-//				%p, Last exit status: %d\n",
-// 			(void *)(*shell_ctx)->process,
-//				(*shell_ctx)->process->last_exit_status);
-// 			exit(EXIT_SUCCESS);
-// 		}
-// 		else
-// 			handle_child_exit_status(pid, (*shell_ctx)->process);
-// 	//waitpid(pid, NULL, 0);
-// 	}
-// 	printf("[DEBUG] before restore_standard_fds: Process pointer: %p,
-//		Last exit status: %d\n",
-//     (void *)(*shell_ctx)->process, (*shell_ctx)->process->last_exit_status);
-// 	restore_standard_fds(saved_stdin, saved_stdout, saved_stderr);
-// 	printf("[DEBUG] execute_ast_command end: Process pointer: %p,
-//		Last exit status: %d\n",
-//     (void *)(*shell_ctx)->process, (*shell_ctx)->process->last_exit_status);
-// }

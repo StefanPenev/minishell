@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_extensions.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:22:50 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 13:17:52 by spenev           ###   ########.fr       */
+/*   Updated: 2024/12/05 00:49:18 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,51 +83,97 @@ char	*lexer_collect_word(t_lexer *lexer, t_shell_context **shell_ctx)
 }
 
 /* Collect a quoted string (single or double quotes) */
-char	*lexer_collect_quoted(t_lexer *lexer, char quote_type,
-	t_shell_context **shell_ctx)
-{
-	char	*expanded_str;
-	char	*temp_str;
-	char	char_as_str[2];
-	char	*tmp;
+// char	*lexer_collect_quoted(t_lexer *lexer, char quote_type,
+// 	t_shell_context **shell_ctx)
+// {
+// 	char	*expanded_str;
+// 	char	*temp_str;
+// 	char	char_as_str[2];
+// 	char	*tmp;
 
-	lexer_advance(lexer);
-	expanded_str = ft_strdup("");
-	if (!expanded_str)
-		return (NULL);
-	while (lexer->current_char && lexer->current_char != quote_type)
-	{
-		if (quote_type == '"' && lexer->current_char == '$')
-		{
-			temp_str = lexer_expand_dollar(lexer, NULL, shell_ctx);
-			if (!temp_str)
-			{
-				free(expanded_str);
-				return (NULL);
-			}
-		}
-		else
-		{
-			char_as_str[0] = lexer->current_char;
-			char_as_str[1] = '\0';
-			temp_str = ft_strdup(char_as_str);
-			lexer_advance(lexer);
-		}
-		tmp = expanded_str;
-		expanded_str = ft_strjoin(expanded_str, temp_str);
-		free(tmp);
-		free(temp_str);
-		if (!expanded_str)
-			return (NULL);
-	}
-	if (lexer->current_char != quote_type)
-	{
-		printf("Error: Unclosed %c quote at position %zu\n", quote_type, lexer->pos);
-		free(expanded_str);
-		return (NULL);
-	}
-	lexer_advance(lexer);
-	return (expanded_str);
+// 	lexer_advance(lexer);
+// 	expanded_str = ft_strdup("");
+// 	if (!expanded_str)
+// 		return (NULL);
+// 	while (lexer->current_char && lexer->current_char != quote_type)
+// 	{
+// 		if (quote_type == '"' && lexer->current_char == '$')
+// 		{
+// 			temp_str = lexer_expand_dollar(lexer, NULL, shell_ctx);
+// 			if (!temp_str)
+// 			{
+// 				free(expanded_str);
+// 				return (NULL);
+// 			}
+// 		}
+// 		else
+// 		{
+// 			char_as_str[0] = lexer->current_char;
+// 			char_as_str[1] = '\0';
+// 			temp_str = ft_strdup(char_as_str);
+// 			lexer_advance(lexer);
+// 		}
+// 		tmp = expanded_str;
+// 		expanded_str = ft_strjoin(expanded_str, temp_str);
+// 		free(tmp);
+// 		free(temp_str);
+// 		if (!expanded_str)
+// 			return (NULL);
+// 	}
+// 	if (lexer->current_char != quote_type)
+// 	{
+// 		printf("Error: Unclosed %c quote at position %zu\n", quote_type, lexer->pos);
+// 		free(expanded_str);
+// 		return (NULL);
+// 	}
+// 	lexer_advance(lexer);
+// 	return (expanded_str);
+// }
+char	*lexer_collect_quoted(t_lexer *lexer, char quote_type,
+     t_shell_context **shell_ctx)
+{
+    char	*expanded_str;
+    char	*temp_str;
+    char	char_as_str[2];
+    char	*tmp;
+
+    lexer_advance(lexer);
+    expanded_str = ft_strdup("");
+    if (!expanded_str)
+        return (NULL);
+    while (lexer->current_char && lexer->current_char != quote_type)
+    {
+        if (quote_type == '"' && lexer->current_char == '$')
+        {
+            temp_str = lexer_expand_dollar(lexer, NULL, shell_ctx);
+            if (!temp_str)
+            {
+                free(expanded_str);
+                return (NULL);
+            }
+        }
+        else
+        {
+            char_as_str[0] = lexer->current_char;
+            char_as_str[1] = '\0';
+            temp_str = ft_strdup(char_as_str);
+            lexer_advance(lexer);
+        }
+        tmp = expanded_str;
+        expanded_str = ft_strjoin(expanded_str, temp_str);
+        free(tmp);
+        free(temp_str);
+        if (!expanded_str)
+            return (NULL);
+    }
+    if (lexer->current_char != quote_type)
+    {
+        printf("Error: Unclosed %c quote at position %zu\n", quote_type, lexer->pos);
+        free(expanded_str);
+        return (NULL);
+    }
+    lexer_advance(lexer);
+    return (expanded_str);
 }
 
 char	*lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy,
@@ -137,7 +183,7 @@ char	*lexer_expand_variable(t_lexer *lexer, size_t *length, t_env *env_copy,
 	char	*var_name;
 	char	*value;
 
-	start = lexer->pos + 1; // Position after '$'
+	start = lexer->pos + 1;
 	if (lexer->input[start] == '\0')
 	{
 		*length = 1;
