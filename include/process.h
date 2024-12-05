@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 11:20:43 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/04 15:35:54 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/05 23:51:05 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,5 +211,13 @@ int								process_all_heredocs(t_ast *ast,
 /* ************************************************************************** */
 int								heredoc(t_redirection *redir,
 									t_process *process);
+int								handle_missing_delimiter(t_redirection *redir);
+int								prepare_temp_file(char *temp_file,
+									t_process *process);
+int								open_temp_file(const char *temp_file);
+void							process_heredoc_lines(int fd,
+									t_redirection *redir);
+int								process_exit_status(const char *temp_file,
+									t_process *process, int status);
 
 #endif

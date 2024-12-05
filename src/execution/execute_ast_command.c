@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_ast_command.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 23:32:28 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/05 15:16:36 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/05 20:33:30 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,8 @@ void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
 			(*shell_ctx)->process);
 	if (redirections_set == -1)
 	{
+		if ((*shell_ctx)->process->last_exit_status == 130)
+			return ;
 		set_exit_status((*shell_ctx)->process, 1);
 		return ;
 	}

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+         #
+#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/12/05 14:59:31 by anilchen         ###   ########.fr        #
+#    Updated: 2024/12/05 23:47:30 by stfn             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -91,6 +91,7 @@ SRCS += $(SRC_DIR)/execution/getenv.c \
 		$(SRC_DIR)/execution/redirections.c \
 		$(SRC_DIR)/execution/redirections_2.c \
 		$(SRC_DIR)/execution/heredoc.c \
+		$(SRC_DIR)/execution/heredoc_utils.c \
 		$(SRC_DIR)/execution/!cleanup.c \
 		$(SRC_DIR)/execution/execute_ast_command.c \
 
