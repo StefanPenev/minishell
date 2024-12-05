@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   execute_ast_command.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 23:32:28 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/05 14:04:52 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/05 15:16:36 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
 #include "minishell.h"
+#include "parser.h"
 
 // static void	execute_in_child_process(t_command *cmd,
 // 	t_shell_context **shell_ctx)
@@ -144,6 +144,7 @@ void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
 			(*shell_ctx)->process);
 	if (redirections_set == -1)
 	{
+		set_exit_status((*shell_ctx)->process, 1);
 		return ;
 	}
 	if (is_builtin(cmd) && !requires_fork && !redirections_set)
@@ -152,43 +153,46 @@ void	execute_ast_command(t_command *cmd, t_shell_context **shell_ctx)
 		restore_standard_fds(&fd_backup);
 		return ;
 	}
-	if (!requires_fork && !redirections_set)
+	if (!requires_fork)
 	{
 		execute_external_commands(cmd, (*shell_ctx)->env_copy,
 			(*shell_ctx)->process);
 		restore_standard_fds(&fd_backup);
 		return ;
-	}
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		restore_standard_fds(&fd_backup);
-		return ;
-	}
-	if (pid == 0)
-	{
-		redir = cmd->redirections;
-		while (redir)
-		{
-			if (redir->type == HEREDOC)
-			{
-				if (dup2(redir->fd, STDIN_FILENO) == -1)
-				{
-					perror("dup2");
-					exit(EXIT_FAILURE);
-				}
-				close(redir->fd);
-			}
-			redir = redir->next;
-		}
-		execute_external_commands(cmd, (*shell_ctx)->env_copy,
-			(*shell_ctx)->process);
-		exit(EXIT_SUCCESS);
 	}
 	else
 	{
-		handle_child_exit_status(pid, (*shell_ctx)->process);
+		pid = fork();
+		if (pid == -1)
+		{
+			perror("fork");
+			restore_standard_fds(&fd_backup);
+			return ;
+		}
+		if (pid == 0)
+		{
+			redir = cmd->redirections;
+			while (redir)
+			{
+				if (redir->type == HEREDOC)
+				{
+					if (dup2(redir->fd, STDIN_FILENO) == -1)
+					{
+						perror("dup2");
+						exit(EXIT_FAILURE);
+					}
+					close(redir->fd);
+				}
+				redir = redir->next;
+			}
+			execute_external_commands(cmd, (*shell_ctx)->env_copy,
+				(*shell_ctx)->process);
+			exit(EXIT_SUCCESS);
+		}
+		else
+		{
+			handle_child_exit_status(pid, (*shell_ctx)->process);
+		}
 	}
 	restore_standard_fds(&fd_backup);
 }

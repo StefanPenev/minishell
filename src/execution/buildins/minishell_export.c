@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 13:14:41 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/05 13:19:26 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/05 15:02:57 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	split_key_value(char *arg, char **key, char **value)
 	else
 	{
 		*key = ft_strdup(arg);
-		*value = ft_strdup(""); //1
+		*value = ft_strdup("");
 	}
 }
 

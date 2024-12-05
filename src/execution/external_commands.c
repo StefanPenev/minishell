@@ -6,7 +6,7 @@
 /*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 13:32:28 by anilchen          #+#    #+#             */
-/*   Updated: 2024/12/04 14:41:38 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/05 15:16:05 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	handle_child_exit_status(pid_t main_pid, t_process *process)
 	int	status;
 	int	signal_code;
 
+	status = 0;
 	if (main_pid <= 0 || waitpid(main_pid, &status, 0) == -1)
 	{
 		perror("ERROR");
@@ -32,9 +33,7 @@ void	handle_child_exit_status(pid_t main_pid, t_process *process)
 		return ;
 	}
 	if (WIFEXITED(status))
-	{
 		set_exit_status(process, WEXITSTATUS(status));
-	}
 	else if (WIFSIGNALED(status))
 	{
 		signal_code = WTERMSIG(status);
@@ -44,9 +43,7 @@ void	handle_child_exit_status(pid_t main_pid, t_process *process)
 			set_exit_status(process, 128 + signal_code);
 	}
 	else
-	{
 		set_exit_status(process, 1);
-	}
 }
 
 // Handles the execution of a child process in a shell-like environment.
