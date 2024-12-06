@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/05 23:37:00 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/05 23:44:19 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/06 12:57:10 by anilchen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "process.h"
 #include "minishell.h"
+#include "process.h"
 
 // Function to handle missing delimiter
 int	handle_missing_delimiter(t_redirection *redir)
@@ -21,12 +21,15 @@ int	handle_missing_delimiter(t_redirection *redir)
 	return (0);
 }
 
-// TO DO the getpid() need to be replaced
+// DONE the getpid() need to be replaced
 int	prepare_temp_file(char *temp_file, t_process *process)
 {
-	char	*pid_str;
+	static int	temp_file_counter;
+	char		*pid_str;
 
-	pid_str = ft_itoa(getpid());
+	temp_file_counter = 1000;
+	temp_file_counter++;
+	pid_str = ft_itoa(temp_file_counter);
 	if (!pid_str)
 	{
 		perror("heredoc: ft_itoa");
