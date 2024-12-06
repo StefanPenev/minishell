@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 19:33:08 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/05 14:14:14 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/06 10:56:13 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,37 +26,6 @@ char	*ft_getenv(char *var_name, t_env *env_copy)
 	}
 	return (getenv(var_name));
 }
-
-// char	*lexer_expand_dollar(t_lexer *lexer, t_token *head,
-// 	t_shell_context **shell_ctx)
-// {
-// 	char	*value;
-// 	char	*expanded_value;
-// 	char	*tmp;
-// 	size_t	var_len;
-
-// 	expanded_value = ft_strdup("");
-// 	if (!expanded_value)
-// 		return (NULL);
-// 	while (lexer->current_char == '$')
-// 	{
-// 		value = lexer_expand_variable(lexer, &var_len, (*shell_ctx)->env_copy,
-// 				(*shell_ctx)->process->last_exit_status);
-// 		if (!value)
-// 		{
-// 			lexer_free_tokens(head);
-// 			free(expanded_value);
-// 			return (NULL);
-// 		}
-// 		tmp = expanded_value;
-// 		expanded_value = ft_strjoin(expanded_value, value);
-// 		free(tmp);
-// 		free(value);
-// 		lexer->pos += var_len;
-// 		lexer->current_char = lexer->input[lexer->pos];
-// 	}
-// 	return (expanded_value);
-// }
 
 // Helper function to process a single variable and append its value.
 static char	*lexer_process_variable(t_lexer *lexer, char *expanded_value,
@@ -101,30 +70,6 @@ char	*lexer_expand_dollar(t_lexer *lexer, t_token *head,
 	}
 	return (expanded_value);
 }
-// char	*lexer_expand_dollar(t_lexer *lexer, t_token *head,
-//      t_shell_context **shell_ctx)
-// {
-//     char	*expanded_value;
-
-//     expanded_value = ft_strdup("");
-//     if (!expanded_value)
-//         return (NULL);
-//     while (lexer->current_char == '$')
-//     {
-//         // Check next character to prevent consuming quotes
-//         if (lexer->input[lexer->pos + 1] == '"' || lexer->input[lexer->pos + 1] == '\'')
-//         {
-//             // Advance past the '$' to prevent infinite loop
-//             lexer_advance(lexer);
-//             break;
-//         }
-//         expanded_value = lexer_process_variable(lexer, expanded_value,
-//                 shell_ctx, head);
-//         if (!expanded_value)
-//             return (NULL);
-//     }
-//     return (expanded_value);
-// }
 
 char	*lexer_collect_dollar(t_lexer *lexer, t_token *head,
 	t_shell_context **shell_ctx)
@@ -139,6 +84,12 @@ char	*lexer_collect_dollar(t_lexer *lexer, t_token *head,
 	while (lexer->current_char && !ft_isspace(lexer->current_char)
 		&& lexer->current_char != '$')
 	{
+		if (lexer->current_char == '"')
+		{
+			printf("Error: Unclosed \" quote at position %zu\n", lexer->pos);
+			free(expanded_value);
+			return (NULL);
+		}
 		char_as_str[0] = lexer->current_char;
 		char_as_str[1] = '\0';
 		tmp = expanded_value;
