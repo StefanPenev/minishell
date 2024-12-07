@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/05 23:37:00 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/06 12:57:10 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/07 09:41:21 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 // Function to handle missing delimiter
 int	handle_missing_delimiter(t_redirection *redir)
 {
-	printf("Error: Expected heredoc delimiter '%s' not found before \
-        end of input.\n", redir->filename);
+	ft_print_error("Error: Expected heredoc delimiter '", redir->filename,
+		"' not found before end of input.\n");
 	return (0);
 }
 

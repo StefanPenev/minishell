@@ -6,7 +6,7 @@
 #    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/12/05 23:47:30 by stfn             ###   ########.fr        #
+#    Updated: 2024/12/07 10:12:07 by stfn             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,6 +39,8 @@ SRCS += $(SRC_DIR)/main/main.c \
 # Lexer 
 SRCS += $(SRC_DIR)/lexer/lexer.c \
         $(SRC_DIR)/lexer/lexer_utils.c \
+        $(SRC_DIR)/lexer/lexer_words.c \
+		$(SRC_DIR)/lexer/lexer_quotes.c \
         $(SRC_DIR)/lexer/lexer_tokens.c \
 		$(SRC_DIR)/lexer/lexer_wildcard.c \
         $(SRC_DIR)/lexer/lexer_operators.c \
