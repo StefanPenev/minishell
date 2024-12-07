@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast_tester.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 10:47:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/21 12:52:12 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/07 16:47:37 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,60 +51,46 @@ void	print_redirection(t_redirection *redir, int indent)
 	}
 }
 
-// Print a command node
-// void	print_command(t_command *cmd, int indent)
-// {
-// 	size_t	i;
-
-// 	print_indent(indent);
-// 	printf("Command:\n");
-// 	print_indent(indent + 1);
-// 	printf("Arguments: ");
-// 	i = 0;
-// 	while (cmd->args && cmd->args[i])
-// 	{
-// 		printf("%s ", cmd->args[i]);
-// 		i++;
-// 	}
-// 	printf("\n");
-// 	if (cmd->redirections)
-// 	{
-// 		print_indent(indent + 1);
-// 		printf("Redirections:\n");
-// 		print_redirection(cmd->redirections, indent + 2);
-// 	}
-// }
-void print_command(t_command *cmd, int indent)
+void	print_command(t_command *cmd, int indent)
 {
-    size_t i;
+	size_t	i;
 
-    print_indent(indent);
-    printf("Command:\n");
-    // Loop through and print each argument on a new line
-    for (i = 0; cmd->args && cmd->args[i]; i++) {
-        print_indent(indent + 1);
-        printf("Arguments: %s\n", cmd->args[i]);
-    }
-
-    // If the command has redirections, print them
-    if (cmd->redirections) {
-        print_indent(indent + 1);
-        printf("Redirections:\n");
-        print_redirection(cmd->redirections, indent + 2);
-    }
+	print_indent(indent);
+	printf("Command:\n");
+	i = 0;
+	while (cmd->args && cmd->args[i])
+	{
+		print_indent(indent + 1);
+		printf("Arguments: %s\n", cmd->args[i]);
+		i++;
+	}
+	if (cmd->redirections)
+	{
+		print_indent(indent + 1);
+		printf("Redirections:\n");
+		print_redirection(cmd->redirections, indent + 2);
+	}
 }
 
-
-
 // Recursive function to print AST
+void	print_ast_branches(t_ast *ast, int indent, const char *type)
+{
+	print_indent(indent);
+	printf("%s:\n", type);
+	print_indent(indent + 1);
+	printf("Left:\n");
+	print_ast(ast->u_data.logical.left, indent + 2);
+	print_indent(indent + 1);
+	printf("Right:\n");
+	print_ast(ast->u_data.logical.right, indent + 2);
+}
+
 void	print_ast(t_ast *ast, int indent)
 {
 	if (!ast)
 		return ;
 	if (ast->type == AST_COMMAND)
-	{
 		print_command(ast->u_data.command, indent);
-	}
 	else if (ast->type == AST_PIPELINE)
 	{
 		print_indent(indent);
@@ -117,27 +103,9 @@ void	print_ast(t_ast *ast, int indent)
 		print_ast(ast->u_data.pipeline.right, indent + 2);
 	}
 	else if (ast->type == AST_LOGICAL_AND)
-	{
-		print_indent(indent);
-		printf("Logical AND:\n");
-		print_indent(indent + 1);
-		printf("Left:\n");
-		print_ast(ast->u_data.logical.left, indent + 2);
-		print_indent(indent + 1);
-		printf("Right:\n");
-		print_ast(ast->u_data.logical.right, indent + 2);
-	}
+		print_ast_branches(ast, indent, "Logical AND");
 	else if (ast->type == AST_LOGICAL_OR)
-	{
-		print_indent(indent);
-		printf("Logical OR:\n");
-		print_indent(indent + 1);
-		printf("Left:\n");
-		print_ast(ast->u_data.logical.left, indent + 2);
-		print_indent(indent + 1);
-		printf("Right:\n");
-		print_ast(ast->u_data.logical.right, indent + 2);
-	}
+		print_ast_branches(ast, indent, "Logical OR");
 	else
 	{
 		print_indent(indent);

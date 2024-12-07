@@ -6,7 +6,7 @@
 /*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 23:27:57 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 22:32:23 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/07 16:36:45 by stfn             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,6 @@ int				map_token_to_redirection(t_token_type token_type,
 					t_redirection_type *redir_type);
 void			add_redirection_to_command(t_command *command,
 					t_redirection *new_redir);
-
-
 t_ast			*allocate_and_initialize_node(void);
 t_command		*allocate_and_initialize_command(void);
 int				handle_redirection_filename(t_parser *parser,
