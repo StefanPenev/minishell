@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_command_handling.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:21:37 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 22:26:38 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 23:10:46 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,65 +14,19 @@
 #include "parser.h"
 #include "minishell.h"
 
+/* 
+ * Validates a command by checking if there are arguments or redirections. 
+ * Returns 1 if valid, 0 otherwise.
+ */
 int	validate_command(t_command *cmd, size_t args_size)
 {
 	return (!(args_size == 0 && !cmd->redirections));
 }
 
-// t_ast	*parse_command(t_parser *parser)
-// {
-// 	t_ast			*node;
-// 	t_command		*cmd;
-// 	size_t			args_size;
-// 	size_t			args_capacity;
-// 	t_redirection	*redir;
-
-// 	node = allocate_and_initialize_node();
-// 	if (!node)
-// 		return (NULL);
-// 	cmd = allocate_and_initialize_command();
-// 	if (!cmd)
-// 	{
-// 		free(node);
-// 		return (NULL);
-// 	}
-// 	args_size = 0;
-// 	args_capacity = 10;
-// 	if (!initialize_arguments(cmd, &args_capacity))
-// 	{
-// 		free(node);
-// 		command_free(cmd);
-// 		return (NULL);
-// 	}
-// 	if (!collect_arguments(parser, cmd, &args_size, &args_capacity))
-// 	{
-// 		free(node);
-// 		command_free(cmd);
-// 		return (NULL);
-// 	}
-// 	handle_wildcards(parser, cmd);
-// 	while (parser->current_token
-// 		&& is_redirection_token(parser->current_token->type))
-// 	{
-// 		redir = parse_redirection(parser);
-// 		if (!redir)
-// 		{
-// 			free(node);
-// 			command_free(cmd);
-// 			return (NULL);
-// 		}
-// 		add_redirection_to_command(cmd, redir);
-// 	}
-// 	if (!validate_command(cmd, args_size))
-// 	{
-// 		free(node);
-// 		command_free(cmd);
-// 		return (NULL);
-// 	}
-// 	node->u_data.command = cmd;
-// 	return (node);
-// }
-
+/* 
+ * Initializes and collects command arguments, ensuring enough capacity and 
+ * handling wildcards. If any step fails, frees resources and returns 0.
+ */
 int	initialize_and_collect_arguments(t_parser *parser, t_ast *node,
 	t_command *cmd)
 {
@@ -103,6 +57,10 @@ int	initialize_and_collect_arguments(t_parser *parser, t_ast *node,
 	return (1);
 }
 
+/* 
+ * Processes redirections for the command. Parses and adds them to the command 
+ * if valid. Frees resources if any redirection parsing fails.
+ */
 int	process_command_redirections(t_parser *parser, t_ast *node, t_command *cmd)
 {
 	t_redirection	*redir;
@@ -122,6 +80,10 @@ int	process_command_redirections(t_parser *parser, t_ast *node, t_command *cmd)
 	return (1);
 }
 
+/* 
+ * Parses a command, initializing the command node and processing its arguments 
+ * and redirections. Returns the populated AST node if successful, NULL otherwise.
+ */
 t_ast	*parse_command(t_parser *parser)
 {
 	t_ast			*node;

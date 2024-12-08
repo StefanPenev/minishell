@@ -3,16 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   terminal_sig_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 17:51:50 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/05 14:06:17 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 22:57:49 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "signals.h"
 #include "minishell.h"
 
+/* 
+ * Disable output control characters in the terminal.
+ * This function disables the echoing of control characters in the terminal
+ * by modifying the terminal settings using the termios API.
+ */
 void	suppress_output(void)
 {
 	struct termios	termios_p;
@@ -24,7 +29,12 @@ void	suppress_output(void)
 		perror("minishell: tcsetattr");
 }
 
-/* Signal handler for main shell prompt */
+/*
+ * Signal handler for the main shell prompt.
+ * This function is invoked when the SIGINT signal is received, typically
+ * when the user presses Ctrl+C. It suppresses the output, clears the line, 
+ * and re-displays the prompt.
+ */
 void	reprompt(int sig)
 {
 	(void)sig;
@@ -35,7 +45,11 @@ void	reprompt(int sig)
 	rl_redisplay();
 }
 
-/* Signal handler for sigquit */
+/*
+ * Signal handler for SIGQUIT signal.
+ * This function is invoked when the SIGQUIT signal is received. It suppresses
+ * the output and re-displays the prompt without terminating the program.
+ */
 void	sigquit(int sig)
 {
 	(void)sig;
@@ -44,7 +58,11 @@ void	sigquit(int sig)
 	rl_redisplay();
 }
 
-/* Signal handler for heredoc (child process) */
+/*
+ * Signal handler for the heredoc input mode (child process).
+ * This function handles the SIGINT signal in the child process during heredoc.
+ * It suppresses the output, outputs a newline, and then exits with status 130.
+ */
 void	interrupt(int sig)
 {
 	(void)sig;
@@ -53,7 +71,11 @@ void	interrupt(int sig)
 	exit(130);
 }
 
-/* Restore terminal settings */
+/*
+ * Restore terminal settings to the default state.
+ * This function restores the terminal settings, specifically enabling echoing
+ * of control characters in the terminal by modifying the terminal attributes. 
+ */
 void	restore_terminal(void)
 {
 	struct termios	termios_p;

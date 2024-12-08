@@ -3,16 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_quotes.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 10:09:15 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/07 10:13:21 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 21:49:53 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "minishell.h"
 
+/* 
+ * Collects a segment of a quoted string. If the quote is a double quote and 
+ * the current character is '$', it will expand the dollar sign. Otherwise, 
+ * it simply adds the current character to the string.
+ */
 static char	*lexer_collect_quoted_segment(t_lexer *lexer, char quote_type,
 	t_shell_context **shell_ctx)
 {
@@ -36,6 +41,11 @@ static char	*lexer_collect_quoted_segment(t_lexer *lexer, char quote_type,
 	return (temp_str);
 }
 
+/* 
+ * Processes the content within a quoted string. Collects segments until the 
+ * closing quote is found, expanding any dollar signs encountered. Returns 
+ * the fully expanded string.
+ */
 static char	*process_quoted_content(t_lexer *lexer, char quote_type,
 	t_shell_context **shell_ctx, char **expanded_str)
 {
@@ -60,6 +70,11 @@ static char	*process_quoted_content(t_lexer *lexer, char quote_type,
 	return (*expanded_str);
 }
 
+/* 
+ * Collects a quoted string from the input, expanding dollar signs if needed. 
+ * It ensures the quote is closed and returns the resulting string. If there 
+ * is an error (unclosed quote), it returns NULL.
+ */
 char	*lexer_collect_quoted(t_lexer *lexer, char quote_type,
 	t_shell_context **shell_ctx)
 {

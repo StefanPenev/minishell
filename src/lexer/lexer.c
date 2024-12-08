@@ -3,17 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 00:11:30 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/23 23:17:18 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 21:41:16 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "minishell.h"
 
-/* Create a new token */
+/* 
+ * Create a new token with the specified type and value. 
+ * Allocates memory for a new token structure, initializes its type and
+ * value, and sets the next pointer to NULL.
+ */
 t_token	*lexer_new_token(t_token_type type, char *value)
 {
 	t_token	*token;
@@ -30,7 +34,11 @@ t_token	*lexer_new_token(t_token_type type, char *value)
 	return (token);
 }
 
-/* Append token to the linked list */
+/* 
+ * Append a token to the end of a linked list. 
+ * Updates the head if the list is empty, or adds the token to the end of the
+ * list and moves the current pointer to the newly added token.
+ */
 void	lexer_append_token(t_token **head, t_token **current, t_token *new_tok)
 {
 	if (!*head)
@@ -40,7 +48,11 @@ void	lexer_append_token(t_token **head, t_token **current, t_token *new_tok)
 	*current = new_tok;
 }
 
-/* Main function to handle operators, dispatches to helper functions */
+/* 
+ * Handle operators in the input and dispatch to specific functions based on the
+ * current character. Returns a new token corresponding to the operator or NULL
+ * if no operator is matched.
+ */
 t_token	*lexer_handle_operator(t_lexer *lexer)
 {
 	if (lexer->current_char == '|')
@@ -66,6 +78,11 @@ t_token	*lexer_handle_operator(t_lexer *lexer)
 	return (NULL);
 }
 
+/* 
+ * Main loop for processing characters in the input and generating tokens. 
+ * Skips whitespace, processes each token, and appends it to the token list. 
+ * Returns the head of the token list or NULL if an error occurs.
+ */
 static t_token	*lexer_process_loop(t_lexer *lexer,
 	t_token **head, t_token **current, t_shell_context **shell_ctx)
 {
@@ -94,6 +111,12 @@ static t_token	*lexer_process_loop(t_lexer *lexer,
 	return (*head);
 }
 
+/* 
+ * Tokenize the given input string into a linked list of tokens. 
+ * Initializes the lexer state, processes the input via a loop, 
+ * and finalizes the token list. Returns the head of the token list or NULL
+ * on failure.
+ */
 t_token	*lexer_tokenize(char *input, t_shell_context **shell_ctx)
 {
 	t_token	*head;

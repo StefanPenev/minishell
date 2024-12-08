@@ -3,17 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:02:09 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/24 18:26:11 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 22:48:54 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
 #include "minishell.h"
 
-// Free redirections
+/* 
+ * Free the redirection list by iterating through each redirection node,
+ * freeing its filename and the redirection node itself.
+ */
 void	redirection_free(t_redirection *redir)
 {
 	t_redirection	*tmp;
@@ -28,7 +31,10 @@ void	redirection_free(t_redirection *redir)
 	}
 }
 
-// Free commands
+/* 
+ * Free the command structure by freeing each argument and the redirection list.
+ * Finally, free the command itself.
+ */
 void	command_free(t_command *cmd)
 {
 	size_t	i;
@@ -49,7 +55,10 @@ void	command_free(t_command *cmd)
 	free (cmd);
 }
 
-// AST free
+/* 
+ * Free the abstract syntax tree (AST) recursively. Depending on the AST node type, 
+ * it frees the appropriate data structures (command, pipeline, logical).
+ */
 void	ast_free(t_ast *ast)
 {
 	if (!ast)

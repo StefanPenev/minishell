@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_argument_handling.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:10:10 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 22:20:20 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 23:24:29 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,44 +14,10 @@
 #include "parser.h"
 #include "minishell.h"
 
-// int	collect_arguments(t_parser *parser, t_command *cmd,
-// 	size_t *args_size, size_t *args_capacity)
-// {
-// 	size_t	i;
-// 	char	**new_args;
-
-// 	while (parser->current_token && parser->current_token->type == TOKEN_WORD)
-// 	{
-// 		if (*args_size >= *args_capacity - 1)
-// 		{
-// 			*args_capacity *= 2;
-// 			new_args = ft_realloc(cmd->args, sizeof(char *) * *args_capacity);
-// 			i = 0;
-// 			if (!new_args)
-// 			{
-// 				while (i < *args_size)
-// 					free(cmd->args[i++]);
-// 				free(cmd->args);
-// 				return (0);
-// 			}
-// 			cmd->args = new_args;
-// 		}
-// 		cmd->args[*args_size] = ft_strdup(parser->current_token->value);
-// 		i = 0;
-// 		if (!cmd->args[*args_size])
-// 		{
-// 			while (i < *args_size)
-// 				free(cmd->args[i++]);
-// 			free(cmd->args);
-// 			return (0);
-// 		}
-// 		(*args_size)++;
-// 		parser_advance(parser);
-// 	}
-// 	cmd->args[*args_size] = NULL;
-// 	return (1);
-// }
-
+/* 
+ * Resizes the argument array by doubling its capacity. If memory allocation 
+ * fails, frees all previously allocated arguments and returns 0.
+ */
 int	resize_argument_array(t_command *cmd, size_t *args_size,
 	size_t *args_capacity)
 {
@@ -72,6 +38,10 @@ int	resize_argument_array(t_command *cmd, size_t *args_size,
 	return (1);
 }
 
+/* 
+ * Adds an argument to the command's argument array. If memory allocation 
+ * fails, frees all previously allocated arguments and returns 0.
+ */
 int	add_argument(t_command *cmd, const char *value,
 	size_t *args_size)
 {
@@ -90,6 +60,11 @@ int	add_argument(t_command *cmd, const char *value,
 	return (1);
 }
 
+/* 
+ * Collects arguments for the command by iterating through the tokens. If the 
+ * argument array exceeds capacity, it is resized. Returns 1 on success, 0 on 
+ * failure.
+ */
 int	collect_arguments(t_parser *parser, t_command *cmd,
 	size_t *args_size, size_t *args_capacity)
 {
@@ -109,12 +84,20 @@ int	collect_arguments(t_parser *parser, t_command *cmd,
 	return (1);
 }
 
+/* 
+ * Initializes the argument array for the command with the given capacity. 
+ * Returns 1 on success, 0 on failure.
+ */
 int	initialize_arguments(t_command *cmd, size_t *args_capacity)
 {
 	cmd->args = malloc(sizeof(char *) * *args_capacity);
 	return (cmd->args != NULL);
 }
 
+/* 
+ * Adds an argument to the command's argument array. If the array is full, 
+ * it is resized. If memory allocation fails, the program exits with an error.
+ */
 void	add_argument_to_command(t_command *command, const char *arg)
 {
 	size_t	args_count;
@@ -126,7 +109,7 @@ void	add_argument_to_command(t_command *command, const char *arg)
 	if (args_count >= command->args_capacity - 1)
 	{
 		new_capacity = command->args_capacity * 2;
-		command->args = realloc(command->args, new_capacity * sizeof(char *));
+		command->args = ft_realloc(command->args, new_capacity * sizeof(char *));
 		if (!command->args)
 		{
 			ft_putstr_fd("Failed to allocate memory for arguments\n",
@@ -135,6 +118,6 @@ void	add_argument_to_command(t_command *command, const char *arg)
 		}
 		command->args_capacity = new_capacity;
 	}
-	command->args[args_count] = strdup(arg);
+	command->args[args_count] = ft_strdup(arg);
 	command->args[args_count + 1] = NULL;
 }

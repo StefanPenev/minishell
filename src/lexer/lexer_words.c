@@ -3,17 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_words.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 10:09:23 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/07 10:13:25 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 21:39:49 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "minishell.h"
 
-/* Collect a subword (part of a word) */
+/* 
+ * Collects a subword from the input (a portion of a word that is not 
+ * interrupted by whitespace, quotes, or special characters). Handles 
+ * quoted strings separately.
+ */
 char	*lexer_collect_subword(t_lexer *lexer, t_shell_context **shell_ctx)
 {
 	char	*temp_str;
@@ -39,6 +43,10 @@ char	*lexer_collect_subword(t_lexer *lexer, t_shell_context **shell_ctx)
 	return (temp_str);
 }
 
+/* 
+ * Collects the next segment of a word, either a quoted string or a subword. 
+ * This function dispatches between the two based on the current character.
+ */
 char	*lexer_collect_next_segment(t_lexer *lexer, t_shell_context **shell_ctx)
 {
 	char	*temp_str;
@@ -56,6 +64,10 @@ char	*lexer_collect_next_segment(t_lexer *lexer, t_shell_context **shell_ctx)
 	return (temp_str);
 }
 
+/* 
+ * Collects a complete word from the input. Words can consist of multiple 
+ * subwords or quoted segments, which are concatenated together.
+ */
 char	*lexer_collect_word(t_lexer *lexer, t_shell_context **shell_ctx)
 {
 	char	*str;

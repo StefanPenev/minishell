@@ -3,16 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_wildcard_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 10:33:14 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/18 10:38:12 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 21:44:14 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "minishell.h"
 
+/* 
+ * Frees an array of file pointers and the memory for the array itself. 
+ * Iterates through the array, freeing each file pointer before freeing 
+ * the array.
+ */
 void	free_files(char **files, int size)
 {
 	while (size > 0)
@@ -20,6 +25,11 @@ void	free_files(char **files, int size)
 	free(files);
 }
 
+/* 
+ * Resizes the files array to accommodate more elements by doubling its 
+ * capacity. Preserves existing elements during reallocation. Returns 1 
+ * on success or 0 on failure.
+ */
 int	resize_array(char ***files, int *capacity, int current_size)
 {
 	char	**new_files;

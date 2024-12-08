@@ -3,16 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   parser_logical_expression.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 17:58:38 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 20:21:02 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 23:06:16 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include "minishell.h"
 
+/* 
+ * Parses the right side of a logical or pipeline expression. If the current 
+ * token is a left parenthesis, a parenthesized expression is parsed. Otherwise, 
+ * a pipeline expression is parsed.
+ */
 t_ast	*parse_right_expression(t_parser *parser)
 {
 	if (parser->current_token
@@ -21,6 +26,11 @@ t_ast	*parse_right_expression(t_parser *parser)
 	return (parse_pipeline(parser));
 }
 
+/* 
+ * Creates a new logical node for an abstract syntax tree (AST). The node type 
+ * is set to the specified logical operation (AND/OR). The left and right 
+ * children of the node are set to the provided left and right AST nodes.
+ */
 t_ast	*create_logical_node(t_ast_node_type type, t_ast *left, t_ast *right)
 {
 	t_ast	*node;
@@ -34,6 +44,11 @@ t_ast	*create_logical_node(t_ast_node_type type, t_ast *left, t_ast *right)
 	return (node);
 }
 
+/* 
+ * Parses logical operations (AND/OR) in an expression. Continuously parses 
+ * right-hand side expressions while logical operators are encountered. 
+ * Constructs logical nodes connecting left and right expressions.
+ */
 t_ast	*parse_logical_operations(t_parser *parser, t_ast *left)
 {
 	t_ast			*right;
@@ -56,6 +71,11 @@ t_ast	*parse_logical_operations(t_parser *parser, t_ast *left)
 	return (left);
 }
 
+/* 
+ * Parses the initial part of an expression. If the current token is a left 
+ * parenthesis, a parenthesized expression is parsed. Otherwise, a pipeline 
+ * expression is parsed.
+ */
 t_ast	*parse_initial_expression(t_parser *parser)
 {
 	t_ast	*expr;
@@ -69,6 +89,12 @@ t_ast	*parse_initial_expression(t_parser *parser)
 	return (expr);
 }
 
+/* 
+ * Parses a logical expression that may include logical AND/OR operations. It 
+ * first parses the initial expression and then processes any logical operations 
+ * encountered in the expression. Returns the final AST representing the logical 
+ * expression.
+ */
 t_ast	*parse_logical_expression(t_parser *parser)
 {
 	t_ast	*left;
@@ -78,54 +104,3 @@ t_ast	*parse_logical_expression(t_parser *parser)
 		return (NULL);
 	return (parse_logical_operations(parser, left));
 }
-
-// t_ast	*parse_logical_expression(t_parser *parser)
-// {
-// 	t_ast			*left;
-// 	t_ast			*right;
-// 	t_ast			*node;
-// 	t_ast_node_type	type;
-
-// 	left = NULL;
-// 	if (parser->current_token
-// 		&& parser->current_token->type == TOKEN_LEFT_PAREN)
-// 		left = parse_parenthesized_expression(parser);
-// 	else
-// 		left = parse_pipeline(parser);
-// 	if (!left)
-// 		return (NULL);
-// 	while (parser->current_token && (parser->current_token->type == TOKEN_AND
-// 			|| parser->current_token->type == TOKEN_OR))
-// 	{
-// 		if (parser->current_token->type == TOKEN_AND)
-// 			type = AST_LOGICAL_AND;
-// 		else
-// 			type = AST_LOGICAL_OR;
-// 		parser_advance(parser);
-// 		right = NULL;
-// 		if (parser->current_token
-// 			&& parser->current_token->type == TOKEN_LEFT_PAREN)
-// 			right = parse_parenthesized_expression(parser);
-// 		else
-// 			right = parse_pipeline(parser);
-// 		if (!right)
-// 		{
-// 			ft_putstr_fd("Error: Expected pipeline after logical operator.\n",
-// 				STDERR_FILENO);
-// 			ast_free(left);
-// 			return (NULL);
-// 		}
-// 		node = malloc(sizeof(t_ast));
-// 		if (!node)
-// 		{
-// 			ast_free(left);
-// 			ast_free(right);
-// 			return (NULL);
-// 		}
-// 		node->type = type;
-// 		node->u_data.logical.left = left;
-// 		node->u_data.logical.right = right;
-// 		left = node;
-// 	}
-// 	return (left);
-// }

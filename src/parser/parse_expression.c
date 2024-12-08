@@ -3,49 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   parse_expression.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 08:55:59 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 21:01:19 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 23:14:59 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include "minishell.h"
 
-// t_ast	*parse_pipeline(t_parser *parser)
-// {
-// 	t_ast	*left;
-// 	t_ast	*right;
-// 	t_ast	*pipe_node;
-
-// 	left = parse_command(parser);
-// 	if (!left)
-// 		return (NULL);
-// 	while (parser->current_token && parser->current_token->type == TOKEN_PIPE)
-// 	{
-// 		parser_advance(parser);
-// 		right = parse_command(parser);
-// 		if (!right)
-// 		{
-// 			ft_putstr_fd("Error: Expected command after '|'.\n", STDERR_FILENO);
-// 			ast_free(left);
-// 			return (NULL);
-// 		}
-// 		pipe_node = malloc(sizeof(t_ast));
-// 		if (!pipe_node)
-// 		{
-// 			ast_free(left);
-// 			ast_free(right);
-// 			return (NULL);
-// 		}
-// 		pipe_node->type = AST_PIPELINE;
-// 		pipe_node->u_data.pipeline.left = left;
-// 		pipe_node->u_data.pipeline.right = right;
-// 		left = pipe_node;
-// 	}
-// 	return (left);
-// }
+/* 
+ * Creates a new AST node for a pipeline expression with the given left and 
+ * right child nodes. If memory allocation fails, it frees the child nodes 
+ * and returns NULL.
+ */
 t_ast	*create_pipe_node(t_ast *left, t_ast *right)
 {
 	t_ast	*pipe_node;
@@ -63,6 +35,11 @@ t_ast	*create_pipe_node(t_ast *left, t_ast *right)
 	return (pipe_node);
 }
 
+/* 
+ * Parses a sequence of pipeline commands, connecting them into a chain of AST 
+ * nodes. For each pipeline operator '|', a new AST node is created. If a 
+ * command is missing after the operator, an error message is displayed.
+ */
 t_ast	*parse_pipeline_sequence(t_parser *parser, t_ast *left)
 {
 	t_ast	*right;
@@ -84,6 +61,10 @@ t_ast	*parse_pipeline_sequence(t_parser *parser, t_ast *left)
 	return (left);
 }
 
+/* 
+ * Parses a pipeline by parsing the first command and then processing any 
+ * subsequent pipeline sequences. If parsing fails at any step, NULL is returned.
+ */
 t_ast	*parse_pipeline(t_parser *parser)
 {
 	t_ast	*left;
@@ -94,7 +75,11 @@ t_ast	*parse_pipeline(t_parser *parser)
 	return (parse_pipeline_sequence(parser, left));
 }
 
-// Parse a parenthesized expression
+/* 
+ * Parses an expression inside parentheses. If the parentheses are properly 
+ * opened and closed and the enclosed expression is valid, it returns the AST 
+ * node for the expression. Otherwise, it prints an error message and returns NULL.
+ */
 t_ast	*parse_parenthesized_expression(t_parser *parser)
 {
 	t_ast	*expr;
@@ -121,7 +106,12 @@ t_ast	*parse_parenthesized_expression(t_parser *parser)
 	return (expr);
 }
 
-// Main parse function
+/* 
+ * Parses the entire sequence of tokens into an Abstract Syntax Tree (AST). 
+ * It starts parsing from the command line and checks if the end of the input 
+ * is reached. If an unexpected token or end-of-input is found, an error is 
+ * displayed.
+ */
 t_ast	*parse_tokens(t_token *tokens)
 {
 	t_ast		*ast;

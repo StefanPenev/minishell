@@ -3,16 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   parse_wildcard.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 22:19:53 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 22:20:25 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 23:13:16 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include "minishell.h"
 
+/* 
+ * Expands wildcard characters in the token and adds the expanded files to the 
+ * command's argument list. If expansion fails, an error message is printed. 
+ */
 void	parse_wildcard(t_token *token, t_command *command)
 {
 	int		i;
@@ -36,6 +40,11 @@ void	parse_wildcard(t_token *token, t_command *command)
 		free(expanded_files);
 	}
 }
+
+/* 
+ * Handles wildcard tokens in the parser by expanding them and adding the 
+ * results to the command's argument list. Advances the parser after processing.
+ */
 
 void	handle_wildcards(t_parser *parser, t_command *cmd)
 {

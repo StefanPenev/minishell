@@ -3,16 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_env_variables.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 19:33:08 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/06 10:56:13 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 22:46:22 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "minishell.h"
 
+/* 
+ * Custom getenv function that looks for a variable in the environment list.
+ * If not found, it falls back to the standard getenv function.
+ */
 char	*ft_getenv(char *var_name, t_env *env_copy)
 {
 	t_env	*current;
@@ -27,7 +31,10 @@ char	*ft_getenv(char *var_name, t_env *env_copy)
 	return (getenv(var_name));
 }
 
-// Helper function to process a single variable and append its value.
+/* 
+ * Helper function to process a single variable expansion and append its value
+ * to the expanded_value string.
+ */
 static char	*lexer_process_variable(t_lexer *lexer, char *expanded_value,
 	t_shell_context **shell_ctx, t_token *head)
 {
@@ -52,7 +59,10 @@ static char	*lexer_process_variable(t_lexer *lexer, char *expanded_value,
 	return (expanded_value);
 }
 
-// Main function orchestrating the expansion process.
+/* 
+ * Main function that orchestrates the expansion of variables (starting with $).
+ * It collects variable values and appends them to the expanded_value string.
+ */
 char	*lexer_expand_dollar(t_lexer *lexer, t_token *head,
 	t_shell_context **shell_ctx)
 {
@@ -71,6 +81,10 @@ char	*lexer_expand_dollar(t_lexer *lexer, t_token *head,
 	return (expanded_value);
 }
 
+/* 
+ * Collects the expanded value of a dollar sign, handling variable names,
+ * quotes, and other special cases in the input.
+ */
 char	*lexer_collect_dollar(t_lexer *lexer, t_token *head,
 	t_shell_context **shell_ctx)
 {
@@ -101,6 +115,10 @@ char	*lexer_collect_dollar(t_lexer *lexer, t_token *head,
 	return (expanded_value);
 }
 
+/* 
+ * Handles the expansion of a dollar sign by calling lexer_collect_dollar
+ * and creating a new token for the expanded value.
+ */
 t_token	*lexer_handle_dollar(t_lexer *lexer, t_token *head,
 	t_shell_context **shell_ctx)
 {

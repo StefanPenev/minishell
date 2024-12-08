@@ -3,16 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   parser_redirection_handling.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:17:13 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 22:24:33 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 23:04:17 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include "minishell.h"
 
+/* 
+ * Maps a token type to a corresponding redirection type. This function checks 
+ * the token type and assigns the appropriate redirection type to the provided 
+ * redirection type pointer. Returns 1 if successful, otherwise returns 0.
+ */
 int	map_token_to_redirection(t_token_type token_type,
 	t_redirection_type *redir_type)
 {
@@ -42,6 +47,12 @@ int	map_token_to_redirection(t_token_type token_type,
 		return (0);
 }
 
+/* 
+ * Appends a new redirection to the end of the linked list of redirections. 
+ * If the head of the list is NULL, the new redirection becomes the head. 
+ * Otherwise, the function traverses to the end of the list and links the 
+ * new redirection to the last node.
+ */
 void	append_redirection(t_redirection **head, t_redirection *new_redir)
 {
 	t_redirection	*last;

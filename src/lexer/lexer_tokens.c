@@ -3,16 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_tokens.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 16:27:07 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 12:43:19 by spenev           ###   ########.fr       */
+/*   Updated: 2024/12/08 21:48:49 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "minishell.h"
 
+/* 
+ * Handles the processing of quoted strings in the lexer. Collects the quoted 
+ * string and returns a token of type TOKEN_WORD with the string as its value. 
+ * If the quote is unclosed, it returns a TOKEN_ERROR.
+ */
 t_token	*lexer_handle_quotes(t_lexer *lexer, t_shell_context **shell_ctx)
 {
 	t_token	*new_tok;
@@ -29,6 +34,11 @@ t_token	*lexer_handle_quotes(t_lexer *lexer, t_shell_context **shell_ctx)
 	return (new_tok);
 }
 
+/* 
+ * Handles the processing of regular words in the lexer. Collects the word 
+ * and returns a token of type TOKEN_WORD. The word is freed after token 
+ * creation.
+ */
 t_token	*lexer_handle_word(t_lexer *lexer, t_shell_context **shell_ctx)
 {
 	t_token	*new_tok;
@@ -44,6 +54,11 @@ t_token	*lexer_handle_word(t_lexer *lexer, t_shell_context **shell_ctx)
 	return (new_tok);
 }
 
+/* 
+ * Processes a single token based on the current character in the lexer. 
+ * Handles special characters, words, and the dollar symbol, returning 
+ * the appropriate token or an error message.
+ */
 t_token	*lexer_process_token(t_lexer *lexer, t_token *head,
 	t_shell_context **shell_ctx)
 {
@@ -69,6 +84,10 @@ t_token	*lexer_process_token(t_lexer *lexer, t_token *head,
 	return (new_tok);
 }
 
+/* 
+ * Finalizes the token list by appending a TOKEN_EOF token to indicate 
+ * the end of input. Returns the modified token list or NULL on failure.
+ */
 t_token	*lexer_finalize_tokens(t_token *head, t_token **current)
 {
 	t_token	*new_tok;

@@ -3,16 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_wildcard.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 18:55:25 by stfn              #+#    #+#             */
-/*   Updated: 2024/11/23 23:17:03 by stfn             ###   ########.fr       */
+/*   Updated: 2024/12/08 21:42:38 by stefan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "minishell.h"
 
+/* 
+ * Adds a file name to the files array. Resizes the array if needed to 
+ * accommodate more files. Returns 1 on success, 0 on failure.
+ */
 static int	add_file(char ***files, int *i, int *capacity,
 	const char *file_name)
 {
@@ -31,6 +35,11 @@ static int	add_file(char ***files, int *i, int *capacity,
 	return (1);
 }
 
+/* 
+ * Reads directory entries and adds valid file names to the files array. 
+ * Skips hidden files (names starting with '.'). Returns 1 on success, 0 
+ * on failure.
+ */
 static int	read_entries(DIR *dp, char ***files, int *i, int *capacity)
 {
 	struct dirent	*entry;
@@ -48,6 +57,10 @@ static int	read_entries(DIR *dp, char ***files, int *i, int *capacity)
 	return (1);
 }
 
+/* 
+ * Allocates an initial array of file pointers with a given capacity. 
+ * Returns the array on success or NULL on failure.
+ */
 static char	**allocate_files_array(int *capacity)
 {
 	char	**files;
@@ -60,6 +73,11 @@ static char	**allocate_files_array(int *capacity)
 	return (files);
 }
 
+/* 
+ * Processes a directory stream, reading entries and storing file names 
+ * in an allocated array. Returns the array of file names or NULL on 
+ * failure.
+ */
 static char	**process_directory(DIR *dp)
 {
 	char	**files;
@@ -81,6 +99,10 @@ static char	**process_directory(DIR *dp)
 	return (files);
 }
 
+/* 
+ * Expands a wildcard by opening the current directory, processing its 
+ * entries, and returning an array of file names. Returns NULL on failure.
+ */
 char	**expand_wildcard(void)
 {
 	DIR		*dp;
