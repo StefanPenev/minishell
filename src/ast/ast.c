@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:02:09 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/08 22:48:54 by stefan           ###   ########.fr       */
+/*   Updated: 2024/12/09 09:39:14 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,9 @@ void	command_free(t_command *cmd)
 }
 
 /* 
- * Free the abstract syntax tree (AST) recursively. Depending on the AST node type, 
- * it frees the appropriate data structures (command, pipeline, logical).
+ * Free the abstract syntax tree (AST) recursively. Depending on the AST node
+ * type, it frees the appropriate data structures (command, pipeline,
+ * logical).
  */
 void	ast_free(t_ast *ast)
 {

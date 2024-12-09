@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 00:11:30 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/08 21:41:16 by stefan           ###   ########.fr       */
+/*   Updated: 2024/12/09 10:13:43 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ static t_token	*lexer_process_loop(t_lexer *lexer,
 
 	while (lexer->current_char)
 	{
-		if (isspace(lexer->current_char))
+		if (ft_isspace(lexer->current_char))
 		{
 			lexer_skip_whitespace(lexer);
 			continue ;

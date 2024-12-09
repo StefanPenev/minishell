@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_command_handling.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:21:37 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/08 23:10:46 by stefan           ###   ########.fr       */
+/*   Updated: 2024/12/09 09:40:32 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,8 @@ int	process_command_redirections(t_parser *parser, t_ast *node, t_command *cmd)
 
 /* 
  * Parses a command, initializing the command node and processing its arguments 
- * and redirections. Returns the populated AST node if successful, NULL otherwise.
+ * and redirections. Returns the populated AST node if successful, NULL
+ * otherwise.
  */
 t_ast	*parse_command(t_parser *parser)
 {

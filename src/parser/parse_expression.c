@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_expression.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 08:55:59 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/08 23:14:59 by stefan           ###   ########.fr       */
+/*   Updated: 2024/12/09 09:39:44 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,8 @@ t_ast	*parse_pipeline(t_parser *parser)
 /* 
  * Parses an expression inside parentheses. If the parentheses are properly 
  * opened and closed and the enclosed expression is valid, it returns the AST 
- * node for the expression. Otherwise, it prints an error message and returns NULL.
+ * node for the expression. Otherwise, it prints an error message and returns
+ * NULL.
  */
 t_ast	*parse_parenthesized_expression(t_parser *parser)
 {

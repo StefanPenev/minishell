@@ -6,7 +6,7 @@
 /*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 00:52:54 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 12:04:06 by spenev           ###   ########.fr       */
+/*   Updated: 2024/12/09 11:19:16 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ void				lexer_skip_whitespace(t_lexer *lexer);
 const char			*lexer_get_error_message(t_token *token);
 
 // lexer_extensions.c
-//char				*lexer_collect_word(t_lexer *lexer);
 t_token				*lexer_new_token(t_token_type type, char *value);
 char				*lexer_expand_variable(t_lexer *lexer, size_t *length,
 						t_env *env_copy, int last_exit_status);

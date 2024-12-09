@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_argument_handling.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:10:10 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/08 23:24:29 by stefan           ###   ########.fr       */
+/*   Updated: 2024/12/09 09:41:24 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,8 @@ void	add_argument_to_command(t_command *command, const char *arg)
 	if (args_count >= command->args_capacity - 1)
 	{
 		new_capacity = command->args_capacity * 2;
-		command->args = ft_realloc(command->args, new_capacity * sizeof(char *));
+		command->args = ft_realloc(command->args,
+				new_capacity * sizeof(char *));
 		if (!command->args)
 		{
 			ft_putstr_fd("Failed to allocate memory for arguments\n",

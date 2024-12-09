@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_expression_utils.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 20:17:40 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/08 23:09:10 by stefan           ###   ########.fr       */
+/*   Updated: 2024/12/09 09:40:49 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ t_ast	*handle_allocation_error(t_ast *left, t_ast *right)
 
 /* 
  * Determines the type of logical operator based on the current token. 
- * If the token is "AND", returns AST_LOGICAL_AND, otherwise returns AST_LOGICAL_OR.
+ * If the token is "AND", returns AST_LOGICAL_AND, otherwise returns
+ * AST_LOGICAL_OR.
  */
 t_ast_node_type	get_logical_type(t_parser *parser)
 {

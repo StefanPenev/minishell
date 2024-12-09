@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_wildcard.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stefan <stefan@student.42.fr>              +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 22:19:53 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/08 23:13:16 by stefan           ###   ########.fr       */
+/*   Updated: 2024/12/09 11:17:05 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,12 @@ void	parse_wildcard(t_token *token, t_command *command)
 			return ;
 		}
 		i = 0;
-		while (command->args[i] != NULL)
+		while (expanded_files[i] != NULL)
 		{
-			add_argument_to_command(command, expanded_files[i]);
+			if (expanded_files[i])
+			{
+				add_argument_to_command(command, expanded_files[i]);
+			}
 			free(expanded_files[i]);
 			i++;
 		}

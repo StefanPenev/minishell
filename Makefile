@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: stfn <stfn@student.42.fr>                  +#+  +:+       +#+         #
+#    By: spenev <spenev@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/15 23:16:58 by stfn              #+#    #+#              #
-#    Updated: 2024/12/07 10:12:07 by stfn             ###   ########.fr        #
+#    Updated: 2024/12/09 11:17:17 by spenev           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -130,8 +130,7 @@ fclean: clean
 
 leaks: $(NAME)
 	@echo "${COLOR_BLUE}Running valgrind for memory leak check...${COLOR_RESET}"
-	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes \
-		--log-file=valgrind_report.log ./$(NAME)
+	@valgrind --leak-check=full --log-file=valgrind_report.log ./$(NAME)
 	@echo "${COLOR_GREEN}Valgrind completed. Check valgrind_report.log for details.${COLOR_RESET}"
 
 re: fclean all

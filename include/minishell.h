@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anilchen <anilchen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: spenev <spenev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 13:31:41 by stfn              #+#    #+#             */
-/*   Updated: 2024/12/04 14:27:08 by anilchen         ###   ########.fr       */
+/*   Updated: 2024/12/09 11:19:29 by spenev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,7 @@ void						print_ast(t_ast *ast, int indent);
 int							is_builtin(t_command *cmd);
 int							setup_redirections(t_command *cmd,
 								t_fd_backup *fd_backup, t_process *process);
-// int	setup_redirections(t_command *cmd, int *saved_stdin,
-//		int *saved_stdout,
-// 		int *saved_stderr, t_shell_context *shell_ctx);
 void						restore_standard_fds(t_fd_backup *fd_backup);
-// int				setup_redirections(t_command *cmd, int *saved_stdin,
-// 					int *saved_stdout, int *saved_stderr);
-// void			restore_standard_fds(int saved_stdin, int saved_stdout,
-// 					int saved_stderr);
 void						assign_vars(t_shell_context **shell_ctx,
 								t_process *process, t_env **env_copy,
 								char **envp);
